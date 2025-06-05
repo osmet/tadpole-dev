@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Precompiled.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>Source Files\app</Filter>
+    </ClCompile>
+    <ClCompile Include="AppConfig.cpp">
+      <Filter>Source Files\app</Filter>
+    </ClCompile>
+    <ClCompile Include="AppConstants.cpp">
+      <Filter>Source Files\app</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetLoader.cpp">
+      <Filter>Source Files\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetConfig.cpp">
+      <Filter>Source Files\assets</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Precompiled.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App.h">
+      <Filter>Source Files\app</Filter>
+    </ClInclude>
+    <ClInclude Include="AppConfig.h">
+      <Filter>Source Files\app</Filter>
+    </ClInclude>
+    <ClInclude Include="AppConstants.h">
+      <Filter>Source Files\app</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetLoader.h">
+      <Filter>Source Files\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetConfig.h">
+      <Filter>Source Files\assets</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{3873e719-dd38-4cca-b3b1-778364c18535}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\app">
+      <UniqueIdentifier>{47c77998-5e31-411e-a575-6392e4833f60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\assets">
+      <UniqueIdentifier>{379c1d2c-6c2d-4544-90ff-2a8ea2cbbf3f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="Precompiled.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetManager.h">
+      <Filter>Source Files\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigManager.h">
+      <Filter>Source Files\configs</Filter>
+    </ClInclude>
+    <ClInclude Include="IConfig.h">
+      <Filter>Source Files\configs</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Precompiled.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetManager.cpp">
+      <Filter>Source Files\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="IConfig.cpp">
+      <Filter>Source Files\configs</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{54a5ee95-f5d0-4f9a-a78c-b46396b35ccc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\assets">
+      <UniqueIdentifier>{92978aea-1596-4d89-920e-d4bcb7de7c1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\configs">
+      <UniqueIdentifier>{26188452-369d-4491-a6de-13f0b0dcfd57}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
