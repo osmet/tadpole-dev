@@ -13,6 +13,9 @@
     <ClInclude Include="IConfig.h">
       <Filter>Source Files\configs</Filter>
     </ClInclude>
+    <ClInclude Include="JsonDataLoader.h">
+      <Filter>Source Files\data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Precompiled.cpp">
@@ -22,6 +25,12 @@
       <Filter>Source Files\assets</Filter>
     </ClCompile>
     <ClCompile Include="IConfig.cpp">
+      <Filter>Source Files\configs</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonDataLoader.cpp">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigManager.cpp">
       <Filter>Source Files\configs</Filter>
     </ClCompile>
   </ItemGroup>
@@ -34,6 +43,9 @@
     </Filter>
     <Filter Include="Source Files\configs">
       <UniqueIdentifier>{26188452-369d-4491-a6de-13f0b0dcfd57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\data">
+      <UniqueIdentifier>{cb7da4e8-b7c3-4cc7-a3da-61c0f875e442}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
