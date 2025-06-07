@@ -22,6 +22,42 @@
     <ClCompile Include="AssetConfig.cpp">
       <Filter>Source Files\assets</Filter>
     </ClCompile>
+    <ClCompile Include="AppDataLoader.cpp">
+      <Filter>Source Files\app</Filter>
+    </ClCompile>
+    <ClCompile Include="AppData.cpp">
+      <Filter>Source Files\app</Filter>
+    </ClCompile>
+    <ClCompile Include="GameData.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemData.cpp">
+      <Filter>Source Files\items</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemRarity.cpp">
+      <Filter>Source Files\items</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemType.cpp">
+      <Filter>Source Files\items</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemConfig.cpp">
+      <Filter>Source Files\items</Filter>
+    </ClCompile>
+    <ClCompile Include="InventoryData.cpp">
+      <Filter>Source Files\inventories</Filter>
+    </ClCompile>
+    <ClCompile Include="InventoryItemData.cpp">
+      <Filter>Source Files\inventories</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterData.cpp">
+      <Filter>Source Files\characters</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemCategory.cpp">
+      <Filter>Source Files\items</Filter>
+    </ClCompile>
+    <ClCompile Include="GameDataLoader.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Precompiled.h">
@@ -42,6 +78,42 @@
     <ClInclude Include="AssetConfig.h">
       <Filter>Source Files\assets</Filter>
     </ClInclude>
+    <ClInclude Include="AppDataLoader.h">
+      <Filter>Source Files\app</Filter>
+    </ClInclude>
+    <ClInclude Include="AppData.h">
+      <Filter>Source Files\app</Filter>
+    </ClInclude>
+    <ClInclude Include="GameData.h">
+      <Filter>Source Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemData.h">
+      <Filter>Source Files\items</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemRarity.h">
+      <Filter>Source Files\items</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemType.h">
+      <Filter>Source Files\items</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemConfig.h">
+      <Filter>Source Files\items</Filter>
+    </ClInclude>
+    <ClInclude Include="InventoryData.h">
+      <Filter>Source Files\inventories</Filter>
+    </ClInclude>
+    <ClInclude Include="InventoryItemData.h">
+      <Filter>Source Files\inventories</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterData.h">
+      <Filter>Source Files\characters</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemCategory.h">
+      <Filter>Source Files\items</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDataLoader.h">
+      <Filter>Source Files\game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
@@ -52,6 +124,18 @@
     </Filter>
     <Filter Include="Source Files\assets">
       <UniqueIdentifier>{379c1d2c-6c2d-4544-90ff-2a8ea2cbbf3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game">
+      <UniqueIdentifier>{4a39cb5f-fcfa-4779-bdb2-b57e992adc7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\items">
+      <UniqueIdentifier>{25aa0618-7005-47f5-a496-282cd79f052f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\inventories">
+      <UniqueIdentifier>{b4d5c31e-36e4-4160-82aa-3321ed1424e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\characters">
+      <UniqueIdentifier>{d2307abd-c6b2-48ff-84b9-3731d29465a3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

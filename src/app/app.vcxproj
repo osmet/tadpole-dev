@@ -72,19 +72,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)bin\$(PlatformName).$(ConfigurationName)\</OutDir>
-    <IntDir>$(SolutionDir)obj\$(PlatformName).$(ConfigurationName)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)bin\$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)bin\$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)bin\$(PlatformName).$(ConfigurationName)\</OutDir>
-    <IntDir>$(SolutionDir)obj\$(PlatformName).$(ConfigurationName)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)bin\$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)bin\$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -94,7 +98,8 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)external\SFML-2.6.2\include\;$(SolutionDir)external\rapidjson-1.1.0\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)external\SFML-2.6.2\include\;$(SolutionDir)external\rapidjson-1.1.0\include\;$(SolutionDir)external\magic_enum-v0.9.7\include\</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -111,7 +116,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SFML_STATIC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)external\SFML-2.6.2\include\;$(SolutionDir)external\rapidjson-1.1.0\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)external\SFML-2.6.2\include\;$(SolutionDir)external\rapidjson-1.1.0\include\;$(SolutionDir)external\magic_enum-v0.9.7\include\</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -130,7 +136,8 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)external\SFML-2.6.2\include\;$(SolutionDir)external\rapidjson-1.1.0\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)external\SFML-2.6.2\include\;$(SolutionDir)external\rapidjson-1.1.0\include\;$(SolutionDir)external\magic_enum-v0.9.7\include\</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,7 +154,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SFML_STATIC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)external\SFML-2.6.2\include\;$(SolutionDir)external\rapidjson-1.1.0\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)external\SFML-2.6.2\include\;$(SolutionDir)external\rapidjson-1.1.0\include\;$(SolutionDir)external\magic_enum-v0.9.7\include\</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -162,8 +170,20 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="AppConfig.cpp" />
     <ClCompile Include="AppConstants.cpp" />
+    <ClCompile Include="AppData.cpp" />
+    <ClCompile Include="AppDataLoader.cpp" />
     <ClCompile Include="AssetConfig.cpp" />
     <ClCompile Include="AssetLoader.cpp" />
+    <ClCompile Include="CharacterData.cpp" />
+    <ClCompile Include="GameData.cpp" />
+    <ClCompile Include="GameDataLoader.cpp" />
+    <ClCompile Include="InventoryItemData.cpp" />
+    <ClCompile Include="InventoryData.cpp" />
+    <ClCompile Include="ItemCategory.cpp" />
+    <ClCompile Include="ItemConfig.cpp" />
+    <ClCompile Include="ItemData.cpp" />
+    <ClCompile Include="ItemRarity.cpp" />
+    <ClCompile Include="ItemType.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -174,8 +194,20 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="AppConfig.h" />
     <ClInclude Include="AppConstants.h" />
+    <ClInclude Include="AppData.h" />
+    <ClInclude Include="AppDataLoader.h" />
     <ClInclude Include="AssetConfig.h" />
     <ClInclude Include="AssetLoader.h" />
+    <ClInclude Include="CharacterData.h" />
+    <ClInclude Include="GameData.h" />
+    <ClInclude Include="GameDataLoader.h" />
+    <ClInclude Include="InventoryItemData.h" />
+    <ClInclude Include="InventoryData.h" />
+    <ClInclude Include="ItemCategory.h" />
+    <ClInclude Include="ItemConfig.h" />
+    <ClInclude Include="ItemData.h" />
+    <ClInclude Include="ItemRarity.h" />
+    <ClInclude Include="ItemType.h" />
     <ClInclude Include="Precompiled.h" />
   </ItemGroup>
   <ItemGroup>

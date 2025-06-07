@@ -2,9 +2,8 @@
 
 namespace app
 {
-    class AppData
+    struct AppData
     {
-    public:
-        std::string Name;
+        std::string LastSaveTime;
     };
 }

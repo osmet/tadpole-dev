@@ -4,6 +4,8 @@
 #include "../core/AssetManager.h"
 #include "AppData.h"
 #include "AppDataLoader.h"
+#include "GameData.h"
+#include "GameDataLoader.h"
 
 namespace app
 {
@@ -32,6 +34,8 @@ namespace app
 
 		AppData m_appData;
 		AppDataLoader m_appDataLoader;
+		GameData m_gameData;
+		GameDataLoader m_gameDataLoader;
 
 		sf::Sprite m_backgroundSprite;
 		sf::Text m_text;
