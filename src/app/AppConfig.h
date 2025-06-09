@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../core/IConfig.h"
+#include "../core/IJsonData.h"
 
 namespace app
 {
-	class AppConfig : public core::IConfig
+	class AppConfig : public core::IJsonData
 	{
 	public:
 		void FromJson(const rapidjson::Value& json) override;

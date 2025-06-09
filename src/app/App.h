@@ -1,19 +1,20 @@
 #pragma once
 
-#include "../core/ConfigManager.h"
 #include "../core/AssetManager.h"
+#include "../core/DataSource.h"
+#include "../core/JsonDataLoader.h"
+#include "AppConfig.h"
+#include "AssetConfig.h"
+#include "ItemConfig.h"
 #include "AppData.h"
-#include "AppDataLoader.h"
 #include "GameData.h"
-#include "GameDataLoader.h"
+#include "ItemService.h"
+#include "CharacterService.h"
+#include "InventoryService.h"
+#include "TradeService.h"
 
 namespace app
 {
-	class ItemService;
-	class CharacterService;
-	class InventoryService;
-	class TradeService;
-
 	class App final
 	{
 	public:
@@ -23,31 +24,25 @@ namespace app
 		void Initialize();
 		void Run();
 
-		sf::Vector2f GetRenderWindowSize() const;
-
-		core::ConfigManager& GetConfigManager();
-		core::AssetManager& GetAssetManager();
-
 	private:
 		void HandleEvents();
 		void Render();
 
 		sf::RenderWindow m_renderWindow;
 
-		core::ConfigManager m_configManager;
 		core::AssetManager m_assetManager;
 
-		AppData m_appData;
-		AppDataLoader m_appDataLoader;
-		GameData m_gameData;
-		GameDataLoader m_gameDataLoader;
+		AppConfig m_appConfig;
+		AssetConfig m_assetConfig;
+		ItemConfig m_itemConfig;
+		core::DataSource<AppData, core::JsonDataLoader> m_appDataSource;
+		core::DataSource<GameData, core::JsonDataLoader> m_gameDataSource;
 
-		std::unique_ptr<ItemService> m_itemService;
-		std::unique_ptr<CharacterService> m_characterService;
-		std::unique_ptr<InventoryService> m_inventoryService;
-		std::unique_ptr<TradeService> m_tradeService;
+		ItemService m_itemService;
+		CharacterService m_characterService;
+		InventoryService m_inventoryService;
+		TradeService m_tradeService;
 
 		sf::Sprite m_backgroundSprite;
-		sf::Text m_text;
 	};
 }

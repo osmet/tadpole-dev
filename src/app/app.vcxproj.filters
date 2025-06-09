@@ -22,9 +22,6 @@
     <ClCompile Include="AssetConfig.cpp">
       <Filter>Source Files\assets</Filter>
     </ClCompile>
-    <ClCompile Include="AppDataLoader.cpp">
-      <Filter>Source Files\app</Filter>
-    </ClCompile>
     <ClCompile Include="AppData.cpp">
       <Filter>Source Files\app</Filter>
     </ClCompile>
@@ -54,9 +51,6 @@
     </ClCompile>
     <ClCompile Include="ItemCategory.cpp">
       <Filter>Source Files\items</Filter>
-    </ClCompile>
-    <ClCompile Include="GameDataLoader.cpp">
-      <Filter>Source Files\game</Filter>
     </ClCompile>
     <ClCompile Include="InventorySortBy.cpp">
       <Filter>Source Files\inventories</Filter>
@@ -93,9 +87,6 @@
     <ClInclude Include="AssetConfig.h">
       <Filter>Source Files\assets</Filter>
     </ClInclude>
-    <ClInclude Include="AppDataLoader.h">
-      <Filter>Source Files\app</Filter>
-    </ClInclude>
     <ClInclude Include="AppData.h">
       <Filter>Source Files\app</Filter>
     </ClInclude>
@@ -125,9 +116,6 @@
     </ClInclude>
     <ClInclude Include="ItemCategory.h">
       <Filter>Source Files\items</Filter>
-    </ClInclude>
-    <ClInclude Include="GameDataLoader.h">
-      <Filter>Source Files\game</Filter>
     </ClInclude>
     <ClInclude Include="InventorySortBy.h">
       <Filter>Source Files\inventories</Filter>

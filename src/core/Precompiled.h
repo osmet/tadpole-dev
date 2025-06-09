@@ -12,6 +12,8 @@
 #include <cassert>
 #include <functional>
 
+#include <tl/expected.hpp>
+
 #include <SFML/Graphics.hpp>
 
 #define RAPIDJSON_NOMEMBERITERATORCLASS

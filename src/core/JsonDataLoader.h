@@ -1,19 +1,13 @@
 #pragma once
 
+#include "DataLoader.h"
+
 namespace core
 {
-    class JsonDataLoader
+    class JsonDataLoader final : public DataLoader
     {
-    public:
-        JsonDataLoader(const std::string& rootPath, const std::string& filePath);
-        void Load();
-        void Save();
-
     protected:
-        virtual void FromJson(const rapidjson::Value& json) = 0;
-        virtual void ToJson(rapidjson::Value& json, rapidjson::Document::AllocatorType& allocator) = 0;
-
-        std::string m_dataPath;
-        std::string m_defaultDataPath;
+        tl::expected<void, DataLoaderError> LoadFromStream(std::istream& input, IData& data) const override;
+        tl::expected<void, DataLoaderError> SaveToStream(std::ostream& output, const IData& data) const override;
     };
 }

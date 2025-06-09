@@ -1,54 +1,43 @@
 #include "Precompiled.h"
 #include "JsonDataLoader.h"
+#include "IJsonData.h"
 
 namespace core
 {
-    JsonDataLoader::JsonDataLoader(const std::string& rootPath, const std::string& filePath)
+    tl::expected<void, DataLoaderError> JsonDataLoader::LoadFromStream(std::istream& input, IData& data) const
     {
-        assert(!rootPath.empty() && "Root path must not be empty.");
-        assert(!filePath.empty() && "File path must not be empty.");
+        auto* jsonData = dynamic_cast<IJsonData*>(&data);
+        if (!jsonData)
+            return tl::unexpected(DataLoaderError::InvalidDataType);
 
-        m_dataPath = filePath;
-        m_defaultDataPath = rootPath + filePath;
-    }
-
-    void JsonDataLoader::Load()
-    {
-        std::string path;
-
-        if (std::filesystem::exists(m_dataPath))
-            path = m_dataPath;
-        else if (std::filesystem::exists(m_defaultDataPath))
-            path = m_defaultDataPath;
-        else
-            assert(false && "Both data and default files are missing.");
-
-        std::ifstream file(path);
-        assert(file.is_open() && "Failed to open JSON file for reading.");
-
-        rapidjson::IStreamWrapper streamWrapper(file);
+        rapidjson::IStreamWrapper streamWrapper(input);
         rapidjson::Document document;
         document.ParseStream(streamWrapper);
 
-        assert(!document.HasParseError() && "Failed to parse the JSON file.");
-        assert(document.IsObject() && "Parsed JSON is not an object.");
+        if (document.HasParseError() || !document.IsObject())
+            return tl::unexpected(DataLoaderError::DataParseFailed);
 
-        FromJson(document);
+        jsonData->FromJson(document);
+
+        return {};
     }
 
-    void JsonDataLoader::Save()
+    tl::expected<void, DataLoaderError> JsonDataLoader::SaveToStream(std::ostream& output, const IData& data) const
     {
+        const auto* jsonData = dynamic_cast<const IJsonData*>(&data);
+        if (!jsonData)
+            return tl::unexpected(DataLoaderError::InvalidDataType);
+
         rapidjson::Document document;
         document.SetObject();
 
-        ToJson(document, document.GetAllocator());
+        jsonData->ToJson(document, document.GetAllocator());
 
-        std::ofstream file(m_dataPath);
-        assert(file.is_open() && "Failed to open JSON file for writing.");
-
-        rapidjson::OStreamWrapper streamWrapper(file);
+        rapidjson::OStreamWrapper streamWrapper(output);
         rapidjson::Writer<rapidjson::OStreamWrapper> writer(streamWrapper);
 
         document.Accept(writer);
+
+        return {};
     }
 }

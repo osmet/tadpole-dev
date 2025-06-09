@@ -7,13 +7,19 @@
     <ClInclude Include="AssetManager.h">
       <Filter>Source Files\assets</Filter>
     </ClInclude>
-    <ClInclude Include="ConfigManager.h">
-      <Filter>Source Files\configs</Filter>
-    </ClInclude>
-    <ClInclude Include="IConfig.h">
-      <Filter>Source Files\configs</Filter>
-    </ClInclude>
     <ClInclude Include="JsonDataLoader.h">
+      <Filter>Source Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="DataSource.h">
+      <Filter>Source Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="IData.h">
+      <Filter>Source Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="IJsonData.h">
+      <Filter>Source Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="DataLoader.h">
       <Filter>Source Files\data</Filter>
     </ClInclude>
   </ItemGroup>
@@ -24,14 +30,20 @@
     <ClCompile Include="AssetManager.cpp">
       <Filter>Source Files\assets</Filter>
     </ClCompile>
-    <ClCompile Include="IConfig.cpp">
-      <Filter>Source Files\configs</Filter>
-    </ClCompile>
     <ClCompile Include="JsonDataLoader.cpp">
       <Filter>Source Files\data</Filter>
     </ClCompile>
-    <ClCompile Include="ConfigManager.cpp">
-      <Filter>Source Files\configs</Filter>
+    <ClCompile Include="DataSource.cpp">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
+    <ClCompile Include="IData.cpp">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
+    <ClCompile Include="IJsonData.cpp">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
+    <ClCompile Include="DataLoader.cpp">
+      <Filter>Source Files\data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -40,9 +52,6 @@
     </Filter>
     <Filter Include="Source Files\assets">
       <UniqueIdentifier>{92978aea-1596-4d89-920e-d4bcb7de7c1e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\configs">
-      <UniqueIdentifier>{26188452-369d-4491-a6de-13f0b0dcfd57}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\data">
       <UniqueIdentifier>{cb7da4e8-b7c3-4cc7-a3da-61c0f875e442}</UniqueIdentifier>

@@ -1,56 +1,43 @@
 #include "Precompiled.h"
 #include "App.h"
 #include "AppConstants.h"
-#include "AppConfig.h"
-#include "AssetConfig.h"
 #include "AssetLoader.h"
-#include "AppDataLoader.h"
-#include "ItemConfig.h"
-#include "ItemService.h"
-#include "CharacterService.h"
-#include "InventoryService.h"
-#include "TradeService.h"
 
 namespace app
 {
 	App::App()
-		: m_configManager(AppConstants::GetConfigsRootPath())
-		, m_appDataLoader(m_appData, AppConstants::GetDataRootPath(), "app_data.json")
-		, m_gameDataLoader(m_gameData, AppConstants::GetDataRootPath(), "game_data.json")
+		: m_appDataSource("app_data.json", AppConstants::GetDataRootPath() + "app_data.json")
+		, m_gameDataSource("game_data.json", AppConstants::GetDataRootPath() + "game_data.json")
+		, m_itemService(m_itemConfig.GetItems())
+		, m_characterService(m_gameDataSource.GetData().GetCharacters())
+		, m_inventoryService(m_gameDataSource.GetData().GetInventories())
+		, m_tradeService(m_inventoryService, m_characterService, m_itemService)
 	{
 	}
 
 	App::~App()
 	{
-		m_appDataLoader.Save();
-		m_gameDataLoader.Save();
+		m_appDataSource.Save();
+		m_gameDataSource.Save();
 	}
 
 	void App::Initialize()
 	{
-		m_configManager.LoadConfig<AppConfig>("app_config.json");
-		m_configManager.LoadConfig<AssetConfig>("asset_config.json");
-		m_configManager.LoadConfig<ItemConfig>("item_config.json");
+		core::JsonDataLoader dataLoader;
+		dataLoader.Load(m_appConfig, AppConstants::GetConfigsRootPath() + "app_config.json");
+		dataLoader.Load(m_assetConfig, AppConstants::GetConfigsRootPath() + "asset_config.json");
+		dataLoader.Load(m_itemConfig, AppConstants::GetConfigsRootPath() + "item_config.json");
 
-		m_appDataLoader.Load();
-		m_gameDataLoader.Load();
-
-		const auto& appConfig = m_configManager.Get<AppConfig>();
-		const auto& assetConfig = m_configManager.Get<AssetConfig>();
-		const auto& itemConfig = m_configManager.Get<ItemConfig>();
+		m_appDataSource.Load();
+		m_gameDataSource.Load();
 
 		m_renderWindow.create(
-			sf::VideoMode(appConfig.GetAppWindowWidth(), appConfig.GetAppWindowHeight()),
-			appConfig.GetAppName(),
-			appConfig.GetAppWindowStyle()
+			sf::VideoMode(m_appConfig.GetAppWindowWidth(), m_appConfig.GetAppWindowHeight()),
+			m_appConfig.GetAppName(),
+			m_appConfig.GetAppWindowStyle()
 		);
 
-		AssetLoader::LoadAssets(m_assetManager, AppConstants::GetAssetsRootPath(), assetConfig);
-
-		m_itemService = std::make_unique<ItemService>(itemConfig.GetItems());
-		m_characterService = std::make_unique<CharacterService>(m_gameData.Characters);
-		m_inventoryService = std::make_unique<InventoryService>(m_gameData.Inventories);
-		m_tradeService = std::make_unique<TradeService>(*m_inventoryService , *m_characterService, *m_itemService);
+		AssetLoader::LoadAssets(m_assetManager, AppConstants::GetAssetsRootPath(), m_assetConfig);
 
 		m_backgroundSprite.setTexture(m_assetManager.GetTexture("background"));
 	}
@@ -62,23 +49,6 @@ namespace app
 			HandleEvents();
 			Render();
 		}
-	}
-
-	sf::Vector2f App::GetRenderWindowSize() const
-	{
-		sf::Vector2u renderWindowSize = m_renderWindow.getSize();
-
-		return sf::Vector2f(static_cast<float>(renderWindowSize.x), static_cast<float>(renderWindowSize.y));
-	}
-
-	core::ConfigManager& App::GetConfigManager()
-	{
-		return m_configManager;
-	}
-
-	core::AssetManager& App::GetAssetManager()
-	{
-		return m_assetManager;
 	}
 
 	void App::HandleEvents()
