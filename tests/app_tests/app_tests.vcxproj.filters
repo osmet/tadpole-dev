@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{f12c3ba4-1c3a-4a79-86af-b012f7b714af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\characters">
+      <UniqueIdentifier>{81248362-5f59-47a2-9d51-f97125284fbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\items">
+      <UniqueIdentifier>{de26fa3c-3019-463b-bca0-d0172ddebe25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\inventories">
+      <UniqueIdentifier>{8ccdbcf9-c309-4637-8e0b-2538be6c911f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\trade">
+      <UniqueIdentifier>{0cbc5d70-12fb-4d72-90d1-0ce4196bd9fd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="CharacterServiceTests.cpp">
+      <Filter>Source Files\characters</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemServiceTests.cpp">
+      <Filter>Source Files\items</Filter>
+    </ClCompile>
+    <ClCompile Include="InventoryServiceTests.cpp">
+      <Filter>Source Files\inventories</Filter>
+    </ClCompile>
+    <ClCompile Include="TradeServiceTests.cpp">
+      <Filter>Source Files\trade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\app\CharacterService.cpp">
+      <Filter>Source Files\characters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\app\InventoryService.cpp">
+      <Filter>Source Files\inventories</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\app\ItemService.cpp">
+      <Filter>Source Files\items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\app\TradeService.cpp">
+      <Filter>Source Files\trade</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

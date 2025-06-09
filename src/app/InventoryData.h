@@ -10,4 +10,6 @@ namespace app
         std::int32_t CurrentMoney = 0;
         std::vector<InventoryItemData> Items;
     };
+
+    using InventoryDataMap = std::unordered_map<std::string, InventoryData>;
 }

@@ -10,4 +10,6 @@ namespace app
         float MaxWeight = 100.f;
         std::string InventoryId;
     };
+
+    using CharacterDataMap = std::unordered_map<std::string, CharacterData>;
 }

@@ -8,7 +8,7 @@ namespace app
     struct ItemData
     {
         std::string Id;
-        std::string PlayerName;
+        std::string Name;
         std::string IconTextureId;
         std::string Description;
         ItemType Type = ItemType::Other;
@@ -17,4 +17,6 @@ namespace app
         float Weight = 0.0f;
         std::int32_t Price = 0;
     };
+
+    using ItemDataMap = std::unordered_map<std::string, ItemData>;
 }

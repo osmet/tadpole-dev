@@ -58,6 +58,21 @@
     <ClCompile Include="GameDataLoader.cpp">
       <Filter>Source Files\game</Filter>
     </ClCompile>
+    <ClCompile Include="InventorySortBy.cpp">
+      <Filter>Source Files\inventories</Filter>
+    </ClCompile>
+    <ClCompile Include="InventoryService.cpp">
+      <Filter>Source Files\inventories</Filter>
+    </ClCompile>
+    <ClCompile Include="TradeService.cpp">
+      <Filter>Source Files\trade</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterService.cpp">
+      <Filter>Source Files\characters</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemService.cpp">
+      <Filter>Source Files\items</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Precompiled.h">
@@ -114,6 +129,21 @@
     <ClInclude Include="GameDataLoader.h">
       <Filter>Source Files\game</Filter>
     </ClInclude>
+    <ClInclude Include="InventorySortBy.h">
+      <Filter>Source Files\inventories</Filter>
+    </ClInclude>
+    <ClInclude Include="InventoryService.h">
+      <Filter>Source Files\inventories</Filter>
+    </ClInclude>
+    <ClInclude Include="TradeService.h">
+      <Filter>Source Files\trade</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterService.h">
+      <Filter>Source Files\characters</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemService.h">
+      <Filter>Source Files\items</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
@@ -136,6 +166,9 @@
     </Filter>
     <Filter Include="Source Files\characters">
       <UniqueIdentifier>{d2307abd-c6b2-48ff-84b9-3731d29465a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\trade">
+      <UniqueIdentifier>{b4c1009e-2c61-49f3-9d9d-167736ac2c15}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

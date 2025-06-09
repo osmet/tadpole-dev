@@ -10,10 +10,9 @@ namespace app
     public:
         void FromJson(const rapidjson::Value& json);
 
-        const ItemData& GetItemById(const std::string& id) const;
-        const std::unordered_map<std::string, ItemData>& GetItems() const;
+        const ItemDataMap& GetItems() const;
 
     private:
-        std::unordered_map<std::string, ItemData> m_items;
+        ItemDataMap m_items;
     };
 }

@@ -6,6 +6,10 @@
 #include "AssetLoader.h"
 #include "AppDataLoader.h"
 #include "ItemConfig.h"
+#include "ItemService.h"
+#include "CharacterService.h"
+#include "InventoryService.h"
+#include "TradeService.h"
 
 namespace app
 {
@@ -28,8 +32,12 @@ namespace app
 		m_configManager.LoadConfig<AssetConfig>("asset_config.json");
 		m_configManager.LoadConfig<ItemConfig>("item_config.json");
 
+		m_appDataLoader.Load();
+		m_gameDataLoader.Load();
+
 		const auto& appConfig = m_configManager.Get<AppConfig>();
 		const auto& assetConfig = m_configManager.Get<AssetConfig>();
+		const auto& itemConfig = m_configManager.Get<ItemConfig>();
 
 		m_renderWindow.create(
 			sf::VideoMode(appConfig.GetAppWindowWidth(), appConfig.GetAppWindowHeight()),
@@ -39,16 +47,12 @@ namespace app
 
 		AssetLoader::LoadAssets(m_assetManager, AppConstants::GetAssetsRootPath(), assetConfig);
 
-		m_appDataLoader.Load();
-		m_gameDataLoader.Load();
+		m_itemService = std::make_unique<ItemService>(itemConfig.GetItems());
+		m_characterService = std::make_unique<CharacterService>(m_gameData.Characters);
+		m_inventoryService = std::make_unique<InventoryService>(m_gameData.Inventories);
+		m_tradeService = std::make_unique<TradeService>(*m_inventoryService , *m_characterService, *m_itemService);
 
 		m_backgroundSprite.setTexture(m_assetManager.GetTexture("background"));
-
-		m_text.setFont(m_assetManager.GetFont("font"));
-		m_text.setString(m_appData.LastSaveTime);
-		m_text.setCharacterSize(36);
-		m_text.setFillColor(sf::Color::White);
-		m_text.setPosition(500.f, 500.f);
 	}
 
 	void App::Run()
@@ -95,7 +99,6 @@ namespace app
 		m_renderWindow.clear();
 
 		m_renderWindow.draw(m_backgroundSprite);
-		m_renderWindow.draw(m_text);
 
 		m_renderWindow.display();
 	}

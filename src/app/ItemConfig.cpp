@@ -30,7 +30,7 @@ namespace app
 
             ItemData item;
             item.Id = value["id"].GetString();
-            item.PlayerName = value["name"].GetString();
+            item.Name = value["name"].GetString();
             item.IconTextureId = value["icon_texture_id"].GetString();
             item.Description = value["description"].GetString();
             item.Type = ItemTypeHelper::FromString(value["type"].GetString());
@@ -43,20 +43,7 @@ namespace app
         }
     }
 
-    const ItemData& ItemConfig::GetItemById(const std::string& id) const
-    {
-        const auto it = m_items.find(id);
-        if (it != m_items.end())
-            return it->second;
-
-        static const ItemData FallbackItem {
-            "none",
-        };
-
-        return FallbackItem;
-    }
-
-    const std::unordered_map<std::string, ItemData>& ItemConfig::GetItems() const
+    const ItemDataMap& ItemConfig::GetItems() const
     {
         return m_items;
     }
