@@ -15,6 +15,8 @@
 #include <tl/expected.hpp>
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Window/Event.hpp>
 
 #define RAPIDJSON_NOMEMBERITERATORCLASS
 #include <rapidjson/document.h>

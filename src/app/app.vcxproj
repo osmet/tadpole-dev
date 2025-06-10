@@ -174,10 +174,13 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="AppConfig.cpp" />
     <ClCompile Include="AppConstants.cpp" />
+    <ClCompile Include="AppContext.cpp" />
     <ClCompile Include="AppData.cpp" />
+    <ClCompile Include="AppScope.cpp" />
     <ClCompile Include="AssetConfig.cpp" />
     <ClCompile Include="AssetLoader.cpp" />
     <ClCompile Include="GameData.cpp" />
+    <ClCompile Include="GameScope.cpp" />
     <ClCompile Include="ItemConfig.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Precompiled.cpp">
@@ -186,17 +189,22 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TradeScope.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="AppConfig.h" />
     <ClInclude Include="AppConstants.h" />
+    <ClInclude Include="AppContext.h" />
     <ClInclude Include="AppData.h" />
+    <ClInclude Include="AppScope.h" />
     <ClInclude Include="AssetConfig.h" />
     <ClInclude Include="AssetLoader.h" />
     <ClInclude Include="GameData.h" />
+    <ClInclude Include="GameScope.h" />
     <ClInclude Include="ItemConfig.h" />
     <ClInclude Include="Precompiled.h" />
+    <ClInclude Include="TradeScope.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\app_domain\app_domain.vcxproj">

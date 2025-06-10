@@ -31,6 +31,18 @@
     <ClCompile Include="ItemConfig.cpp">
       <Filter>Source Files\items</Filter>
     </ClCompile>
+    <ClCompile Include="TradeScope.cpp">
+      <Filter>Source Files\trade</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScope.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="AppContext.cpp">
+      <Filter>Source Files\app</Filter>
+    </ClCompile>
+    <ClCompile Include="AppScope.cpp">
+      <Filter>Source Files\app</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Precompiled.h">
@@ -60,6 +72,18 @@
     <ClInclude Include="ItemConfig.h">
       <Filter>Source Files\items</Filter>
     </ClInclude>
+    <ClInclude Include="TradeScope.h">
+      <Filter>Source Files\trade</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScope.h">
+      <Filter>Source Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="AppContext.h">
+      <Filter>Source Files\app</Filter>
+    </ClInclude>
+    <ClInclude Include="AppScope.h">
+      <Filter>Source Files\app</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
@@ -76,6 +100,9 @@
     </Filter>
     <Filter Include="Source Files\items">
       <UniqueIdentifier>{e8ad9d67-95b6-43a1-a8f4-c63ae96b3931}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\trade">
+      <UniqueIdentifier>{be1711c8-6b7d-4977-8323-7f441bab945d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
