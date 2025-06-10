@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../core/IJsonData.h"
-#include "CharacterData.h"
-#include "InventoryData.h"
+#include "../app_domain/Character.h"
+#include "../app_domain/Inventory.h"
 
 namespace app
 {
@@ -12,11 +12,11 @@ namespace app
         void FromJson(const rapidjson::Value& json) override;
         void ToJson(rapidjson::Value& json, rapidjson::Document::AllocatorType& allocator) const override;
 
-        CharacterDataMap& GetCharacters();
-        InventoryDataMap& GetInventories();
+        app_domain::CharacterMap& GetCharacters();
+        app_domain::InventoryMap& GetInventories();
 
     private:
-        CharacterDataMap m_characters;
-        InventoryDataMap m_inventories;
+        app_domain::CharacterMap m_characters;
+        app_domain::InventoryMap m_inventories;
     };
 }

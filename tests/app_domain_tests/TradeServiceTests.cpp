@@ -5,79 +5,79 @@
 #include "InventoryService.h"
 #include "ItemService.h"
 
-using namespace app;
+using namespace app_domain;
 
 TEST_CASE("TradeService::TradeItem_FewValidTrades_Succeeds")
 {
-    CharacterData buyer;
+    Character buyer;
     buyer.Id = "buyer";
     buyer.Name = "Buyer";
     buyer.InventoryId = "inventory_buyer";
 
-    CharacterData seller;
+    Character seller;
     seller.Id = "seller";
     seller.Name = "Seller";
     seller.InventoryId = "inventory_seller";
 
-    CharacterData third;
+    Character third;
     third.Id = "third";
     third.Name = "Third";
     third.InventoryId = "inventory_third";
 
-    CharacterDataMap characters{
+    CharacterMap characters{
         {buyer.Id, buyer},
         {seller.Id, seller},
         {third.Id, third}
     };
     CharacterService characterService(characters);
 
-    InventoryData buyerInventory;
+    Inventory buyerInventory;
     buyerInventory.Id = "inventory_buyer";
     buyerInventory.CurrentMoney = 1000;
 
-    InventoryItemData item1;
-    item1.ItemId = "item_1";
+    InventoryItem inventoryItem1;
+    inventoryItem1.ItemId = "item_1";
 
-    InventoryItemData item2;
-    item2.ItemId = "item_2";
+    InventoryItem inventoryItem2;
+    inventoryItem2.ItemId = "item_2";
 
-    InventoryItemData item3;
-    item3.ItemId = "item_3";
+    InventoryItem inventoryItem3;
+    inventoryItem3.ItemId = "item_3";
 
-    InventoryData sellerInventory;
+    Inventory sellerInventory;
     sellerInventory.Id = "inventory_seller";
     sellerInventory.CurrentMoney = 500;
-    sellerInventory.Items.push_back(item1); // index 0
-    sellerInventory.Items.push_back(item2); // index 1
+    sellerInventory.Items.push_back(inventoryItem1); // index 0
+    sellerInventory.Items.push_back(inventoryItem2); // index 1
 
-    InventoryData thirdInventory;
+    Inventory thirdInventory;
     thirdInventory.Id = "inventory_third";
     thirdInventory.CurrentMoney = 200;
-    thirdInventory.Items.push_back(item3); // index 0
+    thirdInventory.Items.push_back(inventoryItem3); // index 0
 
-    InventoryDataMap inventories{
+    InventoryMap inventories{
         {buyerInventory.Id, buyerInventory},
         {sellerInventory.Id, sellerInventory},
         {thirdInventory.Id, thirdInventory}
     };
     InventoryService inventoryService(inventories);
 
-    ItemData itemData1;
-    itemData1.Id = "item_1";
-    itemData1.Price = 200;
+    Item item1;
+    item1.Id = "item_1";
+    item1.Price = 200;
 
-    ItemData itemData2;
-    itemData2.Id = "item_2";
-    itemData2.Price = 300;
+    Item item2;
+    item2.Id = "item_2";
+    item2.Price = 300;
 
-    ItemData itemData3;
-    itemData3.Id = "item_3";
-    itemData3.Price = 100;
+    Item item3;
+    item3.Id = "item_3";
+    item3.Price = 100;
 
-    ItemDataMap items{
-        {itemData1.Id, itemData1},
-        {itemData2.Id, itemData2},
-        {itemData3.Id, itemData3}
+    ItemMap items{
+        {item1.Id, item1},
+        {item2.Id, item2},
+        {item3.Id, item3}
     };
     ItemService itemService(items);
 
@@ -129,13 +129,13 @@ TEST_CASE("TradeService::TradeItem_FewValidTrades_Succeeds")
 
 TEST_CASE("TradeService::TradeItem_BuyerNotFound_ReturnsCharacterNotFound")
 {
-    CharacterDataMap characters; // Empty
+    CharacterMap characters; // Empty
     CharacterService characterService(characters);
 
-    InventoryDataMap inventories;
+    InventoryMap inventories;
     InventoryService inventoryService(inventories);
 
-    ItemDataMap items;
+    ItemMap items;
     ItemService itemService(items);
 
     TradeService tradeService(inventoryService, characterService, itemService);
@@ -148,24 +148,24 @@ TEST_CASE("TradeService::TradeItem_BuyerNotFound_ReturnsCharacterNotFound")
 
 TEST_CASE("TradeService::TradeItem_InventoryNotFound_ReturnsInventoryNotFound")
 {
-    CharacterData buyer;
+    Character buyer;
     buyer.Id = "buyer";
     buyer.InventoryId = "inventory_buyer";
 
-    CharacterData seller;
+    Character seller;
     seller.Id = "seller";
     seller.InventoryId = "inventory_seller";
 
-    CharacterDataMap characters{
+    CharacterMap characters{
         {"buyer", buyer},
         {"seller", seller}
     };
     CharacterService characterService(characters);
 
-    InventoryDataMap inventories; // missing inventories
+    InventoryMap inventories; // missing inventories
     InventoryService inventoryService(inventories);
 
-    ItemDataMap items;
+    ItemMap items;
     ItemService itemService(items);
 
     TradeService tradeService(inventoryService, characterService, itemService);
@@ -178,35 +178,35 @@ TEST_CASE("TradeService::TradeItem_InventoryNotFound_ReturnsInventoryNotFound")
 
 TEST_CASE("TradeService::TradeItem_ItemIndexInvalid_ReturnsInventoryItemNotFound")
 {
-    CharacterData buyer;
+    Character buyer;
     buyer.Id = "buyer";
     buyer.InventoryId = "inventory_buyer";
 
-    CharacterData seller;
+    Character seller;
     seller.Id = "seller";
     seller.InventoryId = "inventory_seller";
 
-    CharacterDataMap characters{
+    CharacterMap characters{
         {"buyer", buyer},
         {"seller", seller}
     };
     CharacterService characterService(characters);
 
-    InventoryData buyerInventory;
+    Inventory buyerInventory;
     buyerInventory.Id = "inventory_buyer";
     buyerInventory.CurrentMoney = 1000;
 
-    InventoryData sellerInventory;
+    Inventory sellerInventory;
     sellerInventory.Id = "inventory_seller";
     sellerInventory.CurrentMoney = 500;
 
-    InventoryDataMap inventories{
+    InventoryMap inventories{
         {buyerInventory.Id, buyerInventory},
         {sellerInventory.Id, sellerInventory}
     };
     InventoryService inventoryService(inventories);
 
-    ItemDataMap items;
+    ItemMap items;
     ItemService itemService(items);
 
     TradeService tradeService(inventoryService, characterService, itemService);
@@ -219,39 +219,39 @@ TEST_CASE("TradeService::TradeItem_ItemIndexInvalid_ReturnsInventoryItemNotFound
 
 TEST_CASE("TradeService::TradeItem_ItemNotFound_ReturnsItemNotFound")
 {
-    CharacterData buyer;
+    Character buyer;
     buyer.Id = "buyer";
     buyer.InventoryId = "inventory_buyer";
 
-    CharacterData seller;
+    Character seller;
     seller.Id = "seller";
     seller.InventoryId = "inventory_seller";
 
-    CharacterDataMap characters{
+    CharacterMap characters{
         {"buyer", buyer},
         {"seller", seller}
     };
     CharacterService characterService(characters);
 
-    InventoryItemData item;
+    InventoryItem item;
     item.ItemId = "missing_item";
 
-    InventoryData buyerInventory;
+    Inventory buyerInventory;
     buyerInventory.Id = "inventory_buyer";
     buyerInventory.CurrentMoney = 1000;
 
-    InventoryData sellerInventory;
+    Inventory sellerInventory;
     sellerInventory.Id = "inventory_seller";
     sellerInventory.CurrentMoney = 500;
     sellerInventory.Items.push_back(item);
 
-    InventoryDataMap inventories{
+    InventoryMap inventories{
         {buyerInventory.Id, buyerInventory},
         {sellerInventory.Id, sellerInventory}
     };
     InventoryService inventoryService(inventories);
 
-    ItemDataMap items; // item is missing
+    ItemMap items; // item is missing
     ItemService itemService(items);
 
     TradeService tradeService(inventoryService, characterService, itemService);
@@ -264,44 +264,44 @@ TEST_CASE("TradeService::TradeItem_ItemNotFound_ReturnsItemNotFound")
 
 TEST_CASE("TradeService::TradeItem_NotEnoughMoney_ReturnsNotEnoughMoney")
 {
-    CharacterData buyer;
+    Character buyer;
     buyer.Id = "buyer";
     buyer.InventoryId = "inventory_buyer";
 
-    CharacterData seller;
+    Character seller;
     seller.Id = "seller";
     seller.InventoryId = "inventory_seller";
 
-    CharacterDataMap characters{
+    CharacterMap characters{
         {"buyer", buyer},
         {"seller", seller}
     };
     CharacterService characterService(characters);
 
-    InventoryItemData item;
-    item.ItemId = "item_1";
+    InventoryItem inventoryItem1;
+    inventoryItem1.ItemId = "item_1";
 
-    InventoryData buyerInventory;
+    Inventory buyerInventory;
     buyerInventory.Id = "inventory_buyer";
     buyerInventory.CurrentMoney = 50; // not enough
 
-    InventoryData sellerInventory;
+    Inventory sellerInventory;
     sellerInventory.Id = "inventory_seller";
     sellerInventory.CurrentMoney = 500;
-    sellerInventory.Items.push_back(item);
+    sellerInventory.Items.push_back(inventoryItem1);
 
-    InventoryDataMap inventories{
+    InventoryMap inventories{
         {buyerInventory.Id, buyerInventory},
         {sellerInventory.Id, sellerInventory}
     };
     InventoryService inventoryService(inventories);
 
-    ItemData itemData;
-    itemData.Id = "item_1";
-    itemData.Price = 100;
+    Item item;
+    item.Id = "item_1";
+    item.Price = 100;
 
-    ItemDataMap items{
-        {itemData.Id, itemData}
+    ItemMap items{
+        {item.Id, item}
     };
     ItemService itemService(items);
 

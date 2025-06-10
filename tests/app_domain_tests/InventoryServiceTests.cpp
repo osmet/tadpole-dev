@@ -2,15 +2,15 @@
 #include <tl/expected.hpp>
 #include "InventoryService.h"
 
-using namespace app;
+using namespace app_domain;
 
 TEST_CASE("InventoryService::GetInventoryById_InventoryExists_ReturnsInventory")
 {
-    InventoryData inventory;
+    Inventory inventory;
     inventory.Id = "inventory_1";
     inventory.CurrentMoney = 100;
 
-    InventoryDataMap inventories;
+    InventoryMap inventories;
     inventories["inventory_1"] = inventory;
 
     InventoryService service(inventories);
@@ -24,7 +24,7 @@ TEST_CASE("InventoryService::GetInventoryById_InventoryExists_ReturnsInventory")
 
 TEST_CASE("InventoryService::GetInventoryById_InventoryDoesNotExist_ReturnsNotFoundError")
 {
-    InventoryDataMap inventories;
+    InventoryMap inventories;
     InventoryService service(inventories);
 
     auto result = service.GetInventoryById("inventory_1");
@@ -35,15 +35,15 @@ TEST_CASE("InventoryService::GetInventoryById_InventoryDoesNotExist_ReturnsNotFo
 
 TEST_CASE("InventoryService::GetItemByIndex_ItemExists_ReturnsItem")
 {
-    InventoryItemData item;
+    InventoryItem item;
     item.ItemId = "item_1";
     item.Count = 1;
 
-    InventoryData inventory;
+    Inventory inventory;
     inventory.Id = "inventory_1";
     inventory.Items.push_back(item);
 
-    InventoryDataMap inventories;
+    InventoryMap inventories;
     inventories["inventory_1"] = inventory;
 
     InventoryService service(inventories);
@@ -56,7 +56,7 @@ TEST_CASE("InventoryService::GetItemByIndex_ItemExists_ReturnsItem")
 
 TEST_CASE("InventoryService::GetItemByIndex_InventoryDoesNotExist_ReturnsNotFoundError")
 {
-    InventoryDataMap inventories;
+    InventoryMap inventories;
     InventoryService service(inventories);
 
     auto result = service.GetItemByIndex("inventory_1", 0);
@@ -67,10 +67,10 @@ TEST_CASE("InventoryService::GetItemByIndex_InventoryDoesNotExist_ReturnsNotFoun
 
 TEST_CASE("InventoryService::GetItemByIndex_IndexOutOfBounds_ReturnsItemNotFoundError")
 {
-    InventoryData inventory;
+    Inventory inventory;
     inventory.Id = "inventory_1";
 
-    InventoryDataMap inventories;
+    InventoryMap inventories;
     inventories["inventory_1"] = inventory;
 
     InventoryService service(inventories);
@@ -83,9 +83,9 @@ TEST_CASE("InventoryService::GetItemByIndex_IndexOutOfBounds_ReturnsItemNotFound
 
 TEST_CASE("InventoryService::TransferMoney_ValidTransfer_TransfersMoney")
 {
-    InventoryDataMap inventories;
-    inventories["inventory_1"] = InventoryData{ "inventory_1", 100, {} };
-    inventories["inventory_2"] = InventoryData{ "inventory_2", 50, {} };
+    InventoryMap inventories;
+    inventories["inventory_1"] = Inventory{ "inventory_1", 100, {} };
+    inventories["inventory_2"] = Inventory{ "inventory_2", 50, {} };
 
     InventoryService service(inventories);
 
@@ -98,9 +98,9 @@ TEST_CASE("InventoryService::TransferMoney_ValidTransfer_TransfersMoney")
 
 TEST_CASE("InventoryService::TransferMoney_ZeroAmount_ReturnsInvalidAmountError")
 {
-    InventoryDataMap inventories;
-    inventories["inventory_1"] = InventoryData{ "inventory_1", 100, {} };
-    inventories["inventory_2"] = InventoryData{ "inventory_2", 50, {} };
+    InventoryMap inventories;
+    inventories["inventory_1"] = Inventory{ "inventory_1", 100, {} };
+    inventories["inventory_2"] = Inventory{ "inventory_2", 50, {} };
 
     InventoryService service(inventories);
 
@@ -112,9 +112,9 @@ TEST_CASE("InventoryService::TransferMoney_ZeroAmount_ReturnsInvalidAmountError"
 
 TEST_CASE("InventoryService::TransferMoney_NotEnoughMoney_ReturnsNotEnoughMoneyError")
 {
-    InventoryDataMap inventories;
-    inventories["inventory_1"] = InventoryData{ "inventory_1", 10, {} };
-    inventories["inventory_2"] = InventoryData{ "inventory_2", 50, {} };
+    InventoryMap inventories;
+    inventories["inventory_1"] = Inventory{ "inventory_1", 10, {} };
+    inventories["inventory_2"] = Inventory{ "inventory_2", 50, {} };
 
     InventoryService service(inventories);
 
@@ -126,8 +126,8 @@ TEST_CASE("InventoryService::TransferMoney_NotEnoughMoney_ReturnsNotEnoughMoneyE
 
 TEST_CASE("InventoryService::TransferMoney_InventoryNotFound_ReturnsNotFoundError")
 {
-    InventoryDataMap inventories;
-    inventories["inventory_2"] = InventoryData{ "inventory_2", 50, {} };
+    InventoryMap inventories;
+    inventories["inventory_2"] = Inventory{ "inventory_2", 50, {} };
 
     InventoryService service(inventories);
 
@@ -139,12 +139,12 @@ TEST_CASE("InventoryService::TransferMoney_InventoryNotFound_ReturnsNotFoundErro
 
 TEST_CASE("InventoryService::TransferItemByIndex_ItemExists_TransfersItem")
 {
-    InventoryItemData item{ "item_1", 2 };
+    InventoryItem item{ "item_1", 2 };
 
-    InventoryData fromInventory{ "inventory_1", 0, {item} };
-    InventoryData toInventory{ "inventory_2", 0, {} };
+    Inventory fromInventory{ "inventory_1", 0, {item} };
+    Inventory toInventory{ "inventory_2", 0, {} };
 
-    InventoryDataMap inventories;
+    InventoryMap inventories;
     inventories["inventory_1"] = fromInventory;
     inventories["inventory_2"] = toInventory;
 
@@ -160,10 +160,10 @@ TEST_CASE("InventoryService::TransferItemByIndex_ItemExists_TransfersItem")
 
 TEST_CASE("InventoryService::TransferItemByIndex_IndexOutOfRange_ReturnsItemNotFoundError")
 {
-    InventoryData fromInventory{ "inventory_1", 0, {} };
-    InventoryData toInventory{ "inventory_2", 0, {} };
+    Inventory fromInventory{ "inventory_1", 0, {} };
+    Inventory toInventory{ "inventory_2", 0, {} };
 
-    InventoryDataMap inventories;
+    InventoryMap inventories;
     inventories["inventory_1"] = fromInventory;
     inventories["inventory_2"] = toInventory;
 
@@ -177,8 +177,8 @@ TEST_CASE("InventoryService::TransferItemByIndex_IndexOutOfRange_ReturnsItemNotF
 
 TEST_CASE("InventoryService::TransferItemByIndex_FromInventoryMissing_ReturnsNotFoundError")
 {
-    InventoryDataMap inventories;
-    inventories["inventory_2"] = InventoryData{ "inventory_2", 0, {} };
+    InventoryMap inventories;
+    inventories["inventory_2"] = Inventory{ "inventory_2", 0, {} };
 
     InventoryService service(inventories);
 
@@ -190,10 +190,10 @@ TEST_CASE("InventoryService::TransferItemByIndex_FromInventoryMissing_ReturnsNot
 
 TEST_CASE("InventoryService::TransferItemByIndex_ToInventoryMissing_ReturnsNotFoundError")
 {
-    InventoryItemData item{ "item_1", 1 };
-    InventoryData fromInventory{ "inventory_1", 0, {item} };
+    InventoryItem item{ "item_1", 1 };
+    Inventory fromInventory{ "inventory_1", 0, {item} };
 
-    InventoryDataMap inventories;
+    InventoryMap inventories;
     inventories["inventory_1"] = fromInventory;
 
     InventoryService service(inventories);

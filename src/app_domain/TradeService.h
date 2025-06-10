@@ -4,7 +4,7 @@
 #include "InventoryService.h"
 #include "ItemService.h"
 
-namespace app
+namespace app_domain
 {
     enum class TradeError : std::int8_t
     {

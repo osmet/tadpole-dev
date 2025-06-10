@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "ItemData.h"
+#include "Item.h"
 
-namespace app
+namespace app_domain
 {
     enum class ItemError : std::int8_t
     {
@@ -12,12 +12,12 @@ namespace app
     class ItemService
     {
     public:
-        ItemService(const ItemDataMap& items);
+        ItemService(const ItemMap& items);
 
-        tl::expected<std::reference_wrapper<const ItemData>, ItemError>
+        tl::expected<std::reference_wrapper<const Item>, ItemError>
             GetItemById(const std::string& id) const;
 
     private:
-        const ItemDataMap& m_items;
+        const ItemMap& m_items;
     };
 }

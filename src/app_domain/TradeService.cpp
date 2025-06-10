@@ -1,7 +1,7 @@
 #include "Precompiled.h"
 #include "TradeService.h"
 
-namespace app
+namespace app_domain
 {
     TradeService::TradeService(InventoryService& inventoryService, CharacterService& characterService, ItemService& itemService)
         : m_inventoryService(inventoryService), m_characterService(characterService), m_itemService(itemService)

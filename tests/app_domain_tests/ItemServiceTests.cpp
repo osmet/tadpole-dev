@@ -2,15 +2,15 @@
 #include <tl/expected.hpp>
 #include "ItemService.h"
 
-using namespace app;
+using namespace app_domain;
 
 TEST_CASE("ItemService::GetItemById_ItemExists_ReturnsItem")
 {
-    ItemData item;
+    Item item;
     item.Id = "item_1";
     item.Name = "Sword";
 
-    ItemDataMap items;
+    ItemMap items;
     items["item_1"] = item;
 
     ItemService service(items);
@@ -25,10 +25,10 @@ TEST_CASE("ItemService::GetItemById_ItemExists_ReturnsItem")
 
 TEST_CASE("ItemService::GetItemById_ItemDoesNotExist_ReturnsNotFoundError")
 {
-    ItemData item;
+    Item item;
     item.Id = "item_1";
 
-    ItemDataMap items;
+    ItemMap items;
     items["item_1"] = item;
 
     ItemService service(items);

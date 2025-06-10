@@ -28,14 +28,14 @@ namespace app
             assert(value.HasMember("weight") && value["weight"].IsNumber());
             assert(value.HasMember("price") && value["price"].IsInt());
 
-            ItemData item;
+            app_domain::Item item;
             item.Id = value["id"].GetString();
             item.Name = value["name"].GetString();
             item.IconTextureId = value["icon_texture_id"].GetString();
             item.Description = value["description"].GetString();
-            item.Type = ItemTypeHelper::FromString(value["type"].GetString());
+            item.Type = app_domain::ItemTypeHelper::FromString(value["type"].GetString());
             item.IsStoryItem = value["is_story_item"].GetBool();
-            item.Rarity = ItemRarityHelper::FromString(value["rarity"].GetString());
+            item.Rarity = app_domain::ItemRarityHelper::FromString(value["rarity"].GetString());
             item.Weight = value["weight"].GetFloat();
             item.Price = value["price"].GetInt();
 
@@ -43,7 +43,7 @@ namespace app
         }
     }
 
-    const ItemDataMap& ItemConfig::GetItems() const
+    const app_domain::ItemMap& ItemConfig::GetItems() const
     {
         return m_items;
     }

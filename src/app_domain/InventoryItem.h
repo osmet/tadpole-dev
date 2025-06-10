@@ -1,8 +1,8 @@
 #pragma once
 
-namespace app
+namespace app_domain
 {
-    struct InventoryItemData
+    struct InventoryItem
     {
         std::string ItemId;
         std::int32_t Count = 0;

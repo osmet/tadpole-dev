@@ -3,9 +3,9 @@
 #include "ItemType.h"
 #include "ItemRarity.h"
 
-namespace app
+namespace app_domain
 {
-    struct ItemData
+    struct Item
     {
         std::string Id;
         std::string Name;
@@ -18,5 +18,5 @@ namespace app
         std::int32_t Price = 0;
     };
 
-    using ItemDataMap = std::unordered_map<std::string, ItemData>;
+    using ItemMap = std::unordered_map<std::string, Item>;
 }

@@ -1,8 +1,8 @@
 #pragma once
 
-namespace app
+namespace app_domain
 {
-    struct CharacterData
+    struct Character
     {
         std::string Id;
         std::string Name;
@@ -11,5 +11,5 @@ namespace app
         std::string InventoryId;
     };
 
-    using CharacterDataMap = std::unordered_map<std::string, CharacterData>;
+    using CharacterMap = std::unordered_map<std::string, Character>;
 }

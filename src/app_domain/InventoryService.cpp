@@ -1,14 +1,14 @@
 #include "Precompiled.h"
 #include "InventoryService.h"
 
-namespace app
+namespace app_domain
 {
-    InventoryService::InventoryService(InventoryDataMap& inventories)
+    InventoryService::InventoryService(InventoryMap& inventories)
         : m_inventories(inventories)
     {
     }
 
-    tl::expected<std::reference_wrapper<const InventoryData>, InventoryError>
+    tl::expected<std::reference_wrapper<const Inventory>, InventoryError>
         InventoryService::GetInventoryById(const std::string& id) const
     {
         auto it = m_inventories.find(id);
@@ -18,7 +18,7 @@ namespace app
         return std::cref(it->second);
     }
 
-    tl::expected<std::reference_wrapper<const InventoryItemData>, InventoryError>
+    tl::expected<std::reference_wrapper<const InventoryItem>, InventoryError>
         InventoryService::GetItemByIndex(const std::string& inventoryId, std::size_t index) const
     {
         auto it = m_inventories.find(inventoryId);

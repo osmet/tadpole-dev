@@ -17,7 +17,7 @@ namespace app
             assert(value.HasMember("inventory_id") && value["inventory_id"].IsString());
             assert(value.HasMember("max_weight") && value["max_weight"].IsNumber());
 
-            CharacterData character;
+            app_domain::Character character;
             character.Id = id;
             character.Name = value["name"].GetString();
             character.PortraitTextureId = value["portrait_texture_id"].GetString();
@@ -38,7 +38,7 @@ namespace app
             assert(value.HasMember("items") && value["items"].IsArray());
             assert(value.HasMember("current_money") && value["current_money"].IsInt());
 
-            InventoryData inventory;
+            app_domain::Inventory inventory;
             inventory.Id = id;
             inventory.CurrentMoney = value["current_money"].GetInt();
 
@@ -47,7 +47,7 @@ namespace app
                 assert(item.HasMember("item_id") && item["item_id"].IsString());
                 assert(item.HasMember("count") && item["count"].IsInt());
 
-                InventoryItemData inventoryItem;
+                app_domain::InventoryItem inventoryItem;
                 inventoryItem.ItemId = item["item_id"].GetString();
                 inventoryItem.Count = item["count"].GetInt();
 
@@ -94,12 +94,12 @@ namespace app
         json.AddMember("inventories", inventoriesObj, allocator);
     }
 
-    CharacterDataMap& GameData::GetCharacters()
+    app_domain::CharacterMap& GameData::GetCharacters()
     {
         return m_characters;
     }
 
-    InventoryDataMap& GameData::GetInventories()
+    app_domain::InventoryMap& GameData::GetInventories()
     {
         return m_inventories;
     }

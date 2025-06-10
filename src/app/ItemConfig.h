@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ItemData.h"
+#include "../app_domain/Item.h"
 #include "../core/IJsonData.h"
 
 namespace app
@@ -10,9 +10,9 @@ namespace app
     public:
         void FromJson(const rapidjson::Value& json);
 
-        const ItemDataMap& GetItems() const;
+        const app_domain::ItemMap& GetItems() const;
 
     private:
-        ItemDataMap m_items;
+        app_domain::ItemMap m_items;
     };
 }

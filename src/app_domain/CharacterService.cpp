@@ -1,14 +1,14 @@
 #include "Precompiled.h"
 #include "CharacterService.h"
 
-namespace app
+namespace app_domain
 {
-    CharacterService::CharacterService(CharacterDataMap& characters)
+    CharacterService::CharacterService(CharacterMap& characters)
         : m_characters(characters)
     {
     }
 
-    tl::expected<std::reference_wrapper<const CharacterData>, CharacterError>
+    tl::expected<std::reference_wrapper<const Character>, CharacterError>
         CharacterService::GetCharacterById(const std::string& id) const
     {
         auto it = m_characters.find(id);

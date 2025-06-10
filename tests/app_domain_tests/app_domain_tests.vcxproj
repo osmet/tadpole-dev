@@ -19,26 +19,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\app\app.vcxproj">
-      <Project>{b5b319f4-07b6-4366-b669-8cf70323cd6e}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\src\app\CharacterService.cpp" />
-    <ClCompile Include="..\..\src\app\InventoryService.cpp" />
-    <ClCompile Include="..\..\src\app\ItemService.cpp" />
-    <ClCompile Include="..\..\src\app\TradeService.cpp" />
     <ClCompile Include="CharacterServiceTests.cpp" />
     <ClCompile Include="InventoryServiceTests.cpp" />
     <ClCompile Include="ItemServiceTests.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="TradeServiceTests.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\app_domain\app_domain.vcxproj">
+      <Project>{6b036087-9460-46f6-b120-70b4625cec04}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{01b33378-6d0b-4eba-bd19-37c454ecfc69}</ProjectGuid>
-    <RootNamespace>apptests</RootNamespace>
+    <ProjectGuid>{14a3a444-8f1f-4b91-8c44-5b32a2982f3a}</ProjectGuid>
+    <RootNamespace>appdomaintests</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -113,7 +109,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)external\SFML-2.6.2\include\;$(SolutionDir)external\rapidjson-1.1.0\include\;$(SolutionDir)external\magic_enum-v0.9.7\include\;$(SolutionDir)external\Catch2-2.13.10\include\;$(SolutionDir)external\expected-1.1.0\include\;$(SolutionDir)src\app\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)external\expected-1.1.0\include\;$(SolutionDir)external\Catch2-2.13.10\include\;$(SolutionDir)external\magic_enum-v0.9.7\include\;$(SolutionDir)src\app_domain\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -129,7 +125,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)external\SFML-2.6.2\include\;$(SolutionDir)external\rapidjson-1.1.0\include\;$(SolutionDir)external\magic_enum-v0.9.7\include\;$(SolutionDir)external\Catch2-2.13.10\include\;$(SolutionDir)external\expected-1.1.0\include\;$(SolutionDir)src\app\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)external\expected-1.1.0\include\;$(SolutionDir)external\Catch2-2.13.10\include\;$(SolutionDir)external\magic_enum-v0.9.7\include\;$(SolutionDir)src\app_domain\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -145,7 +141,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)external\SFML-2.6.2\include\;$(SolutionDir)external\rapidjson-1.1.0\include\;$(SolutionDir)external\magic_enum-v0.9.7\include\;$(SolutionDir)external\Catch2-2.13.10\include\;$(SolutionDir)external\expected-1.1.0\include\;$(SolutionDir)src\app\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)external\expected-1.1.0\include\;$(SolutionDir)external\Catch2-2.13.10\include\;$(SolutionDir)external\magic_enum-v0.9.7\include\;$(SolutionDir)src\app_domain\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -161,7 +157,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)external\SFML-2.6.2\include\;$(SolutionDir)external\rapidjson-1.1.0\include\;$(SolutionDir)external\magic_enum-v0.9.7\include\;$(SolutionDir)external\Catch2-2.13.10\include\;$(SolutionDir)external\expected-1.1.0\include\;$(SolutionDir)src\app\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)external\expected-1.1.0\include\;$(SolutionDir)external\Catch2-2.13.10\include\;$(SolutionDir)external\magic_enum-v0.9.7\include\;$(SolutionDir)src\app_domain\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

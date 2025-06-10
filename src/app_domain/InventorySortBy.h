@@ -1,6 +1,6 @@
 #pragma once
 
-namespace app
+namespace app_domain
 {
     enum class InventorySortBy : int8_t
     {

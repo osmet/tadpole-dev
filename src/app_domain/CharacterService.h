@@ -1,8 +1,8 @@
 #pragma once
 
-#include "CharacterData.h"
+#include "Character.h"
 
-namespace app
+namespace app_domain
 {
     enum class CharacterError : std::int8_t
     {
@@ -12,12 +12,12 @@ namespace app
     class CharacterService
     {
     public:
-        CharacterService(CharacterDataMap& characters);
+        CharacterService(CharacterMap& characters);
 
-        tl::expected<std::reference_wrapper<const CharacterData>, CharacterError>
+        tl::expected<std::reference_wrapper<const Character>, CharacterError>
             GetCharacterById(const std::string& id) const;
 
     private:
-        CharacterDataMap& m_characters;
+        CharacterMap& m_characters;
     };
 }

@@ -1,14 +1,14 @@
 #include "Precompiled.h"
 #include "ItemService.h"
 
-namespace app
+namespace app_domain
 {
-    ItemService::ItemService(const ItemDataMap& items)
+    ItemService::ItemService(const ItemMap& items)
         : m_items(items)
     {
     }
 
-    tl::expected<std::reference_wrapper<const ItemData>, ItemError>
+    tl::expected<std::reference_wrapper<const Item>, ItemError>
         ItemService::GetItemById(const std::string& id) const
     {
         auto it = m_items.find(id);

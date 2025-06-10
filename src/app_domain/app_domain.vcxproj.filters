@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\characters">
+      <UniqueIdentifier>{7cd92d1e-b8de-436a-93b7-9fd7c9fb4296}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\inventories">
+      <UniqueIdentifier>{d4d99eac-d1fa-41fa-a3ea-aea45ac90a14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\items">
+      <UniqueIdentifier>{52f4e096-915d-4847-9995-cd16e3a7ac6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\trade">
+      <UniqueIdentifier>{5c138cc4-31a0-4287-ac24-d8c9a3c50f5f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Precompiled.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>Source Files\characters</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterService.cpp">
+      <Filter>Source Files\characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Inventory.cpp">
+      <Filter>Source Files\inventories</Filter>
+    </ClCompile>
+    <ClCompile Include="InventoryItem.cpp">
+      <Filter>Source Files\inventories</Filter>
+    </ClCompile>
+    <ClCompile Include="InventoryService.cpp">
+      <Filter>Source Files\inventories</Filter>
+    </ClCompile>
+    <ClCompile Include="InventorySortBy.cpp">
+      <Filter>Source Files\inventories</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemCategory.cpp">
+      <Filter>Source Files\items</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Source Files\items</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemRarity.cpp">
+      <Filter>Source Files\items</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemService.cpp">
+      <Filter>Source Files\items</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemType.cpp">
+      <Filter>Source Files\items</Filter>
+    </ClCompile>
+    <ClCompile Include="TradeService.cpp">
+      <Filter>Source Files\trade</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Precompiled.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Character.h">
+      <Filter>Source Files\characters</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterService.h">
+      <Filter>Source Files\characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Inventory.h">
+      <Filter>Source Files\inventories</Filter>
+    </ClInclude>
+    <ClInclude Include="InventoryItem.h">
+      <Filter>Source Files\inventories</Filter>
+    </ClInclude>
+    <ClInclude Include="InventoryService.h">
+      <Filter>Source Files\inventories</Filter>
+    </ClInclude>
+    <ClInclude Include="InventorySortBy.h">
+      <Filter>Source Files\inventories</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemCategory.h">
+      <Filter>Source Files\items</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Source Files\items</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemRarity.h">
+      <Filter>Source Files\items</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemService.h">
+      <Filter>Source Files\items</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemType.h">
+      <Filter>Source Files\items</Filter>
+    </ClInclude>
+    <ClInclude Include="TradeService.h">
+      <Filter>Source Files\trade</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

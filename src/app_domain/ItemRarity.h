@@ -2,7 +2,7 @@
 
 #include <magic_enum/magic_enum.hpp>
 
-namespace app
+namespace app_domain
 {
     enum class ItemRarity : std::int8_t
     {

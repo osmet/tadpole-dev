@@ -3,7 +3,7 @@
 #include "ItemCategory.h"
 #include <magic_enum/magic_enum.hpp>
 
-namespace app
+namespace app_domain
 {
     enum class ItemType : std::int8_t
     {
@@ -41,18 +41,16 @@ namespace app
     public:
         constexpr ItemCategory GetItemCategory(ItemType type)
         {
-            using T = app::ItemType;
-
-            if (type >= app::ItemType::Other && type <= app::ItemType::Valuable)
+            if (type >= ItemType::Other && type <= ItemType::Valuable)
                 return ItemCategory::Misc;
 
-            if (type >= app::ItemType::Book && type <= app::ItemType::Key)
+            if (type >= ItemType::Book && type <= ItemType::Key)
                 return ItemCategory::BooksAndKeys;
 
-            if (type >= app::ItemType::Armor && type <= app::ItemType::Shield)
+            if (type >= ItemType::Armor && type <= ItemType::Shield)
                 return ItemCategory::Equipment;
 
-            if (type >= app::ItemType::Food && type <= app::ItemType::Bomb)
+            if (type >= ItemType::Food && type <= ItemType::Bomb)
                 return ItemCategory::Consumables;
 
             return ItemCategory::Misc;
