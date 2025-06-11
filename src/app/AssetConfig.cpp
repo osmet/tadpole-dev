@@ -5,9 +5,9 @@ namespace app
 {
     void AssetConfig::FromJson(const rapidjson::Value& json)
     {
-        if (json.HasMember("fonts"))
+        if (json.HasMember("Fonts"))
         {
-            const auto& fonts = json["fonts"];
+            const auto& fonts = json["Fonts"];
 
             for (auto it = fonts.MemberBegin(); it != fonts.MemberEnd(); ++it)
             {
@@ -21,9 +21,9 @@ namespace app
             }
         }
 
-        if (json.HasMember("textures"))
+        if (json.HasMember("Textures"))
         {
-            const auto& textures = json["textures"];
+            const auto& textures = json["Textures"];
 
             for (auto it = textures.MemberBegin(); it != textures.MemberEnd(); ++it)
             {

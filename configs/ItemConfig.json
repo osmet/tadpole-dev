@@ -1,0 +1,38 @@
+{
+  "Items": 
+  [
+    {
+      "Id": "BearSkin",
+      "Name": "Bear Skin",
+      "IconTextureId": "Texture_UI_Item_BearSkin",
+      "Description": "Bear Skin",
+      "Type": "Other",
+      "IsStoryItem": false,
+      "Rarity": "Rare",
+      "Weight": 4.0,
+      "Price": 100
+    },
+    {
+      "Id": "Longsword",
+      "Name": "Longsword",
+      "IconTextureId": "Texture_UI_Item_Longsword",
+      "Description": "Longsword",
+      "Type": "Weapon",
+      "IsStoryItem": false,
+      "Rarity": "Uncommon",
+      "Weight": 5.0,
+      "Price": 150
+    },
+    {
+      "Id": "RedFlower",
+      "Name": "Red Flower",
+      "IconTextureId": "Texture_UI_Item_RedFlower",
+      "Description": "Red Flower",
+      "Type": "Other",
+      "IsStoryItem": true,
+      "Rarity": "Legendary",
+      "Weight": 1.0,
+      "Price": 1000
+    }
+  ]
+}

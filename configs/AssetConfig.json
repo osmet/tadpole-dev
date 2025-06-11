@@ -1,8 +1,8 @@
 {
-    "fonts": {
+    "Fonts": {
         "Mignon_Regular": "Font_Mignon_Regular.otf"
     },
-    "textures": {
+    "Textures": {
         "Background_Dialogue_Gale": "Texture_Background_Dialogue_Gale.png",
         "UI_Portrait_Alice": "Texture_UI_Portrait_Alice.png",
         "UI_Portrait_Gale": "Texture_UI_Portrait_Gale.png"

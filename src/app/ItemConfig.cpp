@@ -8,36 +8,36 @@ namespace app
 {
     void ItemConfig::FromJson(const rapidjson::Value& json)
     {
-        assert(json.HasMember("items"));
-        const auto& arrayObject = json["items"];
+        assert(json.HasMember("Items"));
+        const auto& arrayObject = json["Items"];
         assert(arrayObject.IsArray());
 
         m_items.clear();
-        
+
         for (auto index = 0u; index < arrayObject.Size(); ++index)
         {
             const auto& value = arrayObject[index];
 
-            assert(value.HasMember("id") && value["id"].IsString());
-            assert(value.HasMember("name") && value["name"].IsString());
-            assert(value.HasMember("icon_texture_id") && value["icon_texture_id"].IsString());
-            assert(value.HasMember("description") && value["description"].IsString());
-            assert(value.HasMember("type") && value["type"].IsString());
-            assert(value.HasMember("is_story_item") && value["is_story_item"].IsBool());
-            assert(value.HasMember("rarity") && value["rarity"].IsString());
-            assert(value.HasMember("weight") && value["weight"].IsNumber());
-            assert(value.HasMember("price") && value["price"].IsInt());
+            assert(value.HasMember("Id") && value["Id"].IsString());
+            assert(value.HasMember("Name") && value["Name"].IsString());
+            assert(value.HasMember("IconTextureId") && value["IconTextureId"].IsString());
+            assert(value.HasMember("Description") && value["Description"].IsString());
+            assert(value.HasMember("Type") && value["Type"].IsString());
+            assert(value.HasMember("IsStoryItem") && value["IsStoryItem"].IsBool());
+            assert(value.HasMember("Rarity") && value["Rarity"].IsString());
+            assert(value.HasMember("Weight") && value["Weight"].IsNumber());
+            assert(value.HasMember("Price") && value["Price"].IsInt());
 
             app_domain::Item item;
-            item.Id = value["id"].GetString();
-            item.Name = value["name"].GetString();
-            item.IconTextureId = value["icon_texture_id"].GetString();
-            item.Description = value["description"].GetString();
-            item.Type = app_domain::ItemTypeHelper::FromString(value["type"].GetString());
-            item.IsStoryItem = value["is_story_item"].GetBool();
-            item.Rarity = app_domain::ItemRarityHelper::FromString(value["rarity"].GetString());
-            item.Weight = value["weight"].GetFloat();
-            item.Price = value["price"].GetInt();
+            item.Id = value["Id"].GetString();
+            item.Name = value["Name"].GetString();
+            item.IconTextureId = value["IconTextureId"].GetString();
+            item.Description = value["Description"].GetString();
+            item.Type = app_domain::ItemTypeHelper::FromString(value["Type"].GetString());
+            item.IsStoryItem = value["IsStoryItem"].GetBool();
+            item.Rarity = app_domain::ItemRarityHelper::FromString(value["Rarity"].GetString());
+            item.Weight = value["Weight"].GetFloat();
+            item.Price = value["Price"].GetInt();
 
             m_items.emplace(item.Id, std::move(item));
         }

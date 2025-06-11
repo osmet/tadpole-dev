@@ -5,30 +5,26 @@ namespace app
 {
     void AppConfig::FromJson(const rapidjson::Value& json)
     {
-        assert(json.HasMember("app_name"));
-        assert(json["app_name"].IsString());
-        m_appName = json["app_name"].GetString();
+        assert(json.HasMember("AppName"));
+        assert(json["AppName"].IsString());
+        m_appName = json["AppName"].GetString();
 
-        assert(json.HasMember("window_width"));
-        assert(json["window_width"].IsUint());
-        m_windowWidth = json["window_width"].GetUint();
+        assert(json.HasMember("WindowWidth"));
+        assert(json["WindowWidth"].IsUint());
+        m_windowWidth = json["WindowWidth"].GetUint();
 
-        assert(json.HasMember("window_height"));
-        assert(json["window_height"].IsUint());
-        m_windowHeight = json["window_height"].GetUint();
+        assert(json.HasMember("WindowHeight"));
+        assert(json["WindowHeight"].IsUint());
+        m_windowHeight = json["WindowHeight"].GetUint();
 
-        assert(json.HasMember("window_style"));
-        assert(json["window_style"].IsString());
-        std::string windowStyleString = json["window_style"].GetString();
+        assert(json.HasMember("WindowStyle"));
+        assert(json["WindowStyle"].IsString());
+        std::string windowStyleString = json["WindowStyle"].GetString();
 
-        if (windowStyleString == "fullscreen")
-        {
+        if (windowStyleString == "Fullscreen")
             m_windowStyle = sf::Style::Fullscreen;
-        }
         else
-        {
             m_windowStyle = sf::Style::Default;
-        }
     }
 
     const std::string& AppConfig::GetAppName() const

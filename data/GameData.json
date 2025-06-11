@@ -1,0 +1,44 @@
+{
+  "Characters": {
+    "Player": {
+      "Name": "Alice",
+      "PortraitTextureId": "Texture_Portrait_Player",
+      "MaxWeight": 150.0,
+      "InventoryId": "Player_Main"
+    },
+    "Trader": {
+      "Name": "Trader",
+      "PortraitTextureId": "Texture_Portrait_Trader",
+      "MaxWeight": 100.0,
+      "InventoryId": "Trader_Main"
+    }
+  },
+  "Inventories": {
+    "Player_Main": {
+      "CurrentMoney": 500,
+      "Items": [
+        {
+          "ItemId": "RedFlower",
+          "Count": 1
+        },
+        {
+          "ItemId": "BearSkin",
+          "Count": 2
+        }
+      ]
+    },
+    "Trader_Main": {
+      "CurrentMoney": 1000,
+      "Items": [
+        {
+          "ItemId": "Longsword",
+          "Count": 3
+        },
+        {
+          "ItemId": "BearSkin",
+          "Count": 1
+        }
+      ]
+    }
+  }
+}

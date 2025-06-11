@@ -7,8 +7,8 @@ namespace app
 {
     AppContext::AppContext(sf::RenderWindow& renderWindow)
         : m_renderWindow(renderWindow)
-        , m_appDataSource("app_data.json", AppConstants::GetDataRootPath() + "app_data.json")
-        , m_gameDataSource("game_data.json", AppConstants::GetDataRootPath() + "game_data.json")
+        , m_appDataSource("AppData.json", AppConstants::GetDataRootPath() + "AppData.json")
+        , m_gameDataSource("GameData.json", AppConstants::GetDataRootPath() + "GameData.json")
         , m_itemService(m_itemConfig.GetItems())
         , m_characterService(m_gameDataSource.GetData().GetCharacters())
         , m_inventoryService(m_gameDataSource.GetData().GetInventories())
@@ -23,9 +23,9 @@ namespace app
     void AppContext::Initialize()
     {
         core::JsonDataLoader dataLoader;
-        dataLoader.Load(m_appConfig, AppConstants::GetConfigsRootPath() + "app_config.json");
-        dataLoader.Load(m_assetConfig, AppConstants::GetConfigsRootPath() + "asset_config.json");
-        dataLoader.Load(m_itemConfig, AppConstants::GetConfigsRootPath() + "item_config.json");
+        dataLoader.Load(m_appConfig, AppConstants::GetConfigsRootPath() + "AppConfig.json");
+        dataLoader.Load(m_assetConfig, AppConstants::GetConfigsRootPath() + "AssetConfig.json");
+        dataLoader.Load(m_itemConfig, AppConstants::GetConfigsRootPath() + "ItemConfig.json");
 
         AssetLoader::LoadAssets(m_assetManager, AppConstants::GetAssetsRootPath(), m_assetConfig);
     }
