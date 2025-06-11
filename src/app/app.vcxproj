@@ -179,6 +179,7 @@
     <ClCompile Include="AppScope.cpp" />
     <ClCompile Include="AssetConfig.cpp" />
     <ClCompile Include="AssetLoader.cpp" />
+    <ClCompile Include="BackgroundPanel.cpp" />
     <ClCompile Include="GameData.cpp" />
     <ClCompile Include="GameScope.cpp" />
     <ClCompile Include="ItemConfig.cpp" />
@@ -190,6 +191,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TradeScope.cpp" />
+    <ClCompile Include="TradeUIView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -200,11 +202,13 @@
     <ClInclude Include="AppScope.h" />
     <ClInclude Include="AssetConfig.h" />
     <ClInclude Include="AssetLoader.h" />
+    <ClInclude Include="BackgroundPanel.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GameScope.h" />
     <ClInclude Include="ItemConfig.h" />
     <ClInclude Include="Precompiled.h" />
     <ClInclude Include="TradeScope.h" />
+    <ClInclude Include="TradeUIView.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\app_domain\app_domain.vcxproj">

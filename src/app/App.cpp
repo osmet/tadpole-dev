@@ -5,7 +5,8 @@
 namespace app
 {
     App::App()
-        : m_appScope(m_appContext)
+        : m_appContext(m_renderWindow)
+        , m_appScope(m_appContext)
     {
     }
 
@@ -46,7 +47,7 @@ namespace app
                 m_renderWindow.close();
             }
 
-            m_appScope.HandleEvent(event);
+            m_appScope.HandleEvent(event, m_renderWindow);
         }
     }
 

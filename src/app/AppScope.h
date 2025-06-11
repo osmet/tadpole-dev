@@ -2,7 +2,6 @@
 
 #include "../core/Scope.h"
 #include "GameScope.h"
-#include "AppContext.h"
 
 namespace app
 {
@@ -15,7 +14,7 @@ namespace app
         ~AppScope();
 
         void Initialize() override;
-        void HandleEvent(const sf::Event& event) override;
+        void HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow) override;
         void Update(float deltaTime) override;
         void Render(sf::RenderWindow& renderWindow) override;
 

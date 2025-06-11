@@ -5,15 +5,15 @@
 
 namespace app
 {
-    AppContext::AppContext()
-        : m_appDataSource("app_data.json", AppConstants::GetDataRootPath() + "app_data.json")
+    AppContext::AppContext(sf::RenderWindow& renderWindow)
+        : m_renderWindow(renderWindow)
+        , m_appDataSource("app_data.json", AppConstants::GetDataRootPath() + "app_data.json")
         , m_gameDataSource("game_data.json", AppConstants::GetDataRootPath() + "game_data.json")
         , m_itemService(m_itemConfig.GetItems())
         , m_characterService(m_gameDataSource.GetData().GetCharacters())
         , m_inventoryService(m_gameDataSource.GetData().GetInventories())
         , m_tradeService(m_inventoryService, m_characterService, m_itemService)
     {
-        
     }
 
     AppContext::~AppContext()
@@ -28,6 +28,18 @@ namespace app
         dataLoader.Load(m_itemConfig, AppConstants::GetConfigsRootPath() + "item_config.json");
 
         AssetLoader::LoadAssets(m_assetManager, AppConstants::GetAssetsRootPath(), m_assetConfig);
+    }
+
+    sf::RenderWindow& AppContext::GetRenderWindow()
+    {
+        return m_renderWindow;
+    }
+
+    sf::Vector2f AppContext::GetRenderWindowSize() const
+    {
+        sf::Vector2u renderWindowSize = m_renderWindow.getSize();
+
+        return sf::Vector2f(static_cast<float>(renderWindowSize.x), static_cast<float>(renderWindowSize.y));
     }
 
     core::AssetManager& AppContext::GetAssetManager() 

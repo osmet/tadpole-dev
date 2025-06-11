@@ -25,9 +25,9 @@ namespace app
         m_gameScope.Initialize();
     }
 
-    void AppScope::HandleEvent(const sf::Event& event)
+    void AppScope::HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow)
     {
-        m_gameScope.HandleEvent(event);
+        m_gameScope.HandleEvent(event, renderWindow);
     }
 
     void AppScope::Update(float deltaTime)

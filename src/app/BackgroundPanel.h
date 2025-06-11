@@ -1,0 +1,19 @@
+#pragma once
+
+#include "../core/PanelWidget.h"
+#include "../core/Image.h"
+
+namespace app
+{
+    class BackgroundPanel final : public core::PanelWidget
+    {
+    public:
+        BackgroundPanel(const sf::Vector2f& size);
+
+        void SetBackgroundColor(const sf::Color& color);
+        void SetBackgroundTexture(const sf::Texture& texture);
+
+    private:
+        core::Image* m_backgroundImage = nullptr;
+    };
+}

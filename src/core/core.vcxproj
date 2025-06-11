@@ -20,24 +20,44 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssetManager.h" />
+    <ClInclude Include="Button.h" />
+    <ClInclude Include="CanvasPanel.h" />
     <ClInclude Include="DataSource.h" />
     <ClInclude Include="DataLoader.h" />
+    <ClInclude Include="GridPanel.h" />
     <ClInclude Include="IData.h" />
     <ClInclude Include="IJsonData.h" />
+    <ClInclude Include="Image.h" />
+    <ClInclude Include="TextLabel.h" />
+    <ClInclude Include="PanelWidget.h" />
+    <ClInclude Include="Scope.h" />
     <ClInclude Include="JsonDataLoader.h" />
     <ClInclude Include="Precompiled.h" />
+    <ClInclude Include="StackPanel.h" />
+    <ClInclude Include="UIView.h" />
+    <ClInclude Include="Widget.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssetManager.cpp" />
+    <ClCompile Include="Button.cpp" />
+    <ClCompile Include="CanvasPanel.cpp" />
     <ClCompile Include="DataSource.cpp" />
     <ClCompile Include="DataLoader.cpp" />
+    <ClCompile Include="GridPanel.cpp" />
     <ClCompile Include="IData.cpp" />
     <ClCompile Include="IJsonData.cpp" />
+    <ClCompile Include="Image.cpp" />
+    <ClCompile Include="TextLabel.cpp" />
+    <ClCompile Include="PanelWidget.cpp" />
+    <ClCompile Include="Scope.cpp" />
     <ClCompile Include="JsonDataLoader.cpp" />
     <ClCompile Include="Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="StackPanel.cpp" />
+    <ClCompile Include="UIView.cpp" />
+    <ClCompile Include="Widget.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

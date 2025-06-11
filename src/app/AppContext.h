@@ -18,12 +18,16 @@ namespace app
     class AppContext
     {
     public: 
-        AppContext();
+        AppContext(sf::RenderWindow& renderWindow);
         ~AppContext();
 
         void Initialize();
 
+        sf::RenderWindow& GetRenderWindow();
+        sf::Vector2f GetRenderWindowSize() const;
+
         core::AssetManager& GetAssetManager();
+
         const AppConfig& GetAppConfig() const;
         const AssetConfig& GetAssetConfig() const;
         const ItemConfig& GetItemConfig() const;
@@ -37,11 +41,14 @@ namespace app
         app_domain::TradeService& GetTradeService();
 
     private:
+        sf::RenderWindow& m_renderWindow;
+
         core::AssetManager m_assetManager;
 
         AppConfig m_appConfig;
         AssetConfig m_assetConfig;
         ItemConfig m_itemConfig;
+
         core::DataSource<AppData, core::JsonDataLoader> m_appDataSource;
         core::DataSource<GameData, core::JsonDataLoader> m_gameDataSource;
 

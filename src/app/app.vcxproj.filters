@@ -43,6 +43,12 @@
     <ClCompile Include="AppScope.cpp">
       <Filter>Source Files\app</Filter>
     </ClCompile>
+    <ClCompile Include="TradeUIView.cpp">
+      <Filter>Source Files\trade</Filter>
+    </ClCompile>
+    <ClCompile Include="BackgroundPanel.cpp">
+      <Filter>Source Files\backgrounds</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Precompiled.h">
@@ -84,6 +90,12 @@
     <ClInclude Include="AppScope.h">
       <Filter>Source Files\app</Filter>
     </ClInclude>
+    <ClInclude Include="TradeUIView.h">
+      <Filter>Source Files\trade</Filter>
+    </ClInclude>
+    <ClInclude Include="BackgroundPanel.h">
+      <Filter>Source Files\backgrounds</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
@@ -103,6 +115,9 @@
     </Filter>
     <Filter Include="Source Files\trade">
       <UniqueIdentifier>{be1711c8-6b7d-4977-8323-7f441bab945d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\backgrounds">
+      <UniqueIdentifier>{25fd648e-5490-4204-adf7-57c0d0707771}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
