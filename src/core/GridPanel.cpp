@@ -17,6 +17,14 @@ namespace core
 		UpdateLayout();
 	}
 
+	void GridPanel::SetCellSize(float x, float y)
+	{
+		m_cellSize.x = x;
+		m_cellSize.y = y;
+
+		UpdateLayout();
+	}
+
 	void GridPanel::SetSpacing(float spacing)
 	{
 		m_spacing = spacing;

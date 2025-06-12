@@ -24,7 +24,8 @@ namespace core
 		if (m_text.getString().isEmpty())
 			return;
 
-		m_text.setPosition(CalculatePosition());
+		m_text.setOrigin(0, std::round(GetSize().y / 2));
+		m_text.setPosition(CalculateRenderPosition());
 
 		renderWindow.draw(m_text);
 	}

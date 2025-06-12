@@ -1,8 +1,18 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "StackPanel.h"
 
 namespace core
 {
+	StackPanel::StackPanel()
+	{
+		SetSizeToContent(true);
+	}
+
+	const sf::Vector2f& StackPanel::GetContentSize() const
+	{
+		return m_contentSize;
+	}
+
 	void StackPanel::SetOrientation(Orientation orientation)
 	{
 		m_orientation = orientation;

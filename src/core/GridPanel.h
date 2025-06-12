@@ -9,6 +9,7 @@ namespace core
 	public:
 		void SetColumnCount(size_t columnCount);
 		void SetCellSize(const sf::Vector2f& cellSize);
+		void SetCellSize(float x, float y);
 		void SetSpacing(float spacing);
 
 	protected:

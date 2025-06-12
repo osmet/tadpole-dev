@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Image.h"
 
 namespace core
@@ -13,21 +13,21 @@ namespace core
 		if (!IsActive())
 			return;
 
-		const auto position = CalculatePosition();
+		const auto position = CalculateRenderPosition();
 		const auto size = GetSize();
 		const auto color = m_color;
 
 		if (m_sprite.getTexture())
 		{
-			const auto& textureRect = m_sprite.getTextureRect();
+			auto bounds = m_sprite.getLocalBounds();
 
-			if (textureRect.width == 0 || textureRect.height == 0)
+			if (bounds.width == 0.f || bounds.height == 0.f)
 				return;
 
 			m_sprite.setPosition(position);
 			m_sprite.setScale(
-				size.x / static_cast<float>(textureRect.width),
-				size.y / static_cast<float>(textureRect.height)
+				size.x / bounds.width,
+				size.y / bounds.height
 			);
 			m_sprite.setColor(color);
 
@@ -38,6 +38,7 @@ namespace core
 			sf::RectangleShape rect(size);
 
 			rect.setPosition(position);
+			rect.setSize(size);
 			rect.setFillColor(color);
 
 			renderWindow.draw(rect);

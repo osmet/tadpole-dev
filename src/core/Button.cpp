@@ -11,7 +11,7 @@ namespace core
 			return false;
 		}
 
-		sf::FloatRect buttonBounds(CalculatePosition(), GetSize());
+		sf::FloatRect buttonBounds(CalculateRenderPosition(), GetSize());
 		sf::Vector2f mousePosition(sf::Mouse::getPosition(renderWindow));
 
 		bool isHovered = buttonBounds.contains(mousePosition);
@@ -53,9 +53,9 @@ namespace core
 		if (!IsActive())
 			return;
 
-		const auto position = CalculatePosition();
+		const auto position = CalculateRenderPosition();
 		const auto size = GetSize();
-		const auto color = GetColor();
+		const auto color = GetRenderColor();
 
 		if (m_sprite.getTexture())
 		{
@@ -101,6 +101,11 @@ namespace core
 		m_sprite.setTexture(texture, true);
 	}
 
+	void Button::SetColor(const sf::Color& color)
+	{
+		m_color = color;
+	}
+
 	void Button::SetNormalColor(const sf::Color& color)
 	{
 		m_normalColor = color;
@@ -126,17 +131,19 @@ namespace core
 		m_onClick = std::move(onClick);
 	}
 
-	sf::Color Button::GetColor() const
+	sf::Color Button::GetRenderColor() const
 	{
-		if (!m_interactable)
-			return m_disabledColor;
+		sf::Color stateColor = !m_interactable
+			? m_disabledColor
+			: (m_state == ButtonState::Hovered ? m_hoveredColor :
+				m_state == ButtonState::Pressed ? m_pressedColor :
+				m_normalColor);
 
-		switch (m_state)
-		{
-		case ButtonState::Normal: return m_normalColor;
-		case ButtonState::Hovered: return m_hoveredColor;
-		case ButtonState::Pressed: return m_pressedColor;
-		default: return m_normalColor;
-		}
+		return {
+			static_cast<sf::Uint8>((stateColor.r * m_color.r) / 255),
+			static_cast<sf::Uint8>((stateColor.g * m_color.g) / 255),
+			static_cast<sf::Uint8>((stateColor.b * m_color.b) / 255),
+			static_cast<sf::Uint8>((stateColor.a * m_color.a) / 255)
+		};
 	}
 }

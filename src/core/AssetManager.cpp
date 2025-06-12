@@ -23,7 +23,16 @@ namespace core
 
 	bool AssetManager::TextureAsset::Load(const std::string& filePath)
 	{
-		return m_texture.loadFromFile(filePath);
+		bool loaded = m_texture.loadFromFile(filePath);
+
+		if (loaded)
+		{
+			m_texture.setSmooth(true);
+
+			return true;
+		}
+
+		return false;
 	}
 
 	void AssetManager::TextureAsset::Unload()

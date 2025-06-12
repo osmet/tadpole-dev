@@ -101,7 +101,7 @@ namespace core
 
 	const sf::Vector2f& Widget::GetContentSize() const
 	{
-		return GetSize();
+		return m_size;
 	}
 
 	const Widget* Widget::GetParent() const
@@ -109,7 +109,7 @@ namespace core
 		return m_parent;
 	}
 
-	sf::Vector2f Widget::CalculatePosition() const
+	sf::Vector2f Widget::CalculateRenderPosition() const
 	{
 		const auto* parentWidget = GetParent();
 
@@ -118,16 +118,16 @@ namespace core
 
 		if (parentWidget != nullptr)
 		{
-			parentPosition = parentWidget->CalculatePosition();
+			parentPosition = parentWidget->CalculateRenderPosition();
 			parentSize = parentWidget->GetSize();
 		}
 
 		auto size = GetSize();
 
-		return sf::Vector2f(
-			parentPosition.x + m_anchor.x * parentSize.x + m_localPosition.x - size.x * m_pivot.x,
-			parentPosition.y + m_anchor.y * parentSize.y + m_localPosition.y - size.y * m_pivot.y
-		);
+		float rawPositionX = parentPosition.x + m_anchor.x * parentSize.x + m_localPosition.x - size.x * m_pivot.x;
+		float rawPositionY = parentPosition.y + m_anchor.y * parentSize.y + m_localPosition.y - size.y * m_pivot.y;
+
+		return sf::Vector2f(std::round(rawPositionX), std::round(rawPositionY));
 	}
 
 	void Widget::SetParent(Widget* widget)

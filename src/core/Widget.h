@@ -38,7 +38,7 @@ namespace core
 		const Widget* GetParent() const;
 
 	protected:
-		sf::Vector2f CalculatePosition() const;
+		sf::Vector2f CalculateRenderPosition() const;
 
 	private:
 		friend class PanelWidget;
@@ -49,8 +49,8 @@ namespace core
 
 		sf::String m_name = "Widget";
 		bool m_active = true;
-		sf::Vector2f m_anchor;
-		sf::Vector2f m_pivot;
+		sf::Vector2f m_anchor = { 0.5f, 0.5f };
+		sf::Vector2f m_pivot = { 0.5f, 0.5f };
 		sf::Vector2f m_localPosition;
 		sf::Vector2f m_size = { 100.f, 100.f };
 

@@ -13,6 +13,10 @@ namespace core
 			Vertical
 		};
 
+		StackPanel();
+
+		const sf::Vector2f& GetContentSize() const override;
+
 		void SetOrientation(Orientation orientation);
 		void SetSpacing(float spacing);
 
@@ -25,5 +29,6 @@ namespace core
 
 		Orientation m_orientation = Orientation::Horizontal;
 		float m_spacing = 10.f;
+		sf::Vector2f m_contentSize;
 	};
 }

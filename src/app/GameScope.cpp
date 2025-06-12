@@ -14,9 +14,11 @@ namespace app
 
     void GameScope::Initialize()
     {
-        m_backgroundPanel = std::make_unique<BackgroundPanel>(m_appContext.GetRenderWindowSize());
+        auto renderWindowSize = m_appContext.GetRenderWindowSize();
+        m_backgroundPanel = std::make_unique<BackgroundPanel>(renderWindowSize);
+        m_backgroundPanel->SetLocalPosition(renderWindowSize.x / 2.f, renderWindowSize.y / 2.f);
         m_backgroundPanel->SetBackgroundTexture(m_appContext.GetAssetManager().GetTexture("Background_Dialogue_Gale"));
-        sf::Uint8 backgroundTint(static_cast<sf::Uint8>(0.25f * 255u));
+        sf::Uint8 backgroundTint(static_cast<sf::Uint8>(0.2f * 255u));
         m_backgroundPanel->SetBackgroundColor(sf::Color(backgroundTint, backgroundTint, backgroundTint, 255u));
 
         m_tradeScope.Initialize();
