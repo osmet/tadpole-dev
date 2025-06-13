@@ -8,39 +8,26 @@ namespace core
 		SetSizeToContent(true);
 	}
 
-	const sf::Vector2f& StackPanel::GetContentSize() const
-	{
-		return m_contentSize;
-	}
-
 	void StackPanel::SetOrientation(Orientation orientation)
 	{
 		m_orientation = orientation;
 
-		UpdateLayout();
+		SetLayoutDirty();
 	}
 
 	void StackPanel::SetSpacing(float spacing)
 	{
 		m_spacing = spacing;
 
-		UpdateLayout();
+		SetLayoutDirty();
 	}
 
-	void StackPanel::OnWidgetAdded()
+	void StackPanel::UpdateLayout(sf::Vector2f& out_сontentSize)
 	{
-		UpdateLayout();
-	}
+		sf::Vector2f contentSize;
 
-	void StackPanel::OnWidgetRemoved()
-	{
-		UpdateLayout();
-	}
-
-	void StackPanel::UpdateLayout()
-	{
 		sf::Vector2f currentPosition;
-
+		
 		size_t widgetCount = GetWidgetCount();
 		for (size_t index = 0; index < widgetCount; ++index)
 		{
@@ -51,9 +38,35 @@ namespace core
 			widget->SetLocalPosition(currentPosition);
 
 			if (m_orientation == Orientation::Horizontal)
-				currentPosition.x += widgetSize.x + m_spacing;
+			{
+				float offset = widgetSize.x + m_spacing;
+
+				currentPosition.x += offset;
+
+				contentSize.x += offset;
+
+				if (widgetSize.y > contentSize.y)
+					contentSize.y = widgetSize.y;
+			}
 			else
-				currentPosition.y += widgetSize.y + m_spacing;
+			{
+				float offset = widgetSize.y + m_spacing;
+
+				currentPosition.y += offset;
+
+				contentSize.y += offset;
+
+				if (widgetSize.x > contentSize.x)
+					contentSize.x = widgetSize.x;
+			}
 		}
+
+		if (m_orientation == Orientation::Horizontal)
+			contentSize.x -= m_spacing;
+		else
+			contentSize.y -= m_spacing;
+
+		out_сontentSize.x = contentSize.x;
+		out_сontentSize.y = contentSize.y;
 	}
 }

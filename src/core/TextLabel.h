@@ -18,11 +18,14 @@ namespace core
 		void SetFont(const sf::Font& font);
 		void SetFontSize(std::uint32_t size);
 		void SetColor(const sf::Color& color);
+		void SetOutlineThickness(float thickness);
+		void SetOutlineColor(const sf::Color& color);
 
 	private:
 		void UpdateContentSize();
 
-		sf::Text m_text;
 		sf::Vector2f m_contentSize;
+
+		sf::Text m_text;
 	};
 }

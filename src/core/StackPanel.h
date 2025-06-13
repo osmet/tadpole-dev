@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "PanelWidget.h"
 
@@ -15,20 +15,14 @@ namespace core
 
 		StackPanel();
 
-		const sf::Vector2f& GetContentSize() const override;
-
 		void SetOrientation(Orientation orientation);
 		void SetSpacing(float spacing);
 
 	protected:
-		void OnWidgetAdded() override;
-		void OnWidgetRemoved() override;
+		void UpdateLayout(sf::Vector2f& out_сontentSize) override;
 
 	private:
-		void UpdateLayout();
-
 		Orientation m_orientation = Orientation::Horizontal;
 		float m_spacing = 10.f;
-		sf::Vector2f m_contentSize;
 	};
 }

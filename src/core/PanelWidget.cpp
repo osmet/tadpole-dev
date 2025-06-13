@@ -10,6 +10,13 @@ namespace core
 		if (!IsActive())
 			return false;
 
+		if (m_layoutDirty)
+		{
+			UpdateLayout(m_contentSize);
+
+			m_layoutDirty = false;
+		}
+
 		size_t widgetCount = GetWidgetCount();
 		for (size_t index = 0u; index < widgetCount; ++index)
 		{
@@ -27,6 +34,13 @@ namespace core
 		if (!IsActive())
 			return;
 
+		if (m_layoutDirty)
+		{
+			UpdateLayout(m_contentSize);
+
+			m_layoutDirty = false;
+		}
+
 		size_t widgetCount = GetWidgetCount();
 		for (size_t index = 0u; index < widgetCount; ++index)
 		{
@@ -34,6 +48,11 @@ namespace core
 
 			GetWidget(index)->Render(renderWindow);
 		}
+	}
+
+	const sf::Vector2f& PanelWidget::GetContentSize() const
+	{
+		return m_contentSize;
 	}
 
 	void PanelWidget::Reserve(size_t capacity)
@@ -71,11 +90,23 @@ namespace core
 		OnWidgetRemoved();
 	}
 
+	void PanelWidget::UpdateLayout(sf::Vector2f& contentSize)
+	{
+		// TODO: add implementation for CanvasPanel
+	}
+
 	void PanelWidget::OnWidgetAdded()
 	{
+		SetLayoutDirty();
 	}
 
 	void PanelWidget::OnWidgetRemoved()
 	{
+		SetLayoutDirty();
+	}
+
+	void PanelWidget::SetLayoutDirty()
+	{
+		m_layoutDirty = true;
 	}
 }

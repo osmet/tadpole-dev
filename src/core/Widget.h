@@ -31,6 +31,7 @@ namespace core
 		const sf::Vector2f& GetSize() const;
 		void SetSize(const sf::Vector2f& size);
 		void SetSize(float x, float y);
+		void SetSize(float size);
 		bool IsSizeToContent() const;
 		void SetSizeToContent(bool sizeToContent);
 		virtual const sf::Vector2f& GetContentSize() const;

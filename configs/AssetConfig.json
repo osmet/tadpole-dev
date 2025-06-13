@@ -8,6 +8,7 @@
         "UI_Portrait_Gale": "Texture_UI_Portrait_Gale.png",
         "UI_Panel_Circle": "Texture_UI_Panel_Circle.png",
         "UI_Panel_Circle_Frame": "Texture_UI_Panel_Circle_Frame.png",
+        "UI_Overlay_ItemSlot_RarityGlow": "Texture_UI_Overlay_ItemSlot_RarityGlow.png",
         "UI_Icon_Coin": "Texture_UI_Icon_Coin.png",
         "UI_Icon_Weight": "Texture_UI_Icon_Weight.png",
         "UI_Icon_Sort": "Texture_UI_Icon_Sort.png",
@@ -15,7 +16,7 @@
         "UI_Icon_Filter_Equipment": "Texture_UI_Icon_Filter_Equipment.png",
         "UI_Icon_Filter_BooksAndKeys": "Texture_UI_Icon_Filter_BooksAndKeys.png",
         "UI_Icon_Filter_Consumables": "Texture_UI_Icon_Filter_Consumables.png",
-        "UI_Icon_Filter_Misc": "Texture_UI_Icon_Filter_Misc.png"
-
+        "UI_Icon_Filter_Misc": "Texture_UI_Icon_Filter_Misc.png",
+        "UI_Item_VeryRareWizardRobe": "Texture_UI_Item_VeryRareWizardRobe.png"
     }
 }

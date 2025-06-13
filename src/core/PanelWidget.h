@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Widget.h"
 
@@ -11,6 +11,8 @@ namespace core
 
 		bool HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow) override;
 		void Render(sf::RenderWindow& renderWindow) override;
+
+		const sf::Vector2f& GetContentSize() const override;
 
 		void Reserve(size_t capacity);
 		size_t GetWidgetCount() const;
@@ -34,11 +36,16 @@ namespace core
 		void RemoveWidget(size_t index);
 
 	protected:
-		virtual void OnWidgetAdded();
-		virtual void OnWidgetRemoved();
+		virtual void UpdateLayout(sf::Vector2f& out_сontentSize);
+
+		void OnWidgetAdded();
+		void OnWidgetRemoved();
+		void SetLayoutDirty();
 
 	private:
 		std::vector<std::unique_ptr<Widget>> m_widgets;
 		size_t m_currentRenderWidgetIndex = 0u;
+		bool m_layoutDirty = false;
+		sf::Vector2f m_contentSize;
 	};
 }

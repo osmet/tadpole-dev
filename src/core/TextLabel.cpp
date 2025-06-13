@@ -24,8 +24,10 @@ namespace core
 		if (m_text.getString().isEmpty())
 			return;
 
-		m_text.setOrigin(0, std::round(GetSize().y / 2));
-		m_text.setPosition(CalculateRenderPosition());
+		auto position = CalculateRenderPosition();
+		position.y -= std::round(GetSize().y / 2.f);
+
+		m_text.setPosition(position);
 
 		renderWindow.draw(m_text);
 	}
@@ -61,11 +63,26 @@ namespace core
 		m_text.setFillColor(color);
 	}
 
+	void TextLabel::SetOutlineThickness(float thickness)
+	{
+		m_text.setOutlineThickness(thickness);
+	}
+
+	void TextLabel::SetOutlineColor(const sf::Color& color)
+	{
+		m_text.setOutlineColor(color);
+	}
+
 	void TextLabel::UpdateContentSize()
 	{
-		auto bounds = m_text.getLocalBounds();
+		std::string currentText(m_text.getString());
 
-		m_contentSize.x = bounds.width;
-		m_contentSize.y = bounds.height;
+		m_contentSize.x = m_text.getLocalBounds().width;
+
+		m_text.setString("M"); // HACK: height test string
+
+		m_contentSize.y = m_text.getLocalBounds().height;
+
+		m_text.setString(currentText);
 	}
 }

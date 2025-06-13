@@ -20,6 +20,8 @@ namespace core
 		void SetHoveredColor(const sf::Color& color);
 		void SetPressedColor(const sf::Color& color);
 		void SetDisabledColor(const sf::Color& color);
+		void SetOutlineThickness(float thickness);
+		void SetOutlineColor(const sf::Color& color);
 
 		void SetOnClick(std::function<void()> onClick);
 
@@ -37,7 +39,7 @@ namespace core
 
 		bool m_interactable = true;
 
-		sf::Sprite m_sprite;
+		sf::RectangleShape m_rectangleShape;
 
 		sf::Color m_color = sf::Color(255u, 255u, 255u, 255u);
 		sf::Color m_normalColor = sf::Color(255u, 255u, 255u, 255u);

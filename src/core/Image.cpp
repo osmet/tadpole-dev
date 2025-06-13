@@ -13,45 +13,29 @@ namespace core
 		if (!IsActive())
 			return;
 
-		const auto position = CalculateRenderPosition();
-		const auto size = GetSize();
-		const auto color = m_color;
+		m_rectangleShape.setSize(GetSize());
+		m_rectangleShape.setPosition(CalculateRenderPosition());
 
-		if (m_sprite.getTexture())
-		{
-			auto bounds = m_sprite.getLocalBounds();
-
-			if (bounds.width == 0.f || bounds.height == 0.f)
-				return;
-
-			m_sprite.setPosition(position);
-			m_sprite.setScale(
-				size.x / bounds.width,
-				size.y / bounds.height
-			);
-			m_sprite.setColor(color);
-
-			renderWindow.draw(m_sprite);
-		}
-		else
-		{
-			sf::RectangleShape rect(size);
-
-			rect.setPosition(position);
-			rect.setSize(size);
-			rect.setFillColor(color);
-
-			renderWindow.draw(rect);
-		}
+		renderWindow.draw(m_rectangleShape);
 	}
 
 	void Image::SetTexture(const sf::Texture& texture)
 	{
-		m_sprite.setTexture(texture);
+		m_rectangleShape.setTexture(&texture);
 	}
 
 	void Image::SetColor(const sf::Color& color)
 	{
-		m_color = color;
+		m_rectangleShape.setFillColor(color);
+	}
+
+	void Image::SetOutlineThickness(float thickness)
+	{
+		m_rectangleShape.setOutlineThickness(thickness);
+	}
+
+	void Image::SetOutlineColor(const sf::Color& color)
+	{
+		m_rectangleShape.setOutlineColor(color);
 	}
 }

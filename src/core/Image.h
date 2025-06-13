@@ -12,9 +12,10 @@ namespace core
 
 		void SetTexture(const sf::Texture& texture);
 		void SetColor(const sf::Color& color);
+		void SetOutlineThickness(float thickness);
+		void SetOutlineColor(const sf::Color& color);
 
 	private:
-		sf::Sprite m_sprite;
-		sf::Color m_color = sf::Color::White;
+		sf::RectangleShape m_rectangleShape;
 	};
 }

@@ -89,6 +89,12 @@ namespace core
 		m_size.y = y;
 	}
 
+	void Widget::SetSize(float size)
+	{
+		m_size.x = size;
+		m_size.y = size;
+	}
+
 	bool Widget::IsSizeToContent() const
 	{
 		return m_sizeToContent;
@@ -122,7 +128,7 @@ namespace core
 			parentSize = parentWidget->GetSize();
 		}
 
-		auto size = GetSize();
+		auto& size = GetSize();
 
 		float rawPositionX = parentPosition.x + m_anchor.x * parentSize.x + m_localPosition.x - size.x * m_pivot.x;
 		float rawPositionY = parentPosition.y + m_anchor.y * parentSize.y + m_localPosition.y - size.y * m_pivot.y;

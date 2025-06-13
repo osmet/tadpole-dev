@@ -43,6 +43,12 @@ namespace core
 			return true;
 		}
 
+		if (m_state == ButtonState::Pressed 
+			&& sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		{
+			return false;
+		}
+
 		m_state = ButtonState::Hovered;
 
 		return false;
@@ -53,35 +59,11 @@ namespace core
 		if (!IsActive())
 			return;
 
-		const auto position = CalculateRenderPosition();
-		const auto size = GetSize();
-		const auto color = GetRenderColor();
+		m_rectangleShape.setSize(GetSize());
+		m_rectangleShape.setPosition(CalculateRenderPosition());
+		m_rectangleShape.setFillColor(GetRenderColor());
 
-		if (m_sprite.getTexture())
-		{
-			const auto& textureRect = m_sprite.getTextureRect();
-
-			if (textureRect.width == 0 || textureRect.height == 0)
-				return;
-
-			m_sprite.setPosition(position);
-			m_sprite.setScale(
-				size.x / static_cast<float>(textureRect.width),
-				size.y / static_cast<float>(textureRect.height)
-			);
-			m_sprite.setColor(color);
-
-			renderWindow.draw(m_sprite);
-		}
-		else
-		{
-			sf::RectangleShape rect(size);
-
-			rect.setPosition(position);
-			rect.setFillColor(color);
-
-			renderWindow.draw(rect);
-		}
+		renderWindow.draw(m_rectangleShape);
 
 		PanelWidget::Render(renderWindow);
 	}
@@ -98,7 +80,7 @@ namespace core
 
 	void Button::SetTexture(const sf::Texture& texture)
 	{
-		m_sprite.setTexture(texture, true);
+		m_rectangleShape.setTexture(&texture);
 	}
 
 	void Button::SetColor(const sf::Color& color)
@@ -124,6 +106,15 @@ namespace core
 	void Button::SetDisabledColor(const sf::Color& color)
 	{
 		m_disabledColor = color;
+	}
+	void Button::SetOutlineThickness(float thickness)
+	{
+		m_rectangleShape.setOutlineThickness(thickness);
+	}
+
+	void Button::SetOutlineColor(const sf::Color& color)
+	{
+		m_rectangleShape.setOutlineColor(color);
 	}
 
 	void Button::SetOnClick(std::function<void()> onClick)

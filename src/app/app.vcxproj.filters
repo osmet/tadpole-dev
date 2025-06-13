@@ -49,6 +49,9 @@
     <ClCompile Include="BackgroundPanel.cpp">
       <Filter>Source Files\backgrounds</Filter>
     </ClCompile>
+    <ClCompile Include="ItemSortMode.cpp">
+      <Filter>Source Files\items</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Precompiled.h">
@@ -95,6 +98,9 @@
     </ClInclude>
     <ClInclude Include="BackgroundPanel.h">
       <Filter>Source Files\backgrounds</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemSortMode.h">
+      <Filter>Source Files\items</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
