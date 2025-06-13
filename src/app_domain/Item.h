@@ -15,7 +15,7 @@ namespace app_domain
         bool IsStoryItem = false;
         ItemRarity Rarity = ItemRarity::Common;
         float Weight = 0.0f;
-        std::int32_t Price = 0;
+        std::int32_t Value = 0;
     };
 
     using ItemMap = std::unordered_map<std::string, Item>;

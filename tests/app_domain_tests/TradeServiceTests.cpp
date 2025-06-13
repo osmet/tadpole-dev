@@ -64,15 +64,15 @@ TEST_CASE("TradeService::TradeItem_FewValidTrades_Succeeds")
 
     Item item1;
     item1.Id = "item_1";
-    item1.Price = 200;
+    item1.Value = 200;
 
     Item item2;
     item2.Id = "item_2";
-    item2.Price = 300;
+    item2.Value = 300;
 
     Item item3;
     item3.Id = "item_3";
-    item3.Price = 100;
+    item3.Value = 100;
 
     ItemMap items{
         {item1.Id, item1},
@@ -298,7 +298,7 @@ TEST_CASE("TradeService::TradeItem_NotEnoughMoney_ReturnsNotEnoughMoney")
 
     Item item;
     item.Id = "item_1";
-    item.Price = 100;
+    item.Value = 100;
 
     ItemMap items{
         {item.Id, item}

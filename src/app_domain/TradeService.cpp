@@ -41,12 +41,12 @@ namespace app_domain
             return tl::unexpected(TradeError::ItemNotFound);
 
         const auto& item = itemResult.value().get();
-        const auto itemPrice = item.Price;
+        const auto itemValue = item.Value;
 
-        if (buyerInventory.CurrentMoney < itemPrice)
+        if (buyerInventory.CurrentMoney < itemValue)
             return tl::unexpected(TradeError::NotEnoughMoney);
 
-        if (!m_inventoryService.TransferMoney(buyerInventoryId, sellerInventoryId, itemPrice))
+        if (!m_inventoryService.TransferMoney(buyerInventoryId, sellerInventoryId, itemValue))
             return tl::unexpected(TradeError::TransferFailed);
 
         if (!m_inventoryService.TransferItemByIndex(sellerInventoryId, buyerInventoryId, itemIndex))

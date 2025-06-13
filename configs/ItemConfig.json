@@ -10,7 +10,7 @@
       "IsStoryItem": false,
       "Rarity": "Rare",
       "Weight": 4.0,
-      "Price": 100
+      "Value": 100
     },
     {
       "Id": "Longsword",
@@ -21,7 +21,7 @@
       "IsStoryItem": false,
       "Rarity": "Uncommon",
       "Weight": 5.0,
-      "Price": 150
+      "Value": 150
     },
     {
       "Id": "RedFlower",
@@ -32,7 +32,7 @@
       "IsStoryItem": true,
       "Rarity": "Legendary",
       "Weight": 1.0,
-      "Price": 1000
+      "Value": 1000
     }
   ]
 }

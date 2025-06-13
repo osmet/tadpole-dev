@@ -26,7 +26,7 @@ namespace app
             assert(value.HasMember("IsStoryItem") && value["IsStoryItem"].IsBool());
             assert(value.HasMember("Rarity") && value["Rarity"].IsString());
             assert(value.HasMember("Weight") && value["Weight"].IsNumber());
-            assert(value.HasMember("Price") && value["Price"].IsInt());
+            assert(value.HasMember("Value") && value["Value"].IsInt());
 
             app_domain::Item item;
             item.Id = value["Id"].GetString();
@@ -37,7 +37,7 @@ namespace app
             item.IsStoryItem = value["IsStoryItem"].GetBool();
             item.Rarity = app_domain::ItemRarityHelper::FromString(value["Rarity"].GetString());
             item.Weight = value["Weight"].GetFloat();
-            item.Price = value["Price"].GetInt();
+            item.Value = value["Value"].GetInt();
 
             m_items.emplace(item.Id, std::move(item));
         }

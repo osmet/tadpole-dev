@@ -45,9 +45,7 @@ namespace core
 
 		if (m_state == ButtonState::Pressed 
 			&& sf::Mouse::isButtonPressed(sf::Mouse::Left))
-		{
 			return false;
-		}
 
 		m_state = ButtonState::Hovered;
 
