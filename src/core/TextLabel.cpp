@@ -11,27 +11,6 @@ namespace core
 		SetSizeToContent(true);
 	}
 
-	bool TextLabel::HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow)
-	{
-		return false;
-	}
-
-	void TextLabel::Render(sf::RenderWindow& renderWindow)
-	{
-		if (!IsActive())
-			return;
-
-		if (m_text.getString().isEmpty())
-			return;
-
-		auto position = CalculateRenderPosition();
-		position.y -= std::round(GetSize().y / 2.f);
-
-		m_text.setPosition(position);
-
-		renderWindow.draw(m_text);
-	}
-
 	const sf::Vector2f& TextLabel::GetContentSize() const
 	{
 		return m_contentSize;
@@ -71,6 +50,19 @@ namespace core
 	void TextLabel::SetOutlineColor(const sf::Color& color)
 	{
 		m_text.setOutlineColor(color);
+	}
+
+	void TextLabel::OnRender(sf::RenderWindow& renderWindow)
+	{
+		if (m_text.getString().isEmpty())
+			return;
+
+		auto position = CalculateRenderPosition();
+		position.y -= std::round(GetSize().y / 2.f);
+
+		m_text.setPosition(position);
+
+		renderWindow.draw(m_text);
 	}
 
 	void TextLabel::UpdateContentSize()

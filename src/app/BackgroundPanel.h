@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../core/PanelWidget.h"
+#include "../core/CanvasPanel.h"
 #include "../core/Image.h"
 
 namespace app
 {
-    class BackgroundPanel final : public core::PanelWidget
+    class BackgroundPanel final : public core::CanvasPanel
     {
     public:
         BackgroundPanel(const sf::Vector2f& size);

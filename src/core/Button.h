@@ -7,9 +7,6 @@ namespace core
 	class Button : public PanelWidget
 	{
 	public:
-		bool HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow) override;
-		void Render(sf::RenderWindow& renderWindow) override;
-
 		bool IsInteractable() const;
 		void SetInteractable(bool interactable);
 
@@ -24,6 +21,10 @@ namespace core
 		void SetOutlineColor(const sf::Color& color);
 
 		void SetOnClick(std::function<void()> onClick);
+
+	protected:
+		bool OnHandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow) override;
+		void OnRender(sf::RenderWindow& renderWindow) override;
 
 	private:
 		enum class ButtonState : uint8_t

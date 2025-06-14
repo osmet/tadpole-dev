@@ -5,6 +5,35 @@ namespace core
 {
 	Widget::~Widget() = default;
 
+	bool Widget::HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow)
+	{
+		if (!IsActive())
+			return false;
+
+		ValidateState();
+
+		for (auto it = m_widgets.rbegin(); it != m_widgets.rend(); ++it)
+		{
+			if ((*it)->HandleEvent(event, renderWindow))
+				return true;
+		}
+
+		return OnHandleEvent(event, renderWindow);
+	}
+
+	void Widget::Render(sf::RenderWindow& renderWindow)
+	{
+		if (!IsActive())
+			return;
+
+		ValidateState();
+
+		OnRender(renderWindow);
+
+		for (auto& child : m_widgets)
+			child->Render(renderWindow);
+	}
+
 	const sf::String& Widget::GetName() const
 	{
 		return m_name;
@@ -108,6 +137,57 @@ namespace core
 	const sf::Vector2f& Widget::GetContentSize() const
 	{
 		return m_size;
+	}
+
+	void Widget::Reserve(size_t capacity)
+	{
+		m_widgets.reserve(capacity);
+	}
+
+	size_t Widget::GetWidgetCount() const
+	{
+		return m_widgets.size();
+	}
+
+	Widget* Widget::GetWidget(size_t index) const
+	{
+		if (index < GetWidgetCount())
+			return m_widgets[index].get();
+
+		return nullptr;
+	}
+
+	void Widget::RemoveWidget(size_t index)
+	{
+		if (index >= GetWidgetCount())
+			return;
+
+		GetWidget(index)->SetParent(nullptr);
+
+		m_widgets.erase(m_widgets.begin() + index);
+
+		OnWidgetRemoved();
+	}
+
+	bool Widget::OnHandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow)
+	{
+		return false;
+	}
+
+	void Widget::OnRender(sf::RenderWindow& renderWindow)
+	{
+	}
+
+	void Widget::OnWidgetAdded()
+	{
+	}
+
+	void Widget::OnWidgetRemoved()
+	{
+	}
+
+	void Widget::ValidateState()
+	{
 	}
 
 	const Widget* Widget::GetParent() const

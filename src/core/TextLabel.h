@@ -9,9 +9,6 @@ namespace core
 	public:
 		TextLabel();
 
-		bool HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow) override;
-		void Render(sf::RenderWindow& renderWindow) override;
-
 		const sf::Vector2f& GetContentSize() const override;
 
 		void SetText(const sf::String& text);
@@ -20,6 +17,9 @@ namespace core
 		void SetColor(const sf::Color& color);
 		void SetOutlineThickness(float thickness);
 		void SetOutlineColor(const sf::Color& color);
+
+	protected:
+		void OnRender(sf::RenderWindow& renderWindow) override;
 
 	private:
 		void UpdateContentSize();

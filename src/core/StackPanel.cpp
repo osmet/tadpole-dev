@@ -24,9 +24,8 @@ namespace core
 
 	void StackPanel::UpdateLayout(sf::Vector2f& out_сontentSize)
 	{
-		sf::Vector2f contentSize;
-
 		sf::Vector2f currentPosition;
+		sf::Vector2f contentSize;
 		
 		size_t widgetCount = GetWidgetCount();
 		for (size_t index = 0; index < widgetCount; ++index)
@@ -42,7 +41,6 @@ namespace core
 				float offset = widgetSize.x + m_spacing;
 
 				currentPosition.x += offset;
-
 				contentSize.x += offset;
 
 				if (widgetSize.y > contentSize.y)
@@ -53,7 +51,6 @@ namespace core
 				float offset = widgetSize.y + m_spacing;
 
 				currentPosition.y += offset;
-
 				contentSize.y += offset;
 
 				if (widgetSize.x > contentSize.x)

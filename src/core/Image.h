@@ -7,13 +7,13 @@ namespace core
 	class Image : public Widget
 	{
 	public:
-		bool HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow) override;
-		void Render(sf::RenderWindow& renderWindow) override;
-
 		void SetTexture(const sf::Texture& texture);
 		void SetColor(const sf::Color& color);
 		void SetOutlineThickness(float thickness);
 		void SetOutlineColor(const sf::Color& color);
+
+	protected:
+		void OnRender(sf::RenderWindow& renderWindow) override;
 
 	private:
 		sf::RectangleShape m_rectangleShape;
