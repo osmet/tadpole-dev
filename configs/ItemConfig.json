@@ -1,38 +1,235 @@
 {
-  "Items": 
-  [
+  "Items": [
     {
-      "Id": "BearSkin",
-      "Name": "Bear Skin",
-      "IconTextureId": "Texture_UI_Item_BearSkin",
-      "Description": "Bear Skin",
+      "Id": "BearHide",
+      "Name": "Bear Hide",
+      "IconTextureId": "UI_Item_Misc_BearSkin",
+      "Description": "",
       "Type": "Other",
       "IsStoryItem": false,
       "Rarity": "Rare",
       "Weight": 4.0,
-      "Value": 100
+      "Value": 140
     },
     {
-      "Id": "Longsword",
-      "Name": "Longsword",
-      "IconTextureId": "Texture_UI_Item_Longsword",
-      "Description": "Longsword",
-      "Type": "Weapon",
+      "Id": "CopperOre",
+      "Name": "Copper Ore",
+      "IconTextureId": "UI_Item_Misc_CopperOre",
+      "Description": "",
+      "Type": "Other",
+      "IsStoryItem": false,
+      "Rarity": "Common",
+      "Weight": 2.5,
+      "Value": 20
+    },
+    {
+      "Id": "BasicPoison",
+      "Name": "Basic Poison",
+      "IconTextureId": "UI_Item_Potion_Poison",
+      "Description": "",
+      "Type": "Potion",
       "IsStoryItem": false,
       "Rarity": "Uncommon",
-      "Weight": 5.0,
-      "Value": 150
+      "Weight": 0.3,
+      "Value": 60
+    },
+    {
+      "Id": "WizardSet_Boots",
+      "Name": "Wizard's Boots",
+      "IconTextureId": "UI_Item_WizardSet_Boots",
+      "Description": "",
+      "Type": "Footwear",
+      "IsStoryItem": false,
+      "Rarity": "VeryRare",
+      "Weight": 1.0,
+      "Value": 280
+    },
+    {
+      "Id": "WizardSet_Gloves",
+      "Name": "Wizard's Gloves",
+      "IconTextureId": "UI_Item_WizardSet_Gloves",
+      "Description": "",
+      "Type": "Handwear",
+      "IsStoryItem": false,
+      "Rarity": "VeryRare",
+      "Weight": 0.5,
+      "Value": 260
+    },
+    {
+      "Id": "WizardSet_Chest",
+      "Name": "Wizard's Robe",
+      "IconTextureId": "UI_Item_WizardSet_Chest",
+      "Description": "",
+      "Type": "Clothing",
+      "IsStoryItem": false,
+      "Rarity": "VeryRare",
+      "Weight": 2.0,
+      "Value": 300
+    },
+    {
+      "Id": "WizardSet_Helmet",
+      "Name": "Wizard's Hood",
+      "IconTextureId": "UI_Item_WizardSet_Helmet",
+      "Description": "",
+      "Type": "Headwear",
+      "IsStoryItem": false,
+      "Rarity": "Epic",
+      "Weight": 0.4,
+      "Value": 600
+    },
+    {
+      "Id": "PriestStaff",
+      "Name": "Priest's Staff",
+      "IconTextureId": "UI_Item_Weapon_PriestStaff",
+      "Description": "",
+      "Type": "Weapon",
+      "IsStoryItem": false,
+      "Rarity": "Rare",
+      "Weight": 3.0,
+      "Value": 160
+    },
+    {
+      "Id": "WizardStaff",
+      "Name": "Gale's Arcane Focus",
+      "IconTextureId": "UI_Item_Weapon_WizardStaff",
+      "Description": "",
+      "Type": "Weapon",
+      "IsStoryItem": false,
+      "Rarity": "Legendary",
+      "Weight": 2.5,
+      "Value": 1000
     },
     {
       "Id": "RedFlower",
       "Name": "Red Flower",
-      "IconTextureId": "Texture_UI_Item_RedFlower",
-      "Description": "Red Flower",
+      "IconTextureId": "UI_Item_Misc_Flower",
+      "Description": "",
       "Type": "Other",
       "IsStoryItem": true,
       "Rarity": "Legendary",
       "Weight": 1.0,
       "Value": 1000
+    },
+    {
+      "Id": "IronOre",
+      "Name": "Iron Ore",
+      "IconTextureId": "UI_Item_Misc_IronOre",
+      "Description": "",
+      "Type": "Other",
+      "IsStoryItem": false,
+      "Rarity": "Common",
+      "Weight": 3.0,
+      "Value": 25
+    },
+    {
+      "Id": "CopperBar",
+      "Name": "Copper Bar",
+      "IconTextureId": "UI_Item_Misc_CopperBar",
+      "Description": "",
+      "Type": "Other",
+      "IsStoryItem": false,
+      "Rarity": "Uncommon",
+      "Weight": 2.0,
+      "Value": 60
+    },
+    {
+      "Id": "ClothBlue",
+      "Name": "Blue Cloth",
+      "IconTextureId": "UI_Item_Misc_ClothBlue",
+      "Description": "",
+      "Type": "Other",
+      "IsStoryItem": false,
+      "Rarity": "Uncommon",
+      "Weight": 0.8,
+      "Value": 50
+    },
+    {
+      "Id": "LeatherSet_Boots",
+      "Name": "Leather Boots",
+      "IconTextureId": "UI_Item_LeatherSet_Boots",
+      "Description": "",
+      "Type": "Footwear",
+      "IsStoryItem": false,
+      "Rarity": "Uncommon",
+      "Weight": 1.2,
+      "Value": 50
+    },
+    {
+      "Id": "LeatherSet_Chest",
+      "Name": "Leather Armor",
+      "IconTextureId": "UI_Item_LeatherSet_Chest",
+      "Description": "",
+      "Type": "Clothing",
+      "IsStoryItem": false,
+      "Rarity": "Uncommon",
+      "Weight": 3.5,
+      "Value": 70
+    },
+    {
+      "Id": "LeatherSet_Gloves",
+      "Name": "Leather Gloves",
+      "IconTextureId": "UI_Item_LeatherSet_Gloves",
+      "Description": "",
+      "Type": "Handwear",
+      "IsStoryItem": false,
+      "Rarity": "Uncommon",
+      "Weight": 0.6,
+      "Value": 40
+    },
+    {
+      "Id": "LeatherSet_Helmet",
+      "Name": "Leather Cap",
+      "IconTextureId": "UI_Item_LeatherSet_Helmet",
+      "Description": "",
+      "Type": "Headwear",
+      "IsStoryItem": false,
+      "Rarity": "Uncommon",
+      "Weight": 1.0,
+      "Value": 60
+    },
+    {
+      "Id": "Meat1",
+      "Name": "Raw Meat",
+      "IconTextureId": "UI_Item_Food_Meat1",
+      "Description": "",
+      "Type": "Food",
+      "IsStoryItem": false,
+      "Rarity": "Common",
+      "Weight": 1.5,
+      "Value": 15
+    },
+    {
+      "Id": "Meat2",
+      "Name": "Cooked Meat",
+      "IconTextureId": "UI_Item_Food_Meat2",
+      "Description": "",
+      "Type": "Food",
+      "IsStoryItem": false,
+      "Rarity": "Uncommon",
+      "Weight": 1.0,
+      "Value": 45
+    },
+    {
+      "Id": "Bow",
+      "Name": "Hunter's Bow",
+      "IconTextureId": "UI_Item_Weapon_Bow",
+      "Description": "",
+      "Type": "Weapon",
+      "IsStoryItem": false,
+      "Rarity": "Uncommon",
+      "Weight": 2.5,
+      "Value": 70
+    },
+    {
+      "Id": "Greataxe",
+      "Name": "Greataxe",
+      "IconTextureId": "UI_Item_Weapon_Greataxe",
+      "Description": "",
+      "Type": "Weapon",
+      "IsStoryItem": false,
+      "Rarity": "Rare",
+      "Weight": 6.0,
+      "Value": 150
     }
   ]
 }

@@ -6,38 +6,45 @@
       "MaxWeight": 150.0,
       "InventoryId": "Player_Main"
     },
-    "Trader": {
-      "Name": "Trader",
-      "PortraitTextureId": "Texture_Portrait_Trader",
-      "MaxWeight": 100.0,
-      "InventoryId": "Trader_Main"
+    "Wizard": {
+      "Name": "Gale",
+      "PortraitTextureId": "Texture_Portrait_Wizard",
+      "MaxWeight": 120.0,
+      "InventoryId": "Gale_Main"
     }
   },
   "Inventories": {
     "Player_Main": {
-      "CurrentMoney": 500,
+      "CurrentMoney": 750,
       "Items": [
-        {
-          "ItemId": "RedFlower",
-          "Count": 1
-        },
-        {
-          "ItemId": "BearSkin",
-          "Count": 2
-        }
+        { "ItemId": "BearHide", "Count": 2 },
+        { "ItemId": "CopperOre", "Count": 10 },
+        { "ItemId": "LeatherSet_Boots", "Count": 1 },
+        { "ItemId": "LeatherSet_Chest", "Count": 1 },
+        { "ItemId": "LeatherSet_Gloves", "Count": 2 },
+        { "ItemId": "LeatherSet_Helmet", "Count": 1 },
+        { "ItemId": "PriestStaff", "Count": 1 },
+        { "ItemId": "RedFlower", "Count": 1 },
+        { "ItemId": "IronOre", "Count": 8 },
+        { "ItemId": "CopperBar", "Count": 4 },
+        { "ItemId": "ClothBlue", "Count": 6 },
+        { "ItemId": "Meat1", "Count": 7 },
+        { "ItemId": "Meat2", "Count": 3 },
+        { "ItemId": "Bow", "Count": 1 },
+        { "ItemId": "Greataxe", "Count": 1 }
       ]
     },
-    "Trader_Main": {
-      "CurrentMoney": 1000,
+    "Wizard_Main": {
+      "CurrentMoney": 1200,
       "Items": [
-        {
-          "ItemId": "Longsword",
-          "Count": 3
-        },
-        {
-          "ItemId": "BearSkin",
-          "Count": 1
-        }
+        { "ItemId": "WizardSet_Boots", "Count": 1 },
+        { "ItemId": "WizardSet_Gloves", "Count": 1 },
+        { "ItemId": "WizardSet_Chest", "Count": 1 },
+        { "ItemId": "WizardSet_Helmet", "Count": 1 },
+        { "ItemId": "WizardStaff", "Count": 1 },
+        { "ItemId": "Meat1", "Count": 4 },
+        { "ItemId": "Meat2", "Count": 2 },
+        { "ItemId": "BasicPoison", "Count": 5 }
       ]
     }
   }

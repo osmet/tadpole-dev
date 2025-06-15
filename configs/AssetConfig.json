@@ -17,6 +17,26 @@
         "UI_Icon_Filter_BooksAndKeys": "Texture_UI_Icon_Filter_BooksAndKeys.png",
         "UI_Icon_Filter_Consumables": "Texture_UI_Icon_Filter_Consumables.png",
         "UI_Icon_Filter_Misc": "Texture_UI_Icon_Filter_Misc.png",
-        "UI_Item_VeryRareWizardRobe": "Texture_UI_Item_VeryRareWizardRobe.png"
+        "UI_Item_Food_Meat1": "Texture_UI_Item_Food_Meat1.png",
+        "UI_Item_Food_Meat2": "Texture_UI_Item_Food_Meat2.png",
+        "UI_Item_LeatherSet_Boots": "Texture_UI_Item_LeatherSet_Boots.png",
+        "UI_Item_LeatherSet_Chest": "Texture_UI_Item_LeatherSet_Chest.png",
+        "UI_Item_LeatherSet_Gloves": "Texture_UI_Item_LeatherSet_Gloves.png",
+        "UI_Item_LeatherSet_Helmet": "Texture_UI_Item_LeatherSet_Helmet.png",
+        "UI_Item_Potion_Poison": "Texture_UI_Item_Potion_Poison.png",
+        "UI_Item_Weapon_Bow": "Texture_UI_Item_Weapon_Bow.png",
+        "UI_Item_Weapon_Greataxe": "Texture_UI_Item_Weapon_Greataxe.png",
+        "UI_Item_Weapon_PriestStaff": "Texture_UI_Item_Weapon_PriestStaff.png",
+        "UI_Item_Weapon_WizardStaff": "Texture_UI_Item_Weapon_WizardStaff.png",
+        "UI_Item_WizardSet_Boots": "Texture_UI_Item_WizardSet_Boots.png",
+        "UI_Item_WizardSet_Chest": "Texture_UI_Item_WizardSet_Chest.png",
+        "UI_Item_WizardSet_Gloves": "Texture_UI_Item_WizardSet_Gloves.png",
+        "UI_Item_WizardSet_Helmet": "Texture_UI_Item_WizardSet_Helmet.png",
+        "UI_Item_Misc_BearHide": "Texture_UI_Item_Misc_BearHide.png",
+        "UI_Item_Misc_ClothBlue": "Texture_UI_Item_Misc_ClothBlue.png",
+        "UI_Item_Misc_CopperBar": "Texture_UI_Item_Misc_CopperBar.png",
+        "UI_Item_Misc_CopperOre": "Texture_UI_Item_Misc_CopperOre.png",
+        "UI_Item_Misc_Flower": "Texture_UI_Item_Misc_Flower.png",
+        "UI_Item_Misc_IronOre": "Texture_UI_Item_Misc_IronOre.png"
     }
 }
