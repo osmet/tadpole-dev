@@ -1,0 +1,127 @@
+#include "Precompiled.h"
+#include "ItemGridPanel.h"
+#include "../core/AssetManager.h"
+#include "../core/Image.h"
+#include "../core/TextLabel.h"
+#include "../app_domain/Item.h"
+#include "../app_domain/ItemRarity.h"
+
+namespace app
+{
+    ItemGridPanel::ItemGridPanel(core::AssetManager& assetManager,
+        size_t columnCount, size_t rowCount, float cellSize, float spacing)
+        : m_assetManager(assetManager)
+    {
+        size_t cellCount = columnCount * rowCount;
+
+        SetColumnCount(columnCount);
+        SetCellSize(cellSize);
+        SetSpacing(spacing);
+
+        for (size_t index = 0; index < cellCount; ++index)
+        {
+            CreateWidget<ItemSlot>(assetManager, cellSize);
+        }
+    }
+
+    void ItemGridPanel::SetItems(const std::vector<const app_domain::Item*>& items)
+    {
+        size_t cellCount = GetWidgetCount();
+        for (size_t index = 0; index < cellCount; ++index)
+        {
+            auto* itemSlot = static_cast<ItemSlot*>(GetWidget(index));
+
+            if (index < items.size())
+                itemSlot->SetItem(*items[index]);
+            else
+                itemSlot->ClearItem();
+        }
+    }
+
+    ItemGridPanel::ItemSlot::ItemSlot(core::AssetManager& assetManager, float cellSize)
+        : m_assetManager(assetManager)
+    {
+        float outlineThickness = 2.f;
+        float iconSize = cellSize - outlineThickness * 2.f;
+
+        auto& regularFont = assetManager.GetFont("Mignon_Regular");
+
+        SetAnchor(0.f, 0.f);
+        SetPivot(0.f, 0.f);
+        SetColor(sf::Color::Transparent);
+
+        auto* rarityGlowImage = CreateWidget<core::Image>();
+        rarityGlowImage->SetSize(iconSize);
+        rarityGlowImage->SetTexture(assetManager.GetTexture("UI_Overlay_ItemSlot_RarityGlow"));
+        rarityGlowImage->SetActive(false);
+        m_rarityGlowImage = rarityGlowImage;
+
+        auto* iconImage = CreateWidget<core::Image>();
+        iconImage->SetSize(iconSize);
+        iconImage->SetActive(false);
+        m_iconImage = iconImage;
+
+        auto* frameImage = CreateWidget<core::Image>();
+        frameImage->SetSize(iconSize);
+        frameImage->SetColor(sf::Color::Transparent);
+        frameImage->SetOutlineThickness(outlineThickness);
+        frameImage->SetOutlineColor(sf::Color(64u, 54u, 48u, 255u));
+        m_frameImage = frameImage;
+
+        auto* countTextLabel = CreateWidget<core::TextLabel>();
+        countTextLabel->SetAnchor(1.f, 1.f);
+        countTextLabel->SetPivot(1.f, 1.f);
+        countTextLabel->SetLocalPosition(-4.f, -8.f);
+        countTextLabel->SetFont(regularFont);
+        countTextLabel->SetFontSize(20);
+        countTextLabel->SetText("3");
+        countTextLabel->SetOutlineThickness(1.f);
+        countTextLabel->SetActive(false);
+        m_countTextLabel = countTextLabel;
+
+        auto* selectImage = CreateWidget<core::Image>();
+        selectImage->SetSize(iconSize + 2.f);
+        selectImage->SetColor(sf::Color::Transparent);
+        selectImage->SetOutlineThickness(outlineThickness);
+        selectImage->SetOutlineColor(sf::Color::White);
+        selectImage->SetActive(false);
+        m_selectImage = selectImage;
+    }
+
+    void ItemGridPanel::ItemSlot::SetItem(const app_domain::Item& item)
+    {
+        if (!m_iconImage || !m_rarityGlowImage)
+            return;
+
+        ClearItem();
+
+        m_iconImage->SetTexture(m_assetManager.GetTexture(item.IconTextureId));
+        m_iconImage->SetActive(true);
+
+        if (item.Rarity == app_domain::ItemRarity::Common)
+            return;
+
+        sf::Color rarityColor = sf::Color::White;
+        switch (item.Rarity)
+        {
+        case app_domain::ItemRarity::Uncommon:  rarityColor = sf::Color(64u, 191u, 255u, 255u); break;
+        case app_domain::ItemRarity::Rare:      rarityColor = sf::Color(47u, 255u, 0u, 255u); break;
+        case app_domain::ItemRarity::VeryRare:  rarityColor = sf::Color(255u, 64u, 160u, 255u); break;
+        case app_domain::ItemRarity::Legendary: rarityColor = sf::Color(255u, 175u, 64u, 255u); break;
+        }
+
+        m_rarityGlowImage->SetColor(rarityColor);
+        m_rarityGlowImage->SetActive(true);
+    }
+
+    void ItemGridPanel::ItemSlot::ItemSlot::ClearItem()
+    {
+        if (!m_iconImage || !m_rarityGlowImage)
+            return;
+
+        m_iconImage->SetActive(false);
+
+        m_rarityGlowImage->SetActive(false);
+    }
+
+}

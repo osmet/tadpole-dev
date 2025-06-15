@@ -183,7 +183,7 @@
     <ClCompile Include="GameData.cpp" />
     <ClCompile Include="GameScope.cpp" />
     <ClCompile Include="ItemConfig.cpp" />
-    <ClCompile Include="ItemSortMode.cpp" />
+    <ClCompile Include="ItemGridPanel.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -207,7 +207,7 @@
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GameScope.h" />
     <ClInclude Include="ItemConfig.h" />
-    <ClInclude Include="ItemSortMode.h" />
+    <ClInclude Include="ItemGridPanel.h" />
     <ClInclude Include="Precompiled.h" />
     <ClInclude Include="TradeScope.h" />
     <ClInclude Include="TradeUIView.h" />

@@ -49,7 +49,7 @@
     <ClCompile Include="BackgroundPanel.cpp">
       <Filter>Source Files\backgrounds</Filter>
     </ClCompile>
-    <ClCompile Include="ItemSortMode.cpp">
+    <ClCompile Include="ItemGridPanel.cpp">
       <Filter>Source Files\items</Filter>
     </ClCompile>
   </ItemGroup>
@@ -99,7 +99,7 @@
     <ClInclude Include="BackgroundPanel.h">
       <Filter>Source Files\backgrounds</Filter>
     </ClInclude>
-    <ClInclude Include="ItemSortMode.h">
+    <ClInclude Include="ItemGridPanel.h">
       <Filter>Source Files\items</Filter>
     </ClInclude>
   </ItemGroup>
