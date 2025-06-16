@@ -78,37 +78,46 @@ namespace app
         auto* sortByButtonIconImage = sortByButton->CreateWidget<core::Image>();
         sortByButtonIconImage->SetAnchor(0.f, .5f);
         sortByButtonIconImage->SetPivot(0.f, .5f);
-        sortByButtonIconImage->SetLocalPosition(8.f, 0.f);
+        sortByButtonIconImage->SetLocalPosition(10.f, 0.f);
         sortByButtonIconImage->SetSize(16.f);
         sortByButtonIconImage->SetTexture(sortIconTexture);
 
         auto* sortByButtonTextLabel = sortByButton->CreateWidget<core::TextLabel>();
         sortByButtonTextLabel->SetAnchor(0.f, .5f);
         sortByButtonTextLabel->SetPivot(0.f, .5f);
-        sortByButtonTextLabel->SetLocalPosition(30.f, -1.f);
+        sortByButtonTextLabel->SetLocalPosition(33.f, -1.f);
         sortByButtonTextLabel->SetFont(regularFont);
         sortByButtonTextLabel->SetFontSize(18u);
         sortByButtonTextLabel->SetText("Sort By");
 
         sf::Color sortByFrameColor(sf::Color(191u, 163u, 143u, 128u));
+        auto& sortByButtonFrameTexture = assetManager.GetTexture("UI_Panel_SortByButton_Frame");
 
         auto* sortByButtonFrame = sortByButton->CreateWidget<core::Image>();
-        sortByButtonFrame->SetSize(185.f, 26.f);
-        sortByButtonFrame->SetColor(sf::Color::Transparent);
-        sortByButtonFrame->SetOutlineThickness(2.f);
-        sortByButtonFrame->SetOutlineColor(sortByFrameColor);
+        sortByButtonFrame->SetSize(185.f, 30.f);
+        sortByButtonFrame->SetTexture(sortByButtonFrameTexture);
+        sortByButtonFrame->SetColor(sortByFrameColor);
 
         sf::Vector2f itemSortPanelSize(185.f, 165.f);
         sf::Vector2f itemSortPanelPosition(0.f, -40.f);
+        auto& itemSortPanelTexture = assetManager.GetTexture("UI_Panel_ItemSort");
+        auto& itemSortPanelFrameTexture = assetManager.GetTexture("UI_Panel_ItemSort_Frame");
+
+        auto* itemSortPanelImage = CreateWidget<core::Image>();
+        itemSortPanelImage->SetAnchor(.5f, 1.f);
+        itemSortPanelImage->SetPivot(0.f, 1.f);
+        itemSortPanelImage->SetLocalPosition(itemSortPanelPosition);
+        itemSortPanelImage->SetSize(itemSortPanelSize);
+        itemSortPanelImage->SetTexture(itemSortPanelTexture);
+        itemSortPanelImage->SetColor(sf::Color(0u, 0u, 0u, 150u));
 
         auto* itemSortPanelFrameImage = CreateWidget<core::Image>();
         itemSortPanelFrameImage->SetAnchor(.5f, 1.f);
         itemSortPanelFrameImage->SetPivot(0.f, 1.f);
         itemSortPanelFrameImage->SetLocalPosition(itemSortPanelPosition);
         itemSortPanelFrameImage->SetSize(itemSortPanelSize);
-        itemSortPanelFrameImage->SetColor(sf::Color(0u, 0u, 0u, 50u));
-        itemSortPanelFrameImage->SetOutlineThickness(2.f);
-        itemSortPanelFrameImage->SetOutlineColor(sortByFrameColor);
+        itemSortPanelFrameImage->SetTexture(itemSortPanelFrameTexture);
+        itemSortPanelFrameImage->SetColor(sortByFrameColor);
 
         itemSortPanelPosition.y += 10.f;
 
@@ -137,7 +146,7 @@ namespace app
             auto* sortButtonTextLabel = sortButton->CreateWidget<core::TextLabel>();
             sortButtonTextLabel->SetAnchor(0.f, .5f);
             sortButtonTextLabel->SetPivot(0.f, .5f);
-            sortButtonTextLabel->SetLocalPosition(18.f, 0.f);
+            sortButtonTextLabel->SetLocalPosition(20.f, 0.f);
             sortButtonTextLabel->SetFont(regularFont);
             sortButtonTextLabel->SetFontSize(18u);
             sortButtonTextLabel->SetText(sortModeName);
@@ -148,12 +157,13 @@ namespace app
         : m_assetManager(assetManager)
     {
         auto& font = assetManager.GetFont("Mignon_Regular");
+        auto& portraitFrameTexture = assetManager.GetTexture("UI_Panel_Portrait_Frame");
         auto& moneyTexture = assetManager.GetTexture("UI_Icon_Coin");
         auto& weightTexture = assetManager.GetTexture("UI_Icon_Weight");
 
         sf::Color portraitFrameColor(153u, 117u, 92u, 255u);
         float portraitFrameOutlineThickness = 3.f;
-        sf::Vector2f portraitSize(75.f, 105.f);
+        sf::Vector2f portraitSize(72.f, 105.f);
         float portraitPositionX = alignRight ? 250.f : -250.f;
         float namePositionX = alignRight ? 40.f : -440.f;
         float moneyPositionX = alignRight ? 325.f : -250.f - 20.f;
@@ -171,10 +181,9 @@ namespace app
         m_portraitImage = portraitImage;
 
         auto* portraitFrameImage = portraitImage->CreateWidget<core::Image>();
-        portraitFrameImage->SetSize(portraitSize.x - portraitFrameOutlineThickness, portraitSize.y - portraitFrameOutlineThickness);
-        portraitFrameImage->SetOutlineThickness(portraitFrameOutlineThickness);
-        portraitFrameImage->SetOutlineColor(portraitFrameColor);
-        portraitFrameImage->SetColor(sf::Color::Transparent);
+        portraitFrameImage->SetSize(portraitSize);
+        portraitFrameImage->SetTexture(portraitFrameTexture);
+        portraitFrameImage->SetColor(portraitFrameColor);
 
         auto* nameTextLabel = CreateWidget<core::TextLabel>();
         nameTextLabel->SetAnchor(.5f, 0.f);
@@ -331,15 +340,18 @@ namespace app
                 auto* itemSortPanel = m_mainWidget->CreateWidget<ItemSortPanel>(assetManager, itemSortDescriptors, m_onItemSortButtonClick);
                 itemSortPanel->SetAnchor(.5f, 1.f);
                 itemSortPanel->SetPivot(0.f, 1.f);
-                itemSortPanel->SetLocalPosition(-490.f, -95.f);
+                itemSortPanel->SetLocalPosition(-492.f, -95.f);
             }
 
             {
+                auto& tradeButtonTexture = assetManager.GetTexture("UI_Panel_TradeButton");
+
                 auto* tradeButton = m_mainWidget->CreateWidget<core::Button>();
                 tradeButton->SetAnchor(0.5f, 1.f);
                 tradeButton->SetPivot(0.5f, 1.f);
                 tradeButton->SetLocalPosition(0.f, -35.f);
                 tradeButton->SetSize(250.f, 40.f);
+                tradeButton->SetTexture(tradeButtonTexture);
                 tradeButton->SetColor(sf::Color(48, 58, 64));
                 tradeButton->SetOnClick([&]() { if (m_onTradeButtonClick) m_onTradeButtonClick(); });
 
