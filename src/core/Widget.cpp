@@ -7,7 +7,7 @@ namespace core
 
 	bool Widget::HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow)
 	{
-		if (!IsActive())
+		if (!IsActiveInHierarchy())
 			return false;
 
 		ValidateState();
@@ -23,7 +23,7 @@ namespace core
 
 	void Widget::Render(sf::RenderWindow& renderWindow)
 	{
-		if (!IsActive())
+		if (!IsActiveSelf())
 			return;
 
 		ValidateState();
@@ -44,9 +44,24 @@ namespace core
 		m_name = name;
 	}
 
-	bool Widget::IsActive() const
+	bool Widget::IsActiveSelf() const
 	{
 		return m_active;
+	}
+
+	bool Widget::IsActiveInHierarchy() const
+	{
+		const auto* currentWidget = this;
+
+		while (currentWidget != nullptr)
+		{
+			if (!currentWidget->IsActiveSelf())
+				return false;
+
+			currentWidget = currentWidget->GetParent();
+		}
+
+		return true;
 	}
 
 	void Widget::SetActive(bool active)

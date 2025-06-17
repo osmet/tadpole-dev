@@ -53,6 +53,11 @@ namespace app
             ItemSortPanel(core::AssetManager& assetManager,
                 const std::vector<ItemSortDescriptor>& itemSortDescriptors,
                 OnSortButtonClick& onSortButtonClick);
+
+        private:
+            void ToggleItemSortPanel();
+
+            core::Widget* m_itemSortPanel = nullptr;
         };
 
         class CharacterInfoPanel final : public core::CanvasPanel

@@ -17,7 +17,8 @@ namespace core
 		const sf::String& GetName() const;
 		void SetName(const sf::String& name);
 
-		bool IsActive() const;
+		bool IsActiveSelf() const;
+		bool IsActiveInHierarchy() const;
 		void SetActive(bool active);
 
 		const sf::Vector2f& GetAnchor() const;

@@ -74,6 +74,7 @@ namespace app
         sortByButton->SetPivot(0.f, 1.f);
         sortByButton->SetSize(185.f, 30.f);
         sortByButton->SetColor(sf::Color::Transparent);
+        sortByButton->SetOnClick([&] { ToggleItemSortPanel(); });
 
         auto* sortByButtonIconImage = sortByButton->CreateWidget<core::Image>();
         sortByButtonIconImage->SetAnchor(0.f, .5f);
@@ -110,33 +111,29 @@ namespace app
         itemSortPanelImage->SetSize(itemSortPanelSize);
         itemSortPanelImage->SetTexture(itemSortPanelTexture);
         itemSortPanelImage->SetColor(sf::Color(0u, 0u, 0u, 150u));
+        itemSortPanelImage->SetActive(false);
+        m_itemSortPanel = itemSortPanelImage;
 
-        auto* itemSortPanelFrameImage = CreateWidget<core::Image>();
-        itemSortPanelFrameImage->SetAnchor(.5f, 1.f);
-        itemSortPanelFrameImage->SetPivot(0.f, 1.f);
-        itemSortPanelFrameImage->SetLocalPosition(itemSortPanelPosition);
+        auto* itemSortPanelFrameImage = itemSortPanelImage->CreateWidget<core::Image>();
         itemSortPanelFrameImage->SetSize(itemSortPanelSize);
         itemSortPanelFrameImage->SetTexture(itemSortPanelFrameTexture);
         itemSortPanelFrameImage->SetColor(sortByFrameColor);
 
-        itemSortPanelPosition.y += 10.f;
-
-        auto* itemSortPanel = CreateWidget<core::StackPanel>();
-        itemSortPanel->SetAnchor(.5f, 1.f);
-        itemSortPanel->SetPivot(0.f, 1.f);
-        itemSortPanel->SetLocalPosition(itemSortPanelPosition);
-        itemSortPanel->SetSize(itemSortPanelSize);
-        itemSortPanel->Reserve(itemSortDescriptors.size());
-        itemSortPanel->SetOrientation(core::StackPanel::Orientation::Vertical);
-        itemSortPanel->SetSpacing(0.f);
-        itemSortPanel->SetSizeToContent(false);
+        auto* itemSortButtonsPanel = itemSortPanelImage->CreateWidget<core::StackPanel>();
+        itemSortButtonsPanel->SetAnchor(0.f, 0.f);
+        itemSortButtonsPanel->SetPivot(0.f, 0.f);
+        itemSortButtonsPanel->SetLocalPosition(0.f, 10.f);
+        itemSortButtonsPanel->Reserve(itemSortDescriptors.size());
+        itemSortButtonsPanel->SetOrientation(core::StackPanel::Orientation::Vertical);
+        itemSortButtonsPanel->SetSpacing(0.f);
+        itemSortButtonsPanel->SetSizeToContent(false);
 
         for (const auto& itemSortDescriptor : itemSortDescriptors)
         {
             auto sortMode = itemSortDescriptor.first;
             const auto& sortModeName = itemSortDescriptor.second;
 
-            auto* sortButton = itemSortPanel->CreateWidget<core::Button>();
+            auto* sortButton = itemSortButtonsPanel->CreateWidget<core::Button>();
             sortButton->SetAnchor(0.f, 0.f);
             sortButton->SetPivot(0.f, 0.f);
             sortButton->SetSize(185.f, 35.f);
@@ -151,6 +148,12 @@ namespace app
             sortButtonTextLabel->SetFontSize(18u);
             sortButtonTextLabel->SetText(sortModeName);
         }
+    }
+
+    void TradeUIView::ItemSortPanel::ToggleItemSortPanel()
+    {
+        if (m_itemSortPanel)
+            m_itemSortPanel->SetActive(!m_itemSortPanel->IsActiveSelf());
     }
 
     TradeUIView::CharacterInfoPanel::CharacterInfoPanel(core::AssetManager& assetManager, bool alignRight)
