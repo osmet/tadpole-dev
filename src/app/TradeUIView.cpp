@@ -292,6 +292,7 @@ namespace app
                     {app_domain::ItemCategory::Equipment, assetManager.GetTexture("UI_Icon_Filter_Equipment")},
                     {app_domain::ItemCategory::BooksAndKeys, assetManager.GetTexture("UI_Icon_Filter_BooksAndKeys")},
                     {app_domain::ItemCategory::Consumables, assetManager.GetTexture("UI_Icon_Filter_Consumables")},
+                    {app_domain::ItemCategory::ScrollsAndTools, assetManager.GetTexture("UI_Icon_Filter_ScrollsAndTools")},
                     {app_domain::ItemCategory::Misc, assetManager.GetTexture("UI_Icon_Filter_Misc")},
                 };
 

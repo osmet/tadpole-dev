@@ -9,5 +9,6 @@ namespace app_domain
         Equipment = 2,
         BooksAndKeys = 3,
         Consumables = 4,
+        ScrollsAndTools = 5,
     };
 }

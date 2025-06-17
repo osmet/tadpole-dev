@@ -27,13 +27,15 @@ namespace app_domain
         Weapon = 28,
         Shield = 29,
 
-        // Consumables (41–60)
+        // Consumables (41–50)
         Food = 41,
         Potion = 42,
         Elixir = 43,
-        Scroll = 44,
-        Tool = 45,
-        Bomb = 46
+
+        // Scrolls and Tools (51-60)
+        Scroll = 51,
+        Tool = 52,
+        Bomb = 53
     };
 
     class ItemTypeHelper
@@ -50,8 +52,11 @@ namespace app_domain
             if (type >= ItemType::Armor && type <= ItemType::Shield)
                 return ItemCategory::Equipment;
 
-            if (type >= ItemType::Food && type <= ItemType::Bomb)
+            if (type >= ItemType::Food && type <= ItemType::Elixir)
                 return ItemCategory::Consumables;
+
+            if (type >= ItemType::Scroll && type <= ItemType::Bomb)
+                return ItemCategory::ScrollsAndTools;
 
             return ItemCategory::Misc;
         }
