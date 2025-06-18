@@ -32,6 +32,7 @@ namespace core
 		const sf::Vector2f& GetLocalPosition() const;
 		void SetLocalPosition(const sf::Vector2f& localPosition);
 		void SetLocalPosition(float x, float y);
+		sf::Vector2f GetPosition() const;
 
 		const sf::Vector2f& GetSize() const;
 		void SetSize(const sf::Vector2f& size);
@@ -72,8 +73,6 @@ namespace core
 		virtual void OnWidgetRemoved();
 
 		virtual void ValidateState();
-
-		sf::Vector2f CalculateRenderPosition() const;
 
 	private:
 		void SetParent(Widget* widget);

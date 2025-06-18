@@ -7,6 +7,10 @@ namespace core
 	class Button : public PanelWidget
 	{
 	public:
+		using OnClick = std::function<void()>;
+		using OnHoverIn = std::function<void(const sf::Vector2f& mousePosition)>;
+		using OnHoverOut = std::function<void()>;
+
 		bool IsInteractable() const;
 		void SetInteractable(bool interactable);
 
@@ -20,7 +24,9 @@ namespace core
 		void SetOutlineThickness(float thickness);
 		void SetOutlineColor(const sf::Color& color);
 
-		void SetOnClick(std::function<void()> onClick);
+		void SetOnClick(OnClick callback);
+		void SetOnHoverIn(OnHoverIn callback);
+		void SetOnHoverOut(OnHoverOut callback);
 
 	protected:
 		bool OnHandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow) override;
@@ -48,6 +54,8 @@ namespace core
 		sf::Color m_pressedColor = sf::Color(200u, 200u, 200u, 255u);
 		sf::Color m_disabledColor = sf::Color(200u, 200u, 200u, 128u);
 
-		std::function<void()> m_onClick;
+		OnClick m_onClick;
+		OnHoverIn m_onHoverIn;
+		OnHoverOut m_onHoverOut;
 	};
 }

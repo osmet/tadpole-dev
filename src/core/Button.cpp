@@ -52,9 +52,19 @@ namespace core
 		m_rectangleShape.setOutlineColor(color);
 	}
 
-	void Button::SetOnClick(std::function<void()> onClick)
+	void Button::SetOnClick(OnClick callback)
 	{
-		m_onClick = std::move(onClick);
+		m_onClick = std::move(callback);
+	}
+
+	void Button::SetOnHoverIn(OnHoverIn callback)
+	{
+		m_onHoverIn = std::move(callback);
+	}
+
+	void Button::SetOnHoverOut(OnHoverOut callback)
+	{
+		m_onHoverOut = std::move(callback);
 	}
 
 	bool Button::OnHandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow)
@@ -66,50 +76,77 @@ namespace core
 			return false;
 		}
 
-		sf::FloatRect buttonBounds(CalculateRenderPosition(), GetSize());
+		sf::FloatRect buttonBounds(GetPosition(), GetSize());
 		sf::Vector2f mousePosition(sf::Mouse::getPosition(renderWindow));
+		
+		bool boundsContainsMouse = buttonBounds.contains(mousePosition);
 
-		bool isHovered = buttonBounds.contains(mousePosition);
-
-		if (!isHovered)
+		if (m_state == ButtonState::Normal)
 		{
-			m_state = ButtonState::Normal;
+			if (boundsContainsMouse)
+			{
+				m_state = ButtonState::Hovered;
 
-			return false;
+				if (m_onHoverIn)
+					m_onHoverIn(mousePosition);
+
+				return false;
+			}
+		}
+		else if (m_state == ButtonState::Hovered)
+		{
+			if (boundsContainsMouse)
+			{
+				if (event.type == sf::Event::MouseButtonPressed
+					&& event.mouseButton.button == sf::Mouse::Left)
+				{
+					m_state = ButtonState::Pressed;
+
+					if (m_onHoverOut)
+						m_onHoverOut();
+
+					return true;
+				}
+			}
+			else
+			{
+				m_state = ButtonState::Normal;
+
+				if (m_onHoverOut)
+					m_onHoverOut();
+
+				return false;
+			}
+		}
+		else if (m_state == ButtonState::Pressed)
+		{
+			if (event.type == sf::Event::MouseButtonReleased
+				&& event.mouseButton.button == sf::Mouse::Left)
+			{
+				if (boundsContainsMouse)
+				{
+					if (m_onClick)
+						m_onClick();
+
+					m_state = ButtonState::Hovered;
+
+					return true;
+				}
+				else
+				{
+					m_state = ButtonState::Normal;
+
+					return false;
+				}
+			}
 		}
 
-		if (event.type == sf::Event::MouseButtonPressed
-			&& event.mouseButton.button == sf::Mouse::Left)
-		{
-			m_state = ButtonState::Pressed;
-
-			return true;
-		}
-
-		if (event.type == sf::Event::MouseButtonReleased
-			&& event.mouseButton.button == sf::Mouse::Left
-			&& m_state == ButtonState::Pressed)
-		{
-			if (m_onClick)
-				m_onClick();
-
-			m_state = ButtonState::Hovered;
-
-			return true;
-		}
-
-		if (m_state == ButtonState::Pressed
-			&& sf::Mouse::isButtonPressed(sf::Mouse::Left))
-			return false;
-
-		m_state = ButtonState::Hovered;
-
-		return true;
+		return false;
 	}
 
 	void Button::OnRender(sf::RenderWindow& renderWindow)
 	{
-		m_rectangleShape.setPosition(CalculateRenderPosition());
+		m_rectangleShape.setPosition(GetPosition());
 		m_rectangleShape.setSize(GetSize());
 		m_rectangleShape.setFillColor(GetRenderColor());
 

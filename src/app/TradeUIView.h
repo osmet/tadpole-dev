@@ -25,15 +25,43 @@ namespace app
     class TradeUIView : public core::UIView
     {
     private:
+        class TooltipPanel final : public core::CanvasPanel
+        {
+        public:
+            TooltipPanel(core::AssetManager& assetManager, const sf::Vector2f& margins);
+
+            void Show(const std::string& text, const sf::Vector2f& position, const sf::Vector2f& offset);
+            void Hide();
+        private:
+            const sf::Vector2f m_margins;
+
+            core::Image* m_frameImage = nullptr;
+            core::TextLabel* m_textLabel = nullptr;
+        };
+
         class ItemFilterPanel final : public core::StackPanel
         {
         public:
-            using ItemFilterDescriptor = std::pair<app_domain::ItemCategory, sf::Texture&>;
+            struct ItemFilterDescriptor
+            {
+                app_domain::ItemCategory ItemCategory;
+                std::string Name;
+                std::string TextureId;
+
+                ItemFilterDescriptor(app_domain::ItemCategory itemCategory, std::string name,
+                    std::string textureId);
+            };
+
             using OnFilterButtonClick = std::function<void(app_domain::ItemCategory)>;
 
             ItemFilterPanel(core::AssetManager& assetManager,
                 const std::vector<ItemFilterDescriptor>& itemFilterDescriptors,
                 OnFilterButtonClick& onFilterButtonClick);
+
+            void SetTooltipPanel(TooltipPanel* tooltipPanel);
+
+        private:
+            TooltipPanel* m_tooltipPanel = nullptr;
         };
 
         enum class ItemSortMode : uint8_t
@@ -54,10 +82,13 @@ namespace app
                 const std::vector<ItemSortDescriptor>& itemSortDescriptors,
                 OnSortButtonClick& onSortButtonClick);
 
-        private:
-            void ToggleItemSortPanel();
+            void SetTooltipPanel(TooltipPanel* tooltipPanel);
 
-            core::Widget* m_itemSortPanel = nullptr;
+        private:
+            void ToggleItemSortButtonsPanel();
+
+            core::Widget* m_itemSortButtonsPanel = nullptr;
+            TooltipPanel* m_tooltipPanel = nullptr;
         };
 
         class CharacterInfoPanel final : public core::CanvasPanel
@@ -108,6 +139,7 @@ namespace app
         CharacterInfoPanel* m_traderCharacterInfoPanel = nullptr;
         ItemGridPanel* m_playerItemGrid = nullptr;
         ItemGridPanel* m_traderItemGrid = nullptr;
+        ItemFilterPanel* m_itemFilterPanel = nullptr;
         ItemSortPanel* m_itemSortPanel = nullptr;
 
         ItemFilterPanel::OnFilterButtonClick m_onItemFilterButtonClick;

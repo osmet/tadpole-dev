@@ -1,5 +1,7 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Widget.h"
+
+//#define DEBUG_DRAW_WIDGET_MARKERS
 
 namespace core
 {
@@ -27,6 +29,41 @@ namespace core
 			return;
 
 		ValidateState();
+
+#ifdef DEBUG_DRAW_WIDGET_MARKERS
+		auto position = GetPosition();
+		auto& size = GetSize();
+
+		sf::CircleShape pivot(3.f);
+		pivot.setFillColor(sf::Color::Red);
+		pivot.setOrigin(3.f, 3.f);
+		pivot.setPosition(position.x + size.x * m_pivot.x, position.y + size.y * m_pivot.y);
+		renderWindow.draw(pivot);
+
+		sf::CircleShape anchor(3.f);
+		anchor.setFillColor(sf::Color::Green);
+		anchor.setOrigin(3.f, 3.f);
+		if (auto* parent = GetParent())
+		{
+			auto parentSize = parent->GetSize();
+			anchor.setPosition(
+				parent->GetPosition().x + parentSize.x * m_anchor.x,
+				parent->GetPosition().y + parentSize.y * m_anchor.y
+			);
+		}
+		else
+		{
+			anchor.setPosition(position);
+		}
+		renderWindow.draw(anchor);
+
+		sf::VertexArray line(sf::Lines, 2);
+		line[0].position = anchor.getPosition();
+		line[0].color = sf::Color::Blue;
+		line[1].position = pivot.getPosition();
+		line[1].color = sf::Color::Cyan;
+		renderWindow.draw(line);
+#endif
 
 		OnRender(renderWindow);
 
@@ -115,6 +152,27 @@ namespace core
 	{
 		m_localPosition.x = x;
 		m_localPosition.y = y;
+	}
+
+	sf::Vector2f Widget::GetPosition() const
+	{
+		const auto* parentWidget = GetParent();
+
+		sf::Vector2f parentPosition;
+		sf::Vector2f parentSize;
+
+		if (parentWidget != nullptr)
+		{
+			parentPosition = parentWidget->GetPosition();
+			parentSize = parentWidget->GetSize();
+		}
+
+		auto& size = GetSize();
+
+		float rawPositionX = parentPosition.x + m_anchor.x * parentSize.x + m_localPosition.x - size.x * m_pivot.x;
+		float rawPositionY = parentPosition.y + m_anchor.y * parentSize.y + m_localPosition.y - size.y * m_pivot.y;
+
+		return sf::Vector2f(std::round(rawPositionX), std::round(rawPositionY));
 	}
 
 	const sf::Vector2f& Widget::GetSize() const
@@ -208,27 +266,6 @@ namespace core
 	const Widget* Widget::GetParent() const
 	{
 		return m_parent;
-	}
-
-	sf::Vector2f Widget::CalculateRenderPosition() const
-	{
-		const auto* parentWidget = GetParent();
-
-		sf::Vector2f parentPosition;
-		sf::Vector2f parentSize;
-
-		if (parentWidget != nullptr)
-		{
-			parentPosition = parentWidget->CalculateRenderPosition();
-			parentSize = parentWidget->GetSize();
-		}
-
-		auto& size = GetSize();
-
-		float rawPositionX = parentPosition.x + m_anchor.x * parentSize.x + m_localPosition.x - size.x * m_pivot.x;
-		float rawPositionY = parentPosition.y + m_anchor.y * parentSize.y + m_localPosition.y - size.y * m_pivot.y;
-
-		return sf::Vector2f(std::round(rawPositionX), std::round(rawPositionY));
 	}
 
 	void Widget::SetParent(Widget* widget)

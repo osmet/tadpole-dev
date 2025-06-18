@@ -57,7 +57,7 @@ namespace core
 		if (m_text.getString().isEmpty())
 			return;
 
-		auto position = CalculateRenderPosition();
+		auto position = GetPosition();
 		position.y -= std::round(GetSize().y / 2.f);
 
 		m_text.setPosition(position);

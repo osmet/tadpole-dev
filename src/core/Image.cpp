@@ -26,7 +26,7 @@ namespace core
 	void Image::OnRender(sf::RenderWindow& renderWindow)
 	{
 		m_rectangleShape.setSize(GetSize());
-		m_rectangleShape.setPosition(CalculateRenderPosition());
+		m_rectangleShape.setPosition(GetPosition());
 
 		renderWindow.draw(m_rectangleShape);
 	}

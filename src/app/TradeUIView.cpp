@@ -8,11 +8,66 @@
 #include "../core/Button.h"
 #include "../core/TextLabel.h"
 #include "../core/GridPanel.h"
-#include "../app_domain/ItemCategory.h"
 #include "ItemGridPanel.h"
 
 namespace app
 {
+    TradeUIView::TooltipPanel::TooltipPanel(core::AssetManager& assetManager, const sf::Vector2f& margins)
+        : m_margins(margins)
+    {
+        SetAnchor(0.f, 0.f);
+        SetPivot(0.5f, 0.5f);
+        SetActive(false);
+
+        auto& regularFont = assetManager.GetFont("Mignon_Regular");
+
+        auto* frameImage = CreateWidget<core::Image>();
+        frameImage->SetColor(sf::Color(0u, 0u, 0u, 150u));
+        frameImage->SetOutlineThickness(2.f);
+        frameImage->SetOutlineColor(sf::Color(191u, 163u, 143u, 128u));
+        m_frameImage = frameImage;
+
+        auto* textLabel = frameImage->CreateWidget<core::TextLabel>();
+        textLabel->SetLocalPosition(0.f, -1.f);
+        textLabel->SetFont(regularFont);
+        textLabel->SetFontSize(18u);
+        m_textLabel = textLabel;
+    }
+
+    void TradeUIView::TooltipPanel::Show(const std::string& text, const sf::Vector2f& position, const sf::Vector2f& offset)
+    {
+        if (!m_textLabel || !m_frameImage)
+            return;
+
+        sf::Vector2f positionWithOffset(position.x + offset.x, position.y + offset.y);
+
+        bool isAbove = offset.y <= 0.f;
+
+        SetPivot(0.f, isAbove ? 1.f : 0.f);
+        SetLocalPosition(positionWithOffset);
+        SetActive(true);
+
+        m_textLabel->SetText(text);
+
+        sf::Vector2f frameSize(m_textLabel->GetSize());
+        frameSize.x += 2.f * m_margins.x;
+        frameSize.y += 2.f * m_margins.y;
+
+        m_frameImage->SetSize(frameSize);
+        m_frameImage->SetAnchor(GetPivot());
+        m_frameImage->SetPivot(GetPivot());
+    }
+
+    void TradeUIView::TooltipPanel::Hide()
+    {
+        SetActive(false);
+    }
+
+    TradeUIView::ItemFilterPanel::ItemFilterDescriptor::ItemFilterDescriptor(app_domain::ItemCategory itemCategory, std::string name,
+        std::string textureId)
+        : ItemCategory(itemCategory), Name(std::move(name)), TextureId(std::move(textureId))
+    {
+    }
 
     TradeUIView::ItemFilterPanel::ItemFilterPanel(core::AssetManager& assetManager,
         const std::vector<ItemFilterDescriptor>& itemFilterDescriptors,
@@ -34,8 +89,11 @@ namespace app
 
         for (const auto& itemFilterDescriptor : itemFilterDescriptors)
         {
-            auto itemCategory = itemFilterDescriptor.first;
-            auto& itemCategoryTexture = itemFilterDescriptor.second;
+            auto itemCategory = itemFilterDescriptor.ItemCategory;
+            auto& name = itemFilterDescriptor.Name;
+            auto& textureId = itemFilterDescriptor.TextureId;
+
+            auto& texture = assetManager.GetTexture(textureId);
 
             auto* filterButton = CreateWidget<core::Button>();
             filterButton->SetAnchor(0.f, 0.f);
@@ -45,17 +103,30 @@ namespace app
             filterButton->SetNormalColor(filterButtonNormalColor);
             filterButton->SetHoveredColor(filterButtonHoveredColor);
             filterButton->SetPressedColor(filterButtonPressedColor);
-            filterButton->SetOnClick([&, itemCategory]() { if (onFilterButtonClick) onFilterButtonClick(itemCategory); });
+            filterButton->SetOnClick([onFilterButtonClick, itemCategory]() { if (onFilterButtonClick) onFilterButtonClick(itemCategory); });
+            filterButton->SetOnHoverIn([this, filterButton, name](const sf::Vector2f& mousePosition) {
+                if (m_tooltipPanel && filterButton) 
+                    m_tooltipPanel->Show(name, filterButton->GetPosition(), sf::Vector2f(6.f, -12.f));
+            });
+            filterButton->SetOnHoverOut([this] {
+                if (m_tooltipPanel)
+                    m_tooltipPanel->Hide();
+            });
 
             auto* itemCategoryImage = filterButton->CreateWidget<core::Image>();
             itemCategoryImage->SetSize(25.f);
-            itemCategoryImage->SetTexture(itemCategoryTexture);
+            itemCategoryImage->SetTexture(texture);
 
             auto* filterButtonFrameImage = filterButton->CreateWidget<core::Image>();
             filterButtonFrameImage->SetSize(buttonSize);
             filterButtonFrameImage->SetTexture(filterButtonFrameTexture);
             filterButtonFrameImage->SetColor(filterButtonFrameColor);
         }
+    }
+
+    void TradeUIView::ItemFilterPanel::SetTooltipPanel(TooltipPanel* tooltipPanel)
+    {
+        m_tooltipPanel = tooltipPanel;
     }
 
     TradeUIView::ItemSortPanel::ItemSortPanel(core::AssetManager& assetManager,
@@ -65,7 +136,6 @@ namespace app
         float buttonSize = 35.f;
         float spacing = 10.f;
         std::size_t buttonCount = itemSortDescriptors.size();
-
         auto& regularFont = assetManager.GetFont("Mignon_Regular");
         auto& sortIconTexture = assetManager.GetTexture("UI_Icon_Sort");
 
@@ -74,7 +144,15 @@ namespace app
         sortByButton->SetPivot(0.f, 1.f);
         sortByButton->SetSize(185.f, 30.f);
         sortByButton->SetColor(sf::Color::Transparent);
-        sortByButton->SetOnClick([&] { ToggleItemSortPanel(); });
+        sortByButton->SetOnClick([this] { ToggleItemSortButtonsPanel(); });
+        sortByButton->SetOnHoverIn([this, sortByButton](const sf::Vector2f& mousePosition) {
+            if (m_tooltipPanel && sortByButton)
+                m_tooltipPanel->Show("Sort By", sf::Vector2f(mousePosition.x, sortByButton->GetPosition().y), sf::Vector2f(6.f, 24.f + sortByButton->GetSize().y));
+        });
+        sortByButton->SetOnHoverOut([this] { 
+            if (m_tooltipPanel)
+                m_tooltipPanel->Hide();
+        });
 
         auto* sortByButtonIconImage = sortByButton->CreateWidget<core::Image>();
         sortByButtonIconImage->SetAnchor(0.f, .5f);
@@ -112,7 +190,7 @@ namespace app
         itemSortPanelImage->SetTexture(itemSortPanelTexture);
         itemSortPanelImage->SetColor(sf::Color(0u, 0u, 0u, 150u));
         itemSortPanelImage->SetActive(false);
-        m_itemSortPanel = itemSortPanelImage;
+        m_itemSortButtonsPanel = itemSortPanelImage;
 
         auto* itemSortPanelFrameImage = itemSortPanelImage->CreateWidget<core::Image>();
         itemSortPanelFrameImage->SetSize(itemSortPanelSize);
@@ -138,7 +216,7 @@ namespace app
             sortButton->SetPivot(0.f, 0.f);
             sortButton->SetSize(185.f, 35.f);
             sortButton->SetColor(sf::Color::Transparent);
-            sortButton->SetOnClick([&, sortMode]() { if (onSortButtonClick) onSortButtonClick(sortMode); });
+            sortButton->SetOnClick([onSortButtonClick, sortMode]() { if (onSortButtonClick) onSortButtonClick(sortMode); });
 
             auto* sortButtonTextLabel = sortButton->CreateWidget<core::TextLabel>();
             sortButtonTextLabel->SetAnchor(0.f, .5f);
@@ -150,10 +228,15 @@ namespace app
         }
     }
 
-    void TradeUIView::ItemSortPanel::ToggleItemSortPanel()
+    void TradeUIView::ItemSortPanel::SetTooltipPanel(TooltipPanel* tooltipPanel)
     {
-        if (m_itemSortPanel)
-            m_itemSortPanel->SetActive(!m_itemSortPanel->IsActiveSelf());
+        m_tooltipPanel = tooltipPanel;
+    }
+
+    void TradeUIView::ItemSortPanel::ToggleItemSortButtonsPanel()
+    {
+        if (m_itemSortButtonsPanel)
+            m_itemSortButtonsPanel->SetActive(!m_itemSortButtonsPanel->IsActiveSelf());
     }
 
     TradeUIView::CharacterInfoPanel::CharacterInfoPanel(core::AssetManager& assetManager, bool alignRight)
@@ -291,18 +374,19 @@ namespace app
 
             {
                 std::vector<ItemFilterPanel::ItemFilterDescriptor> itemFilterDescriptors = {
-                    {app_domain::ItemCategory::All, assetManager.GetTexture("UI_Icon_Filter_All")},
-                    {app_domain::ItemCategory::Equipment, assetManager.GetTexture("UI_Icon_Filter_Equipment")},
-                    {app_domain::ItemCategory::BooksAndKeys, assetManager.GetTexture("UI_Icon_Filter_BooksAndKeys")},
-                    {app_domain::ItemCategory::Consumables, assetManager.GetTexture("UI_Icon_Filter_Consumables")},
-                    {app_domain::ItemCategory::ScrollsAndTools, assetManager.GetTexture("UI_Icon_Filter_ScrollsAndTools")},
-                    {app_domain::ItemCategory::Misc, assetManager.GetTexture("UI_Icon_Filter_Misc")},
+                    { app_domain::ItemCategory::All, "All", "UI_Icon_Filter_All" },
+                    { app_domain::ItemCategory::Equipment, "Equipment", "UI_Icon_Filter_Equipment" },
+                    { app_domain::ItemCategory::BooksAndKeys, "Books and Keys", "UI_Icon_Filter_BooksAndKeys" },
+                    { app_domain::ItemCategory::Consumables, "Consumables", "UI_Icon_Filter_Consumables" },
+                    { app_domain::ItemCategory::ScrollsAndTools, "Scrolls and Tools", "UI_Icon_Filter_ScrollsAndTools" },
+                    { app_domain::ItemCategory::Misc, "Miscellaneous", "UI_Icon_Filter_Misc" },
                 };
 
                 auto* itemFilterPanel = m_mainWidget->CreateWidget<ItemFilterPanel>(assetManager, itemFilterDescriptors, m_onItemFilterButtonClick);
                 itemFilterPanel->SetAnchor(.5f, 0.f);
                 itemFilterPanel->SetPivot(.5f, 0.f);
                 itemFilterPanel->SetLocalPosition(0.f, 135.f);
+                m_itemFilterPanel = itemFilterPanel;
             }
 
             {
@@ -335,16 +419,17 @@ namespace app
 
             {
                 std::vector<ItemSortPanel::ItemSortDescriptor> itemSortDescriptors = {
-                  {ItemSortMode::Type, "Type"},
-                  {ItemSortMode::Value, "Value"},
-                  {ItemSortMode::Weight, "Weight"},
-                  {ItemSortMode::Name, "Name"}
+                  { ItemSortMode::Type, "Type" },
+                  { ItemSortMode::Value, "Value" },
+                  { ItemSortMode::Weight, "Weight" },
+                  { ItemSortMode::Name, "Name" }
                 };
 
                 auto* itemSortPanel = m_mainWidget->CreateWidget<ItemSortPanel>(assetManager, itemSortDescriptors, m_onItemSortButtonClick);
                 itemSortPanel->SetAnchor(.5f, 1.f);
                 itemSortPanel->SetPivot(0.f, 1.f);
                 itemSortPanel->SetLocalPosition(-492.f, -95.f);
+                m_itemSortPanel = itemSortPanel;
             }
 
             {
@@ -357,7 +442,7 @@ namespace app
                 tradeButton->SetSize(250.f, 40.f);
                 tradeButton->SetTexture(tradeButtonTexture);
                 tradeButton->SetColor(sf::Color(48, 58, 64));
-                tradeButton->SetOnClick([&]() { if (m_onTradeButtonClick) m_onTradeButtonClick(); });
+                tradeButton->SetOnClick([onTradeButtonClick = m_onTradeButtonClick]() { if (onTradeButtonClick) onTradeButtonClick(); });
 
                 auto* tradeButtonText = tradeButton->CreateWidget<core::TextLabel>();
                 tradeButtonText->SetLocalPosition(0.f, 0.f);
@@ -365,6 +450,16 @@ namespace app
                 tradeButtonText->SetFontSize(18);
                 tradeButtonText->SetText("TRADE");
                 tradeButtonText->SetColor(sf::Color::White);
+            }
+
+            {
+                auto* tooltipPanel = m_mainWidget->CreateWidget<TooltipPanel>(assetManager, sf::Vector2f(20.f, 14.f));
+
+                if (m_itemFilterPanel) 
+                    m_itemFilterPanel->SetTooltipPanel(tooltipPanel);
+
+                if (m_itemSortPanel) 
+                    m_itemSortPanel->SetTooltipPanel(tooltipPanel);
             }
         }
     }
