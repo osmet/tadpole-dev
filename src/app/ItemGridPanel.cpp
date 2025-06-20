@@ -5,6 +5,7 @@
 #include "../core/TextLabel.h"
 #include "../app_domain/Item.h"
 #include "../app_domain/ItemRarity.h"
+#include "ItemConfig.h"
 
 namespace app
 {
@@ -101,16 +102,7 @@ namespace app
         if (item.Rarity == app_domain::ItemRarity::Common)
             return;
 
-        sf::Color rarityColor = sf::Color::White;
-        switch (item.Rarity)
-        {
-        case app_domain::ItemRarity::Uncommon:  rarityColor = sf::Color(64u, 191u, 255u, 255u); break;
-        case app_domain::ItemRarity::Rare:      rarityColor = sf::Color(47u, 255u, 0u, 255u); break;
-        case app_domain::ItemRarity::VeryRare:  rarityColor = sf::Color(255u, 64u, 160u, 255u); break;
-        case app_domain::ItemRarity::Legendary: rarityColor = sf::Color(255u, 175u, 64u, 255u); break;
-        }
-
-        m_rarityGlowImage->SetColor(rarityColor);
+        m_rarityGlowImage->SetColor(ItemConfig::GetRarityColor(item.Rarity));
         m_rarityGlowImage->SetActive(true);
     }
 

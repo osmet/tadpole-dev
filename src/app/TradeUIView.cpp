@@ -9,11 +9,11 @@
 #include "../core/TextLabel.h"
 #include "../core/GridPanel.h"
 #include "ItemGridPanel.h"
+#include "ItemPanel.h"
 
 namespace app
 {
-    TradeUIView::TooltipPanel::TooltipPanel(core::AssetManager& assetManager, const sf::Vector2f& margins)
-        : m_margins(margins)
+    TradeUIView::TooltipPanel::TooltipPanel(core::AssetManager& assetManager)
     {
         SetAnchor(0.f, 0.f);
         SetPivot(0.5f, 0.5f);
@@ -39,6 +39,7 @@ namespace app
         if (!m_textLabel || !m_frameImage)
             return;
 
+        sf::Vector2f padding(20.f, 14.f);
         sf::Vector2f positionWithOffset(position.x + offset.x, position.y + offset.y);
 
         bool isAbove = offset.y <= 0.f;
@@ -50,8 +51,8 @@ namespace app
         m_textLabel->SetText(text);
 
         sf::Vector2f frameSize(m_textLabel->GetSize());
-        frameSize.x += 2.f * m_margins.x;
-        frameSize.y += 2.f * m_margins.y;
+        frameSize.x += 2.f * padding.x;
+        frameSize.y += 2.f * padding.y;
 
         m_frameImage->SetSize(frameSize);
         m_frameImage->SetAnchor(GetPivot());
@@ -317,15 +318,15 @@ namespace app
     {
         auto& font = assetManager.GetFont("Mignon_Regular");
         auto& portraitFrameTexture = assetManager.GetTexture("UI_Panel_Portrait_Frame");
-        auto& moneyTexture = assetManager.GetTexture("UI_Icon_Coin");
-        auto& weightTexture = assetManager.GetTexture("UI_Icon_Weight");
+        auto& moneyIconTexture = assetManager.GetTexture("UI_Icon_Coin");
+        auto& weightIconTexture = assetManager.GetTexture("UI_Icon_Weight");
 
         sf::Color portraitFrameColor(153u, 117u, 92u, 255u);
         float portraitFrameOutlineThickness = 3.f;
         sf::Vector2f portraitSize(72.f, 105.f);
         float portraitPositionX = alignRight ? 250.f : -250.f;
         float namePositionX = alignRight ? 40.f : -440.f;
-        float moneyPositionX = alignRight ? 325.f : -250.f - 20.f;
+        float moneyPositionX = alignRight ? portraitPositionX + portraitSize.x - 20.f : portraitPositionX - 20.f;
         float weightPositionX = alignRight ? 40.f : -40.f;
         float valuesPositionY = 193.f;
 
@@ -365,8 +366,8 @@ namespace app
         moneyIconImage->SetPivot(1.f, 0.f);
         moneyIconImage->SetLocalPosition(moneyPositionX + 20.f, valuesPositionY);
         moneyIconImage->SetSize(12.f, 14.f);
-        moneyIconImage->SetColor(sf::Color(191, 163, 143));
-        moneyIconImage->SetTexture(moneyTexture);
+        moneyIconImage->SetColor(sf::Color(191u, 163u, 143u, 255u));
+        moneyIconImage->SetTexture(moneyIconTexture);
 
         if (!alignRight)
         {
@@ -383,7 +384,7 @@ namespace app
             weightIconImage->SetPivot(1.f, 0.f);
             weightIconImage->SetLocalPosition(weightPositionX, valuesPositionY - 2.f);
             weightIconImage->SetSize(15.f);
-            weightIconImage->SetTexture(weightTexture);
+            weightIconImage->SetTexture(weightIconTexture);
         }
     }
 
@@ -409,10 +410,10 @@ namespace app
     {
         if (m_weightTextLabel)
         {
-            char buf[32];
-            snprintf(buf, sizeof(buf), "%.1f/%d", currentWeight, (std::uint32_t)maxWeight);
+            char buffer[32];
+            snprintf(buffer, sizeof(buffer), "%.2f/%d", currentWeight, (std::uint32_t)maxWeight);
 
-            m_weightTextLabel->SetText(buf);
+            m_weightTextLabel->SetText(buffer);
         }
     }
 
@@ -526,7 +527,11 @@ namespace app
             }
 
             {
-                auto* tooltipPanel = m_mainWidget->CreateWidget<TooltipPanel>(assetManager, sf::Vector2f(20.f, 14.f));
+                auto* itemPanel = m_mainWidget->CreateWidget<ItemPanel>(assetManager);
+            }
+
+            {
+                auto* tooltipPanel = m_mainWidget->CreateWidget<TooltipPanel>(assetManager);
 
                 if (m_itemFilterPanel) 
                     m_itemFilterPanel->SetTooltipPanel(tooltipPanel);

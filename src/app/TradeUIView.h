@@ -28,13 +28,11 @@ namespace app
         class TooltipPanel final : public core::CanvasPanel
         {
         public:
-            TooltipPanel(core::AssetManager& assetManager, const sf::Vector2f& margins);
+            TooltipPanel(core::AssetManager& assetManager);
 
             void Show(const std::string& text, const sf::Vector2f& position, const sf::Vector2f& offset);
             void Hide();
         private:
-            const sf::Vector2f m_margins;
-
             core::Image* m_frameImage = nullptr;
             core::TextLabel* m_textLabel = nullptr;
         };

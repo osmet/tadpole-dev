@@ -11,7 +11,7 @@ namespace app_domain
         std::string Name;
         std::string IconTextureId;
         std::string Description;
-        ItemType Type = ItemType::Other;
+        ItemType Type = ItemType::Misc;
         bool IsStoryItem = false;
         ItemRarity Rarity = ItemRarity::Common;
         float Weight = 0.0f;

@@ -6,6 +6,23 @@
 
 namespace app
 {
+    const sf::Color& ItemConfig::GetRarityColor(app_domain::ItemRarity rarity)
+    {
+        switch (rarity)
+        {
+        case app_domain::ItemRarity::Uncommon:
+            return sf::Color(0u, 204u, 20u, 255u);
+        case app_domain::ItemRarity::Rare:
+            return sf::Color(64u, 191u, 255u, 255u);
+        case app_domain::ItemRarity::VeryRare:
+            return sf::Color(255u, 64u, 160u, 255u);
+        case app_domain::ItemRarity::Legendary:
+            return sf::Color(255u, 175u, 64u, 255u);
+        default:
+            return sf::Color::White;
+        }
+    }
+
     void ItemConfig::FromJson(const rapidjson::Value& json)
     {
         assert(json.HasMember("Items"));
