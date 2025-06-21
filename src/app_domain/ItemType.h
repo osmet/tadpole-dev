@@ -1,14 +1,14 @@
 #pragma once
 
 #include "ItemCategory.h"
-#include <magic_enum/magic_enum.hpp>
 
 namespace app_domain
 {
+    // IMPORTANT: Update ItemTypeHelper::GetItemCategory if ItemType changes
     enum class ItemType : std::int8_t
     {
         // Misc (0–10)
-        Other = 0,
+        Misc = 0,
         Valuable = 1,
 
         // Books and Keys (11-20)
@@ -41,39 +41,9 @@ namespace app_domain
     class ItemTypeHelper
     {
     public:
-        constexpr ItemCategory GetItemCategory(ItemType type)
-        {
-            if (type >= ItemType::Other && type <= ItemType::Valuable)
-                return ItemCategory::Misc;
+        static ItemType FromString(const std::string& str);
+        static std::string ToString(ItemType type);
 
-            if (type >= ItemType::Book && type <= ItemType::Key)
-                return ItemCategory::BooksAndKeys;
-
-            if (type >= ItemType::Armor && type <= ItemType::Shield)
-                return ItemCategory::Equipment;
-
-            if (type >= ItemType::Food && type <= ItemType::Elixir)
-                return ItemCategory::Consumables;
-
-            if (type >= ItemType::Scroll && type <= ItemType::Bomb)
-                return ItemCategory::ScrollsAndTools;
-
-            return ItemCategory::Misc;
-        }
-
-        static ItemType FromString(const std::string& str)
-        {
-            auto value = magic_enum::enum_cast<ItemType>(str);
-
-            if (value.has_value())
-                return value.value();
-
-            return ItemType::Other;
-        }
-
-        static std::string ToString(ItemType type)
-        {
-            return std::string(magic_enum::enum_name(type));
-        }
+        static ItemCategory GetItemCategory(ItemType type);
     };
 }
