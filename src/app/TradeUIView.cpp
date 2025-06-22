@@ -555,7 +555,18 @@ namespace app
         BindViewModel();
     }
 
-    void app::TradeUIView::BindViewModel() {
+    void TradeUIView::HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow)
+    {
+        if (m_errorPanel && m_errorPanel->IsActiveSelf())
+        {
+            m_errorPanel->HandleEvent(event, renderWindow);
+            return;
+        }
+            
+        UIView::HandleEvent(event, renderWindow);
+    }
+    
+    void TradeUIView::BindViewModel() {
         m_viewModel.SetOnTradeBegin([this]() {
             SetPlayerName(m_viewModel.GetPlayerName());
             SetPlayerPortraitTexture(m_viewModel.GetPlayerPortraitTextureId());
@@ -603,7 +614,6 @@ namespace app
             if (!tradeResult.has_value())
                 ShowErrorPanel(tradeResult.error());
         });
-
     }
 
     void TradeUIView::SetOnPlayerItemSlotClick(ItemGridPanel::OnItemSlotClick callback)

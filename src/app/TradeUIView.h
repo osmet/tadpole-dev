@@ -131,6 +131,7 @@ namespace app
         TradeUIView(AppContext& appContext, TradeUIViewModel& viewModel);
 
         void Initialize() override;
+        void HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow) override;
         
     private:
         void BindViewModel();
