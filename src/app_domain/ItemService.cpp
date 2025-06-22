@@ -3,6 +3,8 @@
 
 namespace app_domain
 {
+    IItemService::~IItemService() = default;
+
     ItemService::ItemService(const ItemMap& items)
         : m_items(items)
     {

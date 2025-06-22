@@ -5,6 +5,7 @@
 #include "../core/Scope.h"
 #include "../app_domain/TradeService.h"
 #include "TradeUIView.h"
+#include "TradeUIViewModel.h"
 
 namespace app
 {
@@ -20,8 +21,10 @@ namespace app
         void Update(float deltaTime) override;
         void Render(sf::RenderWindow& renderWindow) override;
 
+        tl::expected<void, app_domain::TradeError> BeginTrade(const std::string& playerCharacterId, const std::string& traderCharacterId);
+
     private:
-        app_domain::TradeService& m_tradeService;
         TradeUIView m_tradeUIView;
+        TradeUIViewModel m_tradeUIViewModel;
     };
 }

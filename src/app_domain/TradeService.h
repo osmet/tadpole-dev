@@ -12,20 +12,44 @@ namespace app_domain
         InventoryNotFound = 1,
         InventoryItemNotFound = 2,
         ItemNotFound = 3,
-        NotEnoughMoney = 4,
-        TransferFailed = 5,
+        ItemNotTradable = 4,
+        NotEnoughMoney = 5,
+        TransferFailed = 6,
+        TradeWithSelfNotAllowed = 7
+    };
+
+    struct TradeContext
+    {
+        const app_domain::Character& BuyerCharacter;
+        const app_domain::Character& SellerCharacter;
+        const app_domain::Inventory& BuyerInventory;
+        const app_domain::Inventory& SellerInventory;
     };
 
     class TradeService
     {
     public:
-        TradeService(InventoryService& inventoryService, CharacterService& characterService, ItemService& itemService);
+        TradeService(ItemService& itemService, CharacterService& characterService,
+            InventoryService& inventoryService);
+
+        tl::expected<TradeContext, TradeError> MakeContext(const std::string& buyerCharacterId,
+            const std::string& sellerCharacterId) const;
+
+        tl::expected<void, TradeError> CanTradeItem(const std::string& buyerCharacterId,
+            const std::string& sellerCharacterId,
+            std::size_t itemIndex) const;
 
         tl::expected<void, TradeError> TradeItem(const std::string& buyerCharacterId,
             const std::string& sellerCharacterId,
-            std::size_t itemIndex);
+            std::size_t itemIndex) const;
 
     private:
+        tl::expected<void, TradeError> CanTradeItemInternal(const TradeContext& context, 
+            std::size_t itemIndex) const;
+        
+        tl::expected<void, TradeError> TradeItemInternal(const TradeContext& context, 
+            std::size_t itemIndex) const;
+
         InventoryService& m_inventoryService;
         CharacterService& m_characterService;
         ItemService& m_itemService;

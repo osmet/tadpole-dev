@@ -3,7 +3,7 @@
     {
       "Id": "BearHide",
       "Name": "Bear Hide",
-      "IconTextureId": "UI_Item_Misc_BearSkin",
+      "IconTextureId": "UI_Item_Misc_BearHide",
       "Description": "",
       "Type": "Misc",
       "IsStoryItem": false,
@@ -73,7 +73,7 @@
       "Description": "",
       "Type": "Headwear",
       "IsStoryItem": false,
-      "Rarity": "Epic",
+      "Rarity": "VeryRare",
       "Weight": 0.4,
       "Value": 600
     },
@@ -205,7 +205,7 @@
       "Description": "",
       "Type": "Food",
       "IsStoryItem": false,
-      "Rarity": "Uncommon",
+      "Rarity": "Common",
       "Weight": 1.0,
       "Value": 45
     },
@@ -218,7 +218,7 @@
       "IsStoryItem": false,
       "Rarity": "Uncommon",
       "Weight": 2.5,
-      "Value": 70
+      "Value": 100
     },
     {
       "Id": "Greataxe",
@@ -227,9 +227,9 @@
       "Description": "",
       "Type": "Weapon",
       "IsStoryItem": false,
-      "Rarity": "Rare",
+      "Rarity": "Common",
       "Weight": 6.0,
-      "Value": 150
+      "Value": 50
     }
   ]
 }

@@ -211,7 +211,7 @@ namespace app
         m_weightTextLabel->SetLocalPosition(m_weightIconImage->GetLocalPosition().x - 22.f, -padding.y);
 
         char buffer[32];
-        snprintf(buffer, sizeof(buffer), "%.2f", item.Weight);
+        snprintf(buffer, sizeof(buffer), "%.1f", item.Weight);
         m_weightTextLabel->SetText(buffer);
 
         float panelWidth = m_backgroundImage->GetSize().x;

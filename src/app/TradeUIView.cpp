@@ -10,6 +10,7 @@
 #include "../core/GridPanel.h"
 #include "ItemGridPanel.h"
 #include "ItemPanel.h"
+#include "TradeUIViewModel.h"
 
 namespace app
 {
@@ -411,14 +412,15 @@ namespace app
         if (m_weightTextLabel)
         {
             char buffer[32];
-            snprintf(buffer, sizeof(buffer), "%.2f/%d", currentWeight, (std::uint32_t)maxWeight);
+            snprintf(buffer, sizeof(buffer), "%.1f/%d", currentWeight, (std::uint32_t)maxWeight);
 
             m_weightTextLabel->SetText(buffer);
         }
     }
 
-    TradeUIView::TradeUIView(AppContext& appContext)
+    TradeUIView::TradeUIView(AppContext& appContext, TradeUIViewModel& viewModel)
         : m_appContext(appContext)
+        , m_viewModel(viewModel)
     {
     }
 
@@ -482,12 +484,14 @@ namespace app
                 playerItemGrid->SetAnchor(0.5f, 0.f);
                 playerItemGrid->SetPivot(1.f, 0.f);
                 playerItemGrid->SetLocalPosition(-40.f, 215.f);
+                playerItemGrid->SetOnItemSlotClick([this](std::size_t index) { if (m_onPlayerItemSlotClick) m_onPlayerItemSlotClick(index); });
                 m_playerItemGrid = playerItemGrid;
 
                 auto* traderItemGrid = m_mainWidget->CreateWidget<ItemGridPanel>(assetManager, columnCount, rowCount, cellSize, spacing);
                 traderItemGrid->SetAnchor(0.5f, 0.f);
                 traderItemGrid->SetPivot(0.f, 0.f);
                 traderItemGrid->SetLocalPosition(40.f, 215.f);
+                traderItemGrid->SetOnItemSlotClick([this](std::size_t index) { if (m_onTraderItemSlotClick) m_onTraderItemSlotClick(index); });
                 m_traderItemGrid = traderItemGrid;
             }
 
@@ -542,8 +546,72 @@ namespace app
 
             {
                 auto* errorPanel = m_mainWidget->CreateWidget<ErrorPanel>(assetManager, renderWindowSize);
+                m_errorPanel = errorPanel;
             }
         }
+
+        BindViewModel();
+    }
+
+    void app::TradeUIView::BindViewModel() {
+        m_viewModel.SetOnTradeBegin([this]() {
+            SetPlayerName(m_viewModel.GetPlayerName());
+            SetPlayerPortraitTexture(m_viewModel.GetPlayerPortraitTextureId());
+
+            SetTraderName(m_viewModel.GetTraderName());
+            SetTraderPortraitTexture(m_viewModel.GetTraderPortraitTextureId());
+        });
+
+        m_viewModel.SetOnPlayerInventoryUpdate([this]() {
+            SetPlayerItems(m_viewModel.GetPlayerItems());
+
+            SetPlayerMoney(m_viewModel.GetPlayerMoney());
+
+            SetPlayerWeight(m_viewModel.GetPlayerCurrentWeight(), m_viewModel.GetPlayerMaxWeight());
+        });
+
+        m_viewModel.SetOnTraderInventoryUpdate([this]() {
+            SetTraderItems(m_viewModel.GetTraderItems());
+
+            SetTraderMoney(m_viewModel.GetTraderMoney());
+        });
+
+        SetOnPlayerItemSlotClick([this](std::size_t index) {
+            auto canTradeResult = m_viewModel.CanSellItem(index);
+            if (!canTradeResult.has_value())
+            {
+                ShowErrorPanel(canTradeResult.error());
+                return;
+            }
+
+            auto tradeResult = m_viewModel.SellItem(index);
+            if (!tradeResult.has_value())
+                ShowErrorPanel(tradeResult.error());
+        });
+
+        SetOnTraderItemSlotClick([this](std::size_t index) {
+            auto canTradeResult = m_viewModel.CanBuyItem(index);
+            if (!canTradeResult.has_value())
+            {
+                ShowErrorPanel(canTradeResult.error());
+                return;
+            }
+
+            auto tradeResult = m_viewModel.BuyItem(index);
+            if (!tradeResult.has_value())
+                ShowErrorPanel(tradeResult.error());
+        });
+
+    }
+
+    void TradeUIView::SetOnPlayerItemSlotClick(ItemGridPanel::OnItemSlotClick callback)
+    {
+        m_onPlayerItemSlotClick = std::move(callback);
+    }
+
+    void TradeUIView::SetOnTraderItemSlotClick(ItemGridPanel::OnItemSlotClick callback)
+    {
+        m_onTraderItemSlotClick = std::move(callback);
     }
 
     void TradeUIView::SetOnItemFilterButtonClick(ItemFilterPanel::OnFilterButtonClick callback)
@@ -570,7 +638,7 @@ namespace app
     void TradeUIView::SetPlayerName(const std::string& name)
     {
         if (m_playerCharacterInfoPanel)
-            m_playerCharacterInfoPanel->SetName(name);
+            m_playerCharacterInfoPanel->SetCharacterName(name);
     }
 
     void TradeUIView::SetPlayerMoney(uint32_t money)
@@ -594,7 +662,7 @@ namespace app
     void TradeUIView::SetTraderName(const std::string& name)
     {
         if (m_traderCharacterInfoPanel)
-            m_traderCharacterInfoPanel->SetName(name);
+            m_traderCharacterInfoPanel->SetCharacterName(name);
     }
 
     void TradeUIView::SetTraderMoney(uint32_t money)
@@ -619,5 +687,26 @@ namespace app
     {
         if (m_traderItemGrid)
             m_traderItemGrid->SetItems(items);
+    }
+
+    void TradeUIView::ShowErrorPanel(app_domain::TradeError error)
+    {
+        if (!m_errorPanel)
+            return;
+
+        using app_domain::TradeError;
+
+        switch (error)
+        {
+        case TradeError::NotEnoughMoney:
+            m_errorPanel->Show(
+                "Insufficient Gold",
+                "A character has insufficient gold to complete this transaction.",
+                []() {}
+            );
+            break;
+        default:
+            break;
+        }
     }
 }

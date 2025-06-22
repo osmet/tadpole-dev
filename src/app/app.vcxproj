@@ -194,6 +194,7 @@
     </ClCompile>
     <ClCompile Include="TradeScope.cpp" />
     <ClCompile Include="TradeUIView.cpp" />
+    <ClCompile Include="TradeUIViewModel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -213,6 +214,7 @@
     <ClInclude Include="Precompiled.h" />
     <ClInclude Include="TradeScope.h" />
     <ClInclude Include="TradeUIView.h" />
+    <ClInclude Include="TradeUIViewModel.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\app_domain\app_domain.vcxproj">

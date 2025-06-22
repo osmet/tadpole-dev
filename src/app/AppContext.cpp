@@ -11,8 +11,8 @@ namespace app
         , m_gameDataSource("GameData.json", AppConstants::GetDataRootPath() + "GameData.json")
         , m_itemService(m_itemConfig.GetItems())
         , m_characterService(m_gameDataSource.GetData().GetCharacters())
-        , m_inventoryService(m_gameDataSource.GetData().GetInventories())
-        , m_tradeService(m_inventoryService, m_characterService, m_itemService)
+        , m_inventoryService(m_gameDataSource.GetData().GetInventories(), m_itemService)
+        , m_tradeService(m_itemService, m_characterService, m_inventoryService)
     {
     }
 

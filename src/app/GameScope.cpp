@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "GameScope.h"
 
 #include "AppContext.h"
@@ -22,22 +22,31 @@ namespace app
         m_backgroundPanel->SetBackgroundColor(sf::Color(backgroundTint, backgroundTint, backgroundTint, 255u));
 
         m_tradeScope.Initialize();
+
+        auto result = m_tradeScope.BeginTrade("Player", "Wizard");
+        if (result)
+            m_activeScope = std::ref(m_tradeScope);
+        else
+            m_activeScope.reset();
     }
 
     void GameScope::HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow)
     {
-        m_tradeScope.HandleEvent(event, renderWindow);
+        if (m_activeScope)
+            m_activeScope->get().HandleEvent(event, renderWindow);
     }
 
     void GameScope::Update(float deltaTime)
     {
-        m_tradeScope.Update(deltaTime);
+        if (m_activeScope)
+            m_activeScope->get().Update(deltaTime);
     }
 
     void GameScope::Render(sf::RenderWindow& renderWindow)
     {
         m_backgroundPanel->Render(renderWindow);
 
-        m_tradeScope.Render(renderWindow);
+        if (m_activeScope)
+            m_activeScope->get().Render(renderWindow);
     }
 }

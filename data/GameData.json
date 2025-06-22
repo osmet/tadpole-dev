@@ -2,15 +2,15 @@
   "Characters": {
     "Player": {
       "Name": "Alice",
-      "PortraitTextureId": "Texture_Portrait_Player",
+      "PortraitTextureId": "UI_Portrait_Alice",
       "MaxWeight": 150.0,
       "InventoryId": "Player_Main"
     },
     "Wizard": {
       "Name": "Gale",
-      "PortraitTextureId": "Texture_Portrait_Wizard",
+      "PortraitTextureId": "UI_Portrait_Gale",
       "MaxWeight": 120.0,
-      "InventoryId": "Gale_Main"
+      "InventoryId": "Wizard_Main"
     }
   },
   "Inventories": {

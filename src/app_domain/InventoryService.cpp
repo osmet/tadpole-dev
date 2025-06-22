@@ -1,10 +1,12 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "InventoryService.h"
 
 namespace app_domain
 {
-    InventoryService::InventoryService(InventoryMap& inventories)
+    InventoryService::InventoryService(InventoryMap& inventories, IItemService& itemService)
         : m_inventories(inventories)
+        , m_itemService(itemService)
+        
     {
     }
 
@@ -72,5 +74,27 @@ namespace app_domain
         fromInventory.Items.erase(fromInventory.Items.begin() + index);
 
         return {};
+    }
+
+    tl::expected<float, InventoryError> InventoryService::CalculateCurrentWeight(const std::string& inventoryId) const
+    {
+        auto it = m_inventories.find(inventoryId);
+        if (it == m_inventories.end())
+            return tl::unexpected(InventoryError::NotFound);
+
+        const auto& inventory = it->second;
+
+        float currentWeight = 0.0f;
+        for (const auto& inventoryItem : inventory.Items)
+        {
+            auto itemResult = m_itemService.GetItemById(inventoryItem.ItemId);
+            if (itemResult.has_value())
+            {
+                const auto& item = itemResult.value().get();
+                currentWeight += item.Weight * static_cast<float>(inventoryItem.Count);
+            }
+        }
+
+        return currentWeight;
     }
 }

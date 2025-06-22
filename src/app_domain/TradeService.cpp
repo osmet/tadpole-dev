@@ -1,36 +1,68 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "TradeService.h"
 
 namespace app_domain
 {
-    TradeService::TradeService(InventoryService& inventoryService, CharacterService& characterService, ItemService& itemService)
-        : m_inventoryService(inventoryService), m_characterService(characterService), m_itemService(itemService)
+    TradeService::TradeService(ItemService& itemService, CharacterService& characterService,
+        InventoryService& inventoryService)
+        : m_itemService(itemService), m_characterService(characterService), m_inventoryService(inventoryService)
     {
     }
 
-    tl::expected<void, TradeError> TradeService::TradeItem(const std::string& buyerCharacterId,
-        const std::string& sellerCharacterId,
-        std::size_t itemIndex)
+
+    tl::expected<TradeContext, TradeError> TradeService::MakeContext(const std::string& buyerCharacterId,
+        const std::string& sellerCharacterId) const
     {
+        if (buyerCharacterId == sellerCharacterId)
+            return tl::unexpected(TradeError::TradeWithSelfNotAllowed);
+
         auto buyerResult = m_characterService.GetCharacterById(buyerCharacterId);
         auto sellerResult = m_characterService.GetCharacterById(sellerCharacterId);
         if (!buyerResult || !sellerResult)
             return tl::unexpected(TradeError::CharacterNotFound);
 
-        const auto& buyerCharacter = buyerResult.value().get();
-        const auto& sellerCharacter = sellerResult.value().get();
+        auto& buyerCharacter = buyerResult.value().get();
+        auto& sellerCharacter = sellerResult.value().get();
 
-        const auto& buyerInventoryId = buyerCharacter.InventoryId;
-        const auto& sellerInventoryId = sellerCharacter.InventoryId;
-
-        auto buyerInventoryResult = m_inventoryService.GetInventoryById(buyerInventoryId);
-        auto sellerInventoryResult = m_inventoryService.GetInventoryById(sellerInventoryId);
+        auto buyerInventoryResult = m_inventoryService.GetInventoryById(buyerCharacter.InventoryId);
+        auto sellerInventoryResult = m_inventoryService.GetInventoryById(sellerCharacter.InventoryId);
         if (!buyerInventoryResult || !sellerInventoryResult)
             return tl::unexpected(TradeError::InventoryNotFound);
 
-        const auto& buyerInventory = buyerInventoryResult.value().get();
+        return TradeContext{
+            buyerResult.value().get(),
+            sellerResult.value().get(),
+            buyerInventoryResult.value().get(),
+            sellerInventoryResult.value().get()
+        };
+    }
 
-        auto sellerInventoryItemResult = m_inventoryService.GetItemByIndex(sellerInventoryId, itemIndex);
+    tl::expected<void, TradeError> TradeService::CanTradeItem(const std::string& buyerCharacterId,
+        const std::string& sellerCharacterId,
+        std::size_t itemIndex) const
+    {
+        auto contextResult = MakeContext(buyerCharacterId, sellerCharacterId);
+        if (!contextResult)
+            return tl::unexpected(contextResult.error());
+
+        return CanTradeItemInternal(contextResult.value(), itemIndex);
+    }
+
+    tl::expected<void, TradeError> TradeService::TradeItem(const std::string& buyerCharacterId,
+        const std::string& sellerCharacterId,
+        std::size_t itemIndex) const
+    {
+        auto contextResult = MakeContext(buyerCharacterId, sellerCharacterId);
+        if (!contextResult)
+            return tl::unexpected(contextResult.error());
+
+        return TradeItemInternal(contextResult.value(), itemIndex);
+    }
+
+    tl::expected<void, TradeError> TradeService::CanTradeItemInternal(const TradeContext& context,
+        std::size_t itemIndex) const
+    {
+        auto sellerInventoryItemResult = m_inventoryService.GetItemByIndex(context.SellerInventory.Id, itemIndex);
         if (!sellerInventoryItemResult)
             return tl::unexpected(TradeError::InventoryItemNotFound);
 
@@ -41,15 +73,32 @@ namespace app_domain
             return tl::unexpected(TradeError::ItemNotFound);
 
         const auto& item = itemResult.value().get();
-        const auto itemValue = item.Value;
 
-        if (buyerInventory.CurrentMoney < itemValue)
+        if (item.IsStoryItem)
+            return tl::unexpected(TradeError::ItemNotTradable);
+
+        if (context.BuyerInventory.CurrentMoney < item.Value)
             return tl::unexpected(TradeError::NotEnoughMoney);
 
-        if (!m_inventoryService.TransferMoney(buyerInventoryId, sellerInventoryId, itemValue))
+        return {};
+    }
+
+    tl::expected<void, TradeError> TradeService::TradeItemInternal(const TradeContext& context,
+        std::size_t itemIndex) const
+    {
+        auto canTrade = CanTradeItemInternal(context, itemIndex);
+        if (!canTrade)
+            return tl::unexpected(canTrade.error());
+
+        const auto& sellerInventoryItem = m_inventoryService.GetItemByIndex(context.SellerInventory.Id, itemIndex).value().get();
+        const auto& item = m_itemService.GetItemById(sellerInventoryItem.ItemId).value().get();
+
+        const auto itemValue = item.Value;
+
+        if (!m_inventoryService.TransferMoney(context.BuyerInventory.Id, context.SellerInventory.Id, itemValue))
             return tl::unexpected(TradeError::TransferFailed);
 
-        if (!m_inventoryService.TransferItemByIndex(sellerInventoryId, buyerInventoryId, itemIndex))
+        if (!m_inventoryService.TransferItemByIndex(context.SellerInventory.Id, context.BuyerInventory.Id, itemIndex))
             return tl::unexpected(TradeError::TransferFailed);
 
         return {};

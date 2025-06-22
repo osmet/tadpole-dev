@@ -55,6 +55,9 @@
     <ClCompile Include="ItemPanel.cpp">
       <Filter>Source Files\items</Filter>
     </ClCompile>
+    <ClCompile Include="TradeUIViewModel.cpp">
+      <Filter>Source Files\trade</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Precompiled.h">
@@ -107,6 +110,9 @@
     </ClInclude>
     <ClInclude Include="ItemPanel.h">
       <Filter>Source Files\items</Filter>
+    </ClInclude>
+    <ClInclude Include="TradeUIViewModel.h">
+      <Filter>Source Files\trade</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

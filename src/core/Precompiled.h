@@ -11,6 +11,7 @@
 #include <streambuf>
 #include <cassert>
 #include <functional>
+#include <optional>
 
 #include <tl/expected.hpp>
 

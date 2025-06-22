@@ -3,6 +3,7 @@
 #include "Inventory.h"
 #include <tl/expected.hpp>
 #include <functional>
+#include "ItemService.h"
 
 namespace app_domain
 {
@@ -17,7 +18,7 @@ namespace app_domain
     class InventoryService
     {
     public:
-        InventoryService(InventoryMap& inventories);
+        InventoryService(InventoryMap& inventories, IItemService& itemService);
 
         tl::expected<std::reference_wrapper<const Inventory>, InventoryError>
             GetInventoryById(const std::string& id) const;
@@ -25,13 +26,17 @@ namespace app_domain
         tl::expected<std::reference_wrapper<const InventoryItem>, InventoryError>
             GetItemByIndex(const std::string& inventoryId, std::size_t index) const;
 
-        tl::expected<void, InventoryError>
+        virtual tl::expected<void, InventoryError>
             TransferMoney(const std::string& fromId, const std::string& toId, int32_t amount);
 
-        tl::expected<void, InventoryError>
+        virtual tl::expected<void, InventoryError>
             TransferItemByIndex(const std::string& fromId, const std::string& toId, std::size_t index);
+
+        tl::expected<float, InventoryError> CalculateCurrentWeight(const std::string& inventoryId) const;
 
     private:
         InventoryMap& m_inventories;
+
+        IItemService& m_itemService;
     };
 }

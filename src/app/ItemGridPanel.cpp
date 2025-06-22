@@ -21,7 +21,8 @@ namespace app
 
         for (size_t index = 0; index < cellCount; ++index)
         {
-            CreateWidget<ItemSlot>(assetManager, cellSize);
+            auto* itemSlot = CreateWidget<ItemSlot>(assetManager, cellSize);
+            itemSlot->SetOnClick([this, index]() { if (m_onItemSlotClick) m_onItemSlotClick(index); });
         }
     }
 
@@ -37,6 +38,11 @@ namespace app
             else
                 itemSlot->ClearItem();
         }
+    }
+
+    void ItemGridPanel::SetOnItemSlotClick(OnItemSlotClick callback)
+    {
+        m_onItemSlotClick = std::move(callback);
     }
 
     ItemGridPanel::ItemSlot::ItemSlot(core::AssetManager& assetManager, float cellSize)

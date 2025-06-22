@@ -20,13 +20,19 @@ namespace app
     class ItemGridPanel : public core::GridPanel
     {
     public:
+        using OnItemSlotClick = std::function<void(std::size_t index)>;
+
         ItemGridPanel(core::AssetManager& assetManager,
             size_t columnCount, size_t rowCount, float cellSize, float spacing);
 
         void SetItems(const std::vector<const app_domain::Item*>& items);
 
+        void SetOnItemSlotClick(OnItemSlotClick callback);
+
     private:
         core::AssetManager& m_assetManager;
+
+        OnItemSlotClick m_onItemSlotClick;
 
     private:
         class ItemSlot final : public core::Button
