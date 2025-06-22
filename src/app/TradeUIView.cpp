@@ -411,6 +411,8 @@ namespace app
     {
         if (m_weightTextLabel)
         {
+            m_weightTextLabel->SetColor(currentWeight > maxWeight ? sf::Color::Red : sf::Color::White);
+
             char buffer[32];
             snprintf(buffer, sizeof(buffer), "%.1f/%d", currentWeight, (std::uint32_t)maxWeight);
 

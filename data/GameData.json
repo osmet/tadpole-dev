@@ -3,19 +3,19 @@
     "Player": {
       "Name": "Alice",
       "PortraitTextureId": "UI_Portrait_Alice",
-      "MaxWeight": 150.0,
+      "MaxWeight": 120.0,
       "InventoryId": "Player_Main"
     },
     "Wizard": {
       "Name": "Gale",
       "PortraitTextureId": "UI_Portrait_Gale",
-      "MaxWeight": 120.0,
+      "MaxWeight": 100.0,
       "InventoryId": "Wizard_Main"
     }
   },
   "Inventories": {
     "Player_Main": {
-      "CurrentMoney": 750,
+      "CurrentMoney": 2000,
       "Items": [
         { "ItemId": "BearHide", "Count": 2 },
         { "ItemId": "CopperOre", "Count": 10 },
@@ -35,7 +35,7 @@
       ]
     },
     "Wizard_Main": {
-      "CurrentMoney": 1200,
+      "CurrentMoney": 2500,
       "Items": [
         { "ItemId": "WizardSet_Boots", "Count": 1 },
         { "ItemId": "WizardSet_Gloves", "Count": 1 },
@@ -44,7 +44,9 @@
         { "ItemId": "WizardStaff", "Count": 1 },
         { "ItemId": "Meat1", "Count": 4 },
         { "ItemId": "Meat2", "Count": 2 },
-        { "ItemId": "BasicPoison", "Count": 5 }
+        { "ItemId": "BasicPoison", "Count": 5 },
+        { "ItemId": "BearHide", "Count": 2 },
+        { "ItemId": "CopperBar", "Count": 2 }
       ]
     }
   }
