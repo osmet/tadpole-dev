@@ -574,7 +574,7 @@ namespace app
             SetTraderPortraitTexture(m_viewModel.GetTraderPortraitTextureId());
         });
 
-        m_viewModel.SetOnPlayerInventoryUpdate([this]() {
+        m_viewModel.SetOnPlayerItemsUpdate([this]() {
             SetPlayerItems(m_viewModel.GetPlayerItems());
 
             SetPlayerMoney(m_viewModel.GetPlayerMoney());
@@ -582,7 +582,7 @@ namespace app
             SetPlayerWeight(m_viewModel.GetPlayerCurrentWeight(), m_viewModel.GetPlayerMaxWeight());
         });
 
-        m_viewModel.SetOnTraderInventoryUpdate([this]() {
+        m_viewModel.SetOnTraderItemsUpdate([this]() {
             SetTraderItems(m_viewModel.GetTraderItems());
 
             SetTraderMoney(m_viewModel.GetTraderMoney());
@@ -604,9 +604,9 @@ namespace app
             });
 
             m_playerItemGrid->SetOnItemSlotHoverIn([this](std::size_t index, const sf::Vector2f& position) {
-                auto* item = m_viewModel.GetPlayerItemByIndex(index);
+                auto item = m_viewModel.GetPlayerItem(index);
                 if (item)
-                    ShowItemPanel(*item, position);
+                    ShowItemPanel(item->Item, position);
             });
 
             m_playerItemGrid->SetOnItemSlotHoverOut([this](std::size_t index) {
@@ -630,9 +630,9 @@ namespace app
             });
 
             m_traderItemGrid->SetOnItemSlotHoverIn([this](std::size_t index, const sf::Vector2f& position) {
-                auto* item = m_viewModel.GetTraderItemByIndex(index);
+                auto item = m_viewModel.GetTraderItem(index);
                 if (item)
-                    ShowItemPanel(*item, position);
+                    ShowItemPanel(item->Item, position);
             });
 
             m_traderItemGrid->SetOnItemSlotHoverOut([this](std::size_t index) {
@@ -704,13 +704,13 @@ namespace app
             m_traderCharacterInfoPanel->SetWeight(currentWeight, maxWeight);
     }
 
-    void TradeUIView::SetPlayerItems(const std::vector<const app_domain::Item*>& items)
+    void TradeUIView::SetPlayerItems(const std::vector<app_domain::InventoryItemDetails>& items)
     {
         if (m_playerItemGrid)
             m_playerItemGrid->SetItems(items);
     }
 
-    void TradeUIView::SetTraderItems(const std::vector<const app_domain::Item*>& items)
+    void TradeUIView::SetTraderItems(const std::vector<app_domain::InventoryItemDetails>& items)
     {
         if (m_traderItemGrid)
             m_traderItemGrid->SetItems(items);

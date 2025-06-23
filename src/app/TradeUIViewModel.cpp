@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "TradeUIViewModel.h"
 
 namespace app
@@ -40,7 +40,7 @@ namespace app
         if (m_onTradeBegin)
             m_onTradeBegin();
 
-        InvokeOnInventoryUpdates();
+        UpdateItems();
 
         return {};
     }
@@ -50,14 +50,14 @@ namespace app
         m_onTradeBegin = std::move(callback);
     }
 
-    void TradeUIViewModel::SetOnPlayerInventoryUpdate(OnPlayerInventoryUpdate callback)
+    void TradeUIViewModel::SetOnPlayerItemsUpdate(OnItemsUpdate callback)
     {
-        m_onPlayerInventoryUpdate = std::move(callback);
+        m_onPlayerItemsUpdate = std::move(callback);
     }
 
-    void TradeUIViewModel::SetOnTraderInventoryUpdate(OnTraderInventoryUpdate callback)
+    void TradeUIViewModel::SetOnTraderItemsUpdate(OnItemsUpdate callback)
     {
-        m_onTraderInventoryUpdate = std::move(callback);
+        m_onTraderItemsUpdate = std::move(callback);
     }
 
     tl::expected<void, app_domain::TradeError> TradeUIViewModel::CanBuyItem(std::size_t itemIndex) const
@@ -74,7 +74,7 @@ namespace app
     {
         auto result = m_tradeService.TradeItem(m_playerCharacterId, m_traderCharacterId, itemIndex);
         if (result)
-            InvokeOnInventoryUpdates();
+            UpdateItems();
 
         return result;
     }
@@ -83,7 +83,7 @@ namespace app
     {
         auto result = m_tradeService.TradeItem(m_traderCharacterId, m_playerCharacterId, itemIndex);
         if (result)
-            InvokeOnInventoryUpdates();
+            UpdateItems();
 
         return result;
     }
@@ -129,33 +129,36 @@ namespace app
         return m_playerMaxWeight;
     }
 
-    const app_domain::Item* TradeUIViewModel::GetPlayerItemByIndex(size_t index) const
+    const std::optional<app_domain::InventoryItemDetails> TradeUIViewModel::GetPlayerItem(size_t itemIndex) const
     {
-        return GetInventoryItemByIndex(m_playerInventoryId, index);
+        return GetInventoryItem(m_playerInventoryId, itemIndex);
     }
 
-    const app_domain::Item* TradeUIViewModel::GetTraderItemByIndex(size_t index) const
+    const std::optional<app_domain::InventoryItemDetails> TradeUIViewModel::GetTraderItem(size_t itemIndex) const
     {
-        return GetInventoryItemByIndex(m_traderInventoryId, index);
+        return GetInventoryItem(m_traderInventoryId, itemIndex);
     }
 
-    std::vector<const app_domain::Item*> TradeUIViewModel::GetPlayerItems() const
+    const std::vector<app_domain::InventoryItemDetails>& TradeUIViewModel::GetPlayerItems() const
     {
-        return GetInventoryItems(m_playerInventoryId);
+        return m_playerItemsCache;
     }
 
-    std::vector<const app_domain::Item*> TradeUIViewModel::GetTraderItems() const
+    const std::vector<app_domain::InventoryItemDetails>& TradeUIViewModel::GetTraderItems() const
     {
-        return GetInventoryItems(m_traderInventoryId);
+        return m_traderItemsCache;
     }
 
-    void TradeUIViewModel::InvokeOnInventoryUpdates()
+    void TradeUIViewModel::UpdateItems()
     {
-        if (m_onPlayerInventoryUpdate)
-            m_onPlayerInventoryUpdate();
+        LoadInventoryItems(m_playerInventoryId, m_playerItemsCache);
+        LoadInventoryItems(m_traderInventoryId, m_traderItemsCache);
 
-        if (m_onTraderInventoryUpdate)
-            m_onTraderInventoryUpdate();
+        if (m_onPlayerItemsUpdate)
+            m_onPlayerItemsUpdate();
+
+        if (m_onTraderItemsUpdate)
+            m_onTraderItemsUpdate();
     }
 
     uint32_t TradeUIViewModel::GetInventoryMoney(const std::string& inventoryId) const
@@ -164,35 +167,30 @@ namespace app
         return inventory ? inventory.value().get().CurrentMoney : 0;
     }
 
-    const app_domain::Item* TradeUIViewModel::GetInventoryItemByIndex(const std::string& inventoryId, size_t index) const
+    std::optional<app_domain::InventoryItemDetails> TradeUIViewModel::GetInventoryItem(const std::string& inventoryId, size_t itemIndex) const
     {
-        auto inventoryItemResult = m_inventoryService.GetItemByIndex(inventoryId, index);
-        if (!inventoryItemResult)
-            return nullptr;
+        auto result = m_inventoryService.GetItemDetails(inventoryId, itemIndex);
+        if (!result)
+            return std::nullopt;
 
-        const auto& inventoryItem = inventoryItemResult.value().get();
-
-        auto itemResult = m_itemService.GetItemById(inventoryItem.ItemId);
-        if (!itemResult)
-            return nullptr;
-
-        return &itemResult.value().get();
+        return result.value();
     }
 
-    std::vector<const app_domain::Item*> TradeUIViewModel::GetInventoryItems(const std::string& inventoryId) const
+    void TradeUIViewModel::LoadInventoryItems(const std::string& inventoryId, std::vector<app_domain::InventoryItemDetails>& out_items) const
     {
-        std::vector<const app_domain::Item*> items;
+        out_items.clear();
+
         auto inventoryResult = m_inventoryService.GetInventoryById(inventoryId);
         if (!inventoryResult)
-            return items;
+            return;
 
-        for (const auto& inventoryItem : inventoryResult.value().get().Items)
+        const auto& inventory = inventoryResult.value().get();
+
+        for (size_t itemIndex = 0; itemIndex < inventory.Items.size(); ++itemIndex)
         {
-            auto itemResult = m_itemService.GetItemById(inventoryItem.ItemId);
-            if (itemResult)
-                items.push_back(&itemResult.value().get());
+            auto itemDetailsResult = m_inventoryService.GetItemDetails(inventoryId, itemIndex);
+            if (itemDetailsResult)
+                out_items.push_back(itemDetailsResult.value());
         }
-
-        return items;
     }
 }

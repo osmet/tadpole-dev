@@ -12,8 +12,7 @@ namespace app
     {
     public:
         using OnTradeBegin = std::function<void()>;
-        using OnPlayerInventoryUpdate = std::function<void()>;
-        using OnTraderInventoryUpdate = std::function<void()>;
+        using OnItemsUpdate = std::function<void()>;
 
         TradeUIViewModel(AppContext& appContext);
 
@@ -22,8 +21,8 @@ namespace app
             const std::string& traderCharacterId);
 
         void SetOnTradeBegin(OnTradeBegin callback);
-        void SetOnPlayerInventoryUpdate(OnPlayerInventoryUpdate callback);
-        void SetOnTraderInventoryUpdate(OnTraderInventoryUpdate callback);
+        void SetOnPlayerItemsUpdate(OnItemsUpdate callback);
+        void SetOnTraderItemsUpdate(OnItemsUpdate callback);
 
         tl::expected<void, app_domain::TradeError> CanBuyItem(std::size_t itemIndex) const;
         tl::expected<void, app_domain::TradeError> CanSellItem(std::size_t itemIndex) const;
@@ -43,17 +42,17 @@ namespace app
         float GetPlayerCurrentWeight() const;
         float GetPlayerMaxWeight() const;
 
-        const app_domain::Item* GetPlayerItemByIndex(size_t index) const;
-        const app_domain::Item* GetTraderItemByIndex(size_t index) const;
+        const std::optional<app_domain::InventoryItemDetails> GetPlayerItem(size_t itemIndex) const;
+        const std::optional<app_domain::InventoryItemDetails> GetTraderItem(size_t itemIndex) const;
         
-        std::vector<const app_domain::Item*> GetPlayerItems() const;
-        std::vector<const app_domain::Item*> GetTraderItems() const;
+        const std::vector<app_domain::InventoryItemDetails>& GetPlayerItems() const;
+        const std::vector<app_domain::InventoryItemDetails>& GetTraderItems() const;
 
     private:
-        void InvokeOnInventoryUpdates();
+        void UpdateItems();
         uint32_t GetInventoryMoney(const std::string& inventoryId) const;
-        const app_domain::Item* GetInventoryItemByIndex(const std::string& inventoryId, size_t index) const;
-        std::vector<const app_domain::Item*> GetInventoryItems(const std::string& inventoryId) const;
+        std::optional<app_domain::InventoryItemDetails> GetInventoryItem(const std::string& inventoryId, size_t itemIndex) const;
+        void LoadInventoryItems(const std::string& inventoryId, std::vector<app_domain::InventoryItemDetails>& out_items) const;
 
     private:
         app_domain::ItemService& m_itemService;
@@ -72,8 +71,11 @@ namespace app
         std::string m_traderPortrait;
         float m_playerMaxWeight = 0.0f;
 
+        std::vector<app_domain::InventoryItemDetails> m_playerItemsCache;
+        std::vector<app_domain::InventoryItemDetails> m_traderItemsCache;
+
         OnTradeBegin m_onTradeBegin;
-        OnPlayerInventoryUpdate m_onPlayerInventoryUpdate;
-        OnTraderInventoryUpdate m_onTraderInventoryUpdate;
+        OnItemsUpdate m_onPlayerItemsUpdate;
+        OnItemsUpdate m_onTraderItemsUpdate;
     };
 }

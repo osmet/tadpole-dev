@@ -513,7 +513,7 @@ public:
         return InventoryService::TransferMoney(fromInventoryId, toInventoryId, amount);
     }
 
-    tl::expected<void, InventoryError> TransferItemByIndex(
+    tl::expected<void, InventoryError> TransferItem(
         const std::string& fromInventoryId,
         const std::string& toInventoryId,
         std::size_t itemIndex) override
@@ -521,7 +521,7 @@ public:
         if (failTransferItem)
             return tl::unexpected(InventoryError::NotFound);
 
-        return InventoryService::TransferItemByIndex(fromInventoryId, toInventoryId, itemIndex);
+        return InventoryService::TransferItem(fromInventoryId, toInventoryId, itemIndex);
     }
 };
 

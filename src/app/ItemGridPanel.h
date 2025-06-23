@@ -12,7 +12,7 @@ namespace core
 
 namespace app_domain 
 { 
-    struct Item; 
+    struct InventoryItemDetails;
 }
 
 namespace app
@@ -27,7 +27,7 @@ namespace app
         ItemGridPanel(core::AssetManager& assetManager,
             size_t columnCount, size_t rowCount, float cellSize, float spacing);
 
-        void SetItems(const std::vector<const app_domain::Item*>& items);
+        void SetItems(const std::vector<app_domain::InventoryItemDetails>& items);
 
         void SetOnItemSlotClick(OnItemSlotClick callback);
         void SetOnItemSlotHoverIn(OnItemSlotHoverIn callback);
@@ -46,7 +46,7 @@ namespace app
         public:
             ItemSlot(core::AssetManager& assetManager, float cellSize);
 
-            void SetItem(const app_domain::Item& item);
+            void SetItem(const app_domain::InventoryItemDetails& item);
             void ClearItem();
 
         private:

@@ -21,17 +21,41 @@ namespace app_domain
     }
 
     tl::expected<std::reference_wrapper<const InventoryItem>, InventoryError>
-        InventoryService::GetItemByIndex(const std::string& inventoryId, std::size_t index) const
+        InventoryService::GetItem(const std::string& inventoryId, std::size_t itemIndex) const
     {
         auto it = m_inventories.find(inventoryId);
         if (it == m_inventories.end())
             return tl::unexpected(InventoryError::NotFound);
 
         const auto& inventory = it->second;
-        if (index >= inventory.Items.size())
+        if (itemIndex >= inventory.Items.size())
+            return tl::unexpected(InventoryError::IndexOutOfRange);
+
+        return std::cref(inventory.Items[itemIndex]);
+    }
+
+    tl::expected<InventoryItemDetails, InventoryError>
+        InventoryService::GetItemDetails(const std::string& inventoryId, std::size_t itemIndex) const
+    {
+        auto it = m_inventories.find(inventoryId);
+        if (it == m_inventories.end())
+            return tl::unexpected(InventoryError::NotFound);
+
+        const auto& inventory = it->second;
+        if (itemIndex >= inventory.Items.size())
+            return tl::unexpected(InventoryError::IndexOutOfRange);
+
+        const auto& inventoryItem = inventory.Items[itemIndex];
+
+        auto itemResult = m_itemService.GetItemById(inventoryItem.ItemId);
+        if (!itemResult.has_value())
             return tl::unexpected(InventoryError::ItemNotFound);
 
-        return std::cref(inventory.Items[index]);
+        return InventoryItemDetails {
+            itemIndex,
+            itemResult.value().get(),
+            inventoryItem.Count
+        };
     }
 
     tl::expected<void, InventoryError>
@@ -56,7 +80,7 @@ namespace app_domain
     }
 
     tl::expected<void, InventoryError>
-        InventoryService::TransferItemByIndex(const std::string& fromId, const std::string& toId, std::size_t index)
+        InventoryService::TransferItem(const std::string& fromId, const std::string& toId, std::size_t itemIndex)
     {
         auto fromIt = m_inventories.find(fromId);
         auto toIt = m_inventories.find(toId);
@@ -67,11 +91,11 @@ namespace app_domain
         auto& fromInventory = fromIt->second;
         auto& toInventory = toIt->second;
 
-        if (index >= fromInventory.Items.size())
-            return tl::unexpected(InventoryError::ItemNotFound);
+        if (itemIndex >= fromInventory.Items.size())
+            return tl::unexpected(InventoryError::IndexOutOfRange);
 
-        toInventory.Items.push_back(std::move(fromInventory.Items[index]));
-        fromInventory.Items.erase(fromInventory.Items.begin() + index);
+        toInventory.Items.push_back(std::move(fromInventory.Items[itemIndex]));
+        fromInventory.Items.erase(fromInventory.Items.begin() + itemIndex);
 
         return {};
     }

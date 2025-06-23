@@ -5,6 +5,7 @@
 #include "../core/TextLabel.h"
 #include "../app_domain/Item.h"
 #include "../app_domain/ItemRarity.h"
+#include "../app_domain/InventoryItemDetails.h"
 #include "ItemConfig.h"
 
 namespace app
@@ -37,7 +38,7 @@ namespace app
         }
     }
 
-    void ItemGridPanel::SetItems(const std::vector<const app_domain::Item*>& items)
+    void ItemGridPanel::SetItems(const std::vector<app_domain::InventoryItemDetails>& items)
     {
         size_t cellCount = GetWidgetCount();
         for (size_t index = 0; index < cellCount; ++index)
@@ -49,7 +50,7 @@ namespace app
             auto* itemSlot = static_cast<ItemSlot*>(widget);
 
             if (index < items.size())
-                itemSlot->SetItem(*items[index]);
+                itemSlot->SetItem(items[index]);
             else
                 itemSlot->ClearItem();
         }
@@ -120,31 +121,39 @@ namespace app
         m_selectImage = selectImage;
     }
 
-    void ItemGridPanel::ItemSlot::SetItem(const app_domain::Item& item)
+    void ItemGridPanel::ItemSlot::SetItem(const app_domain::InventoryItemDetails& item)
     {
-        if (!m_iconImage || !m_rarityGlowImage)
+        if (!m_iconImage || !m_rarityGlowImage || !m_countTextLabel)
             return;
 
         ClearItem();
 
-        m_iconImage->SetTexture(m_assetManager.GetTexture(item.IconTextureId));
+        m_iconImage->SetTexture(m_assetManager.GetTexture(item.Item.IconTextureId));
         m_iconImage->SetActive(true);
 
-        if (item.Rarity == app_domain::ItemRarity::Common)
-            return;
+        if (item.Item.Rarity != app_domain::ItemRarity::Common)
+        {
+            m_rarityGlowImage->SetColor(ItemConfig::GetRarityColor(item.Item.Rarity));
+            m_rarityGlowImage->SetActive(true);
+        }
 
-        m_rarityGlowImage->SetColor(ItemConfig::GetRarityColor(item.Rarity));
-        m_rarityGlowImage->SetActive(true);
+        if (item.Count > 1u)
+        {
+            m_countTextLabel->SetText(std::to_string(item.Count));
+            m_countTextLabel->SetActive(true);
+        }
     }
 
     void ItemGridPanel::ItemSlot::ItemSlot::ClearItem()
     {
-        if (!m_iconImage || !m_rarityGlowImage)
+        if (!m_iconImage || !m_rarityGlowImage || !m_countTextLabel)
             return;
 
         m_iconImage->SetActive(false);
 
         m_rarityGlowImage->SetActive(false);
+
+        m_countTextLabel->SetActive(false);
     }
 
 }

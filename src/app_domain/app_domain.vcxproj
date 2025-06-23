@@ -23,6 +23,7 @@
     <ClInclude Include="CharacterService.h" />
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="InventoryItem.h" />
+    <ClInclude Include="InventoryItemDetails.h" />
     <ClInclude Include="InventoryService.h" />
     <ClInclude Include="InventorySortBy.h" />
     <ClInclude Include="ItemCategory.h" />
@@ -38,6 +39,7 @@
     <ClCompile Include="CharacterService.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="InventoryItem.cpp" />
+    <ClCompile Include="InventoryItemDetails.cpp" />
     <ClCompile Include="InventoryService.cpp" />
     <ClCompile Include="InventorySortBy.cpp" />
     <ClCompile Include="ItemCategory.cpp" />

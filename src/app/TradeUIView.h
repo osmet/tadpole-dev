@@ -18,7 +18,7 @@ namespace core
 
 namespace app_domain 
 { 
-    struct Item; 
+    struct InventoryItemDetails;
 }
 
 namespace app
@@ -152,8 +152,8 @@ namespace app
         void SetTraderMoney(uint32_t money);
         void SetTraderWeight(float currentWeight, float maxWeight);
 
-        void SetPlayerItems(const std::vector<const app_domain::Item*>& items);
-        void SetTraderItems(const std::vector<const app_domain::Item*>& items);
+        void SetPlayerItems(const std::vector<app_domain::InventoryItemDetails>& items);
+        void SetTraderItems(const std::vector<app_domain::InventoryItemDetails>& items);
 
         void ShowItemPanel(const app_domain::Item& item, const sf::Vector2f& position);
         void HideItemPanel();

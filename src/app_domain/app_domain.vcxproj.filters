@@ -58,6 +58,9 @@
     <ClCompile Include="TradeService.cpp">
       <Filter>Source Files\trade</Filter>
     </ClCompile>
+    <ClCompile Include="InventoryItemDetails.cpp">
+      <Filter>Source Files\inventories</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Precompiled.h">
@@ -98,6 +101,9 @@
     </ClInclude>
     <ClInclude Include="TradeService.h">
       <Filter>Source Files\trade</Filter>
+    </ClInclude>
+    <ClInclude Include="InventoryItemDetails.h">
+      <Filter>Source Files\inventories</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,6 +4,7 @@
 #include <tl/expected.hpp>
 #include <functional>
 #include "ItemService.h"
+#include "InventoryItemDetails.h"
 
 namespace app_domain
 {
@@ -12,7 +13,8 @@ namespace app_domain
         NotFound = 0,
         NotEnoughMoney = 1,
         InvalidAmount = 2,
-        ItemNotFound = 3,
+        IndexOutOfRange = 3,
+        ItemNotFound = 4
     };
 
     class InventoryService
@@ -24,13 +26,16 @@ namespace app_domain
             GetInventoryById(const std::string& id) const;
 
         tl::expected<std::reference_wrapper<const InventoryItem>, InventoryError>
-            GetItemByIndex(const std::string& inventoryId, std::size_t index) const;
+            GetItem(const std::string& inventoryId, std::size_t itemIndex) const;
+
+        tl::expected<InventoryItemDetails, InventoryError>
+            GetItemDetails(const std::string& inventoryId, std::size_t itemIndex) const;
 
         virtual tl::expected<void, InventoryError>
             TransferMoney(const std::string& fromId, const std::string& toId, int32_t amount);
 
         virtual tl::expected<void, InventoryError>
-            TransferItemByIndex(const std::string& fromId, const std::string& toId, std::size_t index);
+            TransferItem(const std::string& fromId, const std::string& toId, std::size_t itemIndex);
 
         tl::expected<float, InventoryError> CalculateCurrentWeight(const std::string& inventoryId) const;
 

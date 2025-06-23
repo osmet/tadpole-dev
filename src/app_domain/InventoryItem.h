@@ -5,6 +5,6 @@ namespace app_domain
     struct InventoryItem
     {
         std::string ItemId;
-        std::int32_t Count = 0;
+        std::uint32_t Count = 0;
     };
 }
