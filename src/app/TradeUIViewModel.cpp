@@ -62,17 +62,17 @@ namespace app
 
     tl::expected<void, app_domain::TradeError> TradeUIViewModel::CanBuyItem(std::size_t itemIndex) const
     {
-        return m_tradeService.CanTradeItem(*m_playerCharacterId, *m_traderCharacterId, itemIndex);
+        return m_tradeService.CanTradeItem(m_playerCharacterId, m_traderCharacterId, itemIndex);
     }
 
     tl::expected<void, app_domain::TradeError> TradeUIViewModel::CanSellItem(std::size_t itemIndex) const
     {
-        return m_tradeService.CanTradeItem(*m_traderCharacterId, *m_playerCharacterId, itemIndex);
+        return m_tradeService.CanTradeItem(m_traderCharacterId, m_playerCharacterId, itemIndex);
     }
 
     tl::expected<void, app_domain::TradeError> TradeUIViewModel::BuyItem(std::size_t itemIndex)
     {
-        auto result = m_tradeService.TradeItem(*m_playerCharacterId, *m_traderCharacterId, itemIndex);
+        auto result = m_tradeService.TradeItem(m_playerCharacterId, m_traderCharacterId, itemIndex);
         if (result)
             InvokeOnInventoryUpdates();
 
@@ -81,7 +81,7 @@ namespace app
 
     tl::expected<void, app_domain::TradeError> TradeUIViewModel::SellItem(std::size_t itemIndex)
     {
-        auto result = m_tradeService.TradeItem(*m_traderCharacterId, *m_playerCharacterId, itemIndex);
+        auto result = m_tradeService.TradeItem(m_traderCharacterId, m_playerCharacterId, itemIndex);
         if (result)
             InvokeOnInventoryUpdates();
 
@@ -110,17 +110,17 @@ namespace app
 
     uint32_t TradeUIViewModel::GetPlayerMoney() const
     {
-        return GetInventoryMoney(*m_playerInventoryId);
+        return GetInventoryMoney(m_playerInventoryId);
     }
 
     uint32_t TradeUIViewModel::GetTraderMoney() const
     {
-        return GetInventoryMoney(*m_traderInventoryId);
+        return GetInventoryMoney(m_traderInventoryId);
     }
 
     float TradeUIViewModel::GetPlayerCurrentWeight() const
     {
-        auto weight = m_inventoryService.CalculateCurrentWeight(*m_playerInventoryId);
+        auto weight = m_inventoryService.CalculateCurrentWeight(m_playerInventoryId);
         return weight.value_or(0.0f);
     }
 
@@ -131,22 +131,22 @@ namespace app
 
     const app_domain::Item* TradeUIViewModel::GetPlayerItemByIndex(size_t index) const
     {
-        return GetInventoryItemByIndex(*m_playerInventoryId, index);
+        return GetInventoryItemByIndex(m_playerInventoryId, index);
     }
 
     const app_domain::Item* TradeUIViewModel::GetTraderItemByIndex(size_t index) const
     {
-        return GetInventoryItemByIndex(*m_traderInventoryId, index);
+        return GetInventoryItemByIndex(m_traderInventoryId, index);
     }
 
     std::vector<const app_domain::Item*> TradeUIViewModel::GetPlayerItems() const
     {
-        return GetInventoryItems(*m_playerInventoryId);
+        return GetInventoryItems(m_playerInventoryId);
     }
 
     std::vector<const app_domain::Item*> TradeUIViewModel::GetTraderItems() const
     {
-        return GetInventoryItems(*m_traderInventoryId);
+        return GetInventoryItems(m_traderInventoryId);
     }
 
     void TradeUIViewModel::InvokeOnInventoryUpdates()

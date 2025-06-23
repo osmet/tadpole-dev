@@ -61,10 +61,10 @@ namespace app
         app_domain::InventoryService& m_inventoryService;
         app_domain::TradeService& m_tradeService;
 
-        std::optional<std::string> m_playerCharacterId;
-        std::optional<std::string> m_traderCharacterId;
-        std::optional<std::string> m_playerInventoryId;
-        std::optional<std::string> m_traderInventoryId;
+        std::string m_playerCharacterId;
+        std::string m_traderCharacterId;
+        std::string m_playerInventoryId;
+        std::string m_traderInventoryId;
 
         std::string m_playerCharacterName;
         std::string m_traderCharacterName;
