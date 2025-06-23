@@ -43,12 +43,16 @@ namespace app
         float GetPlayerCurrentWeight() const;
         float GetPlayerMaxWeight() const;
 
+        const app_domain::Item* GetPlayerItemByIndex(size_t index) const;
+        const app_domain::Item* GetTraderItemByIndex(size_t index) const;
+        
         std::vector<const app_domain::Item*> GetPlayerItems() const;
         std::vector<const app_domain::Item*> GetTraderItems() const;
 
     private:
         void InvokeOnInventoryUpdates();
         uint32_t GetInventoryMoney(const std::string& inventoryId) const;
+        const app_domain::Item* GetInventoryItemByIndex(const std::string& inventoryId, size_t index) const;
         std::vector<const app_domain::Item*> GetInventoryItems(const std::string& inventoryId) const;
 
     private:

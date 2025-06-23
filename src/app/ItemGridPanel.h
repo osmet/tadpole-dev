@@ -21,6 +21,8 @@ namespace app
     {
     public:
         using OnItemSlotClick = std::function<void(std::size_t index)>;
+        using OnItemSlotHoverIn = std::function<void(std::size_t index, const sf::Vector2f& position)>;
+        using OnItemSlotHoverOut = std::function<void(std::size_t index)>;
 
         ItemGridPanel(core::AssetManager& assetManager,
             size_t columnCount, size_t rowCount, float cellSize, float spacing);
@@ -28,11 +30,15 @@ namespace app
         void SetItems(const std::vector<const app_domain::Item*>& items);
 
         void SetOnItemSlotClick(OnItemSlotClick callback);
+        void SetOnItemSlotHoverIn(OnItemSlotHoverIn callback);
+        void SetOnItemSlotHoverOut(OnItemSlotHoverOut callback);
 
     private:
         core::AssetManager& m_assetManager;
 
         OnItemSlotClick m_onItemSlotClick;
+        OnItemSlotHoverIn m_onItemSlotHoverIn;
+        OnItemSlotHoverOut m_onItemSlotHoverOut;
 
     private:
         class ItemSlot final : public core::Button

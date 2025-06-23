@@ -23,7 +23,9 @@ namespace app_domain
 
 namespace app
 {
-    class AppContext; class ItemGridPanel;
+    class AppContext; 
+    class ItemGridPanel;
+    class ItemPanel;
 
     class TradeUIView : public core::UIView
     {
@@ -136,8 +138,6 @@ namespace app
     private:
         void BindViewModel();
 
-        void SetOnPlayerItemSlotClick(ItemGridPanel::OnItemSlotClick callback);
-        void SetOnTraderItemSlotClick(ItemGridPanel::OnItemSlotClick callback);
         void SetOnItemFilterButtonClick(ItemFilterPanel::OnFilterButtonClick callback);
         void SetOnItemSortButtonClick(ItemSortPanel::OnSortButtonClick callback);
         void SetOnTradeButtonClick(std::function<void()> callback);
@@ -155,6 +155,8 @@ namespace app
         void SetPlayerItems(const std::vector<const app_domain::Item*>& items);
         void SetTraderItems(const std::vector<const app_domain::Item*>& items);
 
+        void ShowItemPanel(const app_domain::Item& item, const sf::Vector2f& position);
+        void HideItemPanel();
         void ShowErrorPanel(app_domain::TradeError error);
 
         AppContext& m_appContext;
@@ -167,10 +169,9 @@ namespace app
         ItemGridPanel* m_traderItemGrid = nullptr;
         ItemFilterPanel* m_itemFilterPanel = nullptr;
         ItemSortPanel* m_itemSortPanel = nullptr;
+        ItemPanel* m_itemPanel = nullptr;
         ErrorPanel* m_errorPanel = nullptr;
 
-        ItemGridPanel::OnItemSlotClick m_onPlayerItemSlotClick;
-        ItemGridPanel::OnItemSlotClick m_onTraderItemSlotClick;
         ItemFilterPanel::OnFilterButtonClick m_onItemFilterButtonClick;
         ItemSortPanel::OnSortButtonClick m_onItemSortButtonClick;
         std::function<void()> m_onTradeButtonClick;

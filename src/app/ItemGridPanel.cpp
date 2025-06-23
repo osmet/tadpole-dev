@@ -23,6 +23,17 @@ namespace app
         {
             auto* itemSlot = CreateWidget<ItemSlot>(assetManager, cellSize);
             itemSlot->SetOnClick([this, index]() { if (m_onItemSlotClick) m_onItemSlotClick(index); });
+            itemSlot->SetOnHoverIn([this, index, itemSlot](const sf::Vector2f& mousePosition) { 
+                if (!m_onItemSlotHoverIn)
+                    return;
+
+                auto* widget = GetWidget(index);
+                if (!widget)
+                    return;
+
+                 m_onItemSlotHoverIn(index, widget->GetPosition());
+            });
+            itemSlot->SetOnHoverOut([this, index]() { if (m_onItemSlotHoverOut) m_onItemSlotHoverOut(index); });
         }
     }
 
@@ -31,7 +42,11 @@ namespace app
         size_t cellCount = GetWidgetCount();
         for (size_t index = 0; index < cellCount; ++index)
         {
-            auto* itemSlot = static_cast<ItemSlot*>(GetWidget(index));
+            auto* widget = GetWidget(index);
+            if (!widget)
+                continue;
+
+            auto* itemSlot = static_cast<ItemSlot*>(widget);
 
             if (index < items.size())
                 itemSlot->SetItem(*items[index]);
@@ -43,6 +58,16 @@ namespace app
     void ItemGridPanel::SetOnItemSlotClick(OnItemSlotClick callback)
     {
         m_onItemSlotClick = std::move(callback);
+    }
+
+    void ItemGridPanel::SetOnItemSlotHoverIn(OnItemSlotHoverIn callback)
+    {
+        m_onItemSlotHoverIn = std::move(callback);
+    }
+
+    void ItemGridPanel::SetOnItemSlotHoverOut(OnItemSlotHoverOut callback)
+    {
+        m_onItemSlotHoverOut = std::move(callback);
     }
 
     ItemGridPanel::ItemSlot::ItemSlot(core::AssetManager& assetManager, float cellSize)

@@ -105,7 +105,7 @@
       "IconTextureId": "UI_Item_Misc_Flower",
       "Description": "",
       "Type": "Misc",
-      "IsStoryItem": true,
+      "IsStoryItem": false,
       "Rarity": "Legendary",
       "Weight": 1.0,
       "Value": 1000

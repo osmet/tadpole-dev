@@ -129,6 +129,16 @@ namespace app
         return m_playerMaxWeight;
     }
 
+    const app_domain::Item* TradeUIViewModel::GetPlayerItemByIndex(size_t index) const
+    {
+        return GetInventoryItemByIndex(*m_playerInventoryId, index);
+    }
+
+    const app_domain::Item* TradeUIViewModel::GetTraderItemByIndex(size_t index) const
+    {
+        return GetInventoryItemByIndex(*m_traderInventoryId, index);
+    }
+
     std::vector<const app_domain::Item*> TradeUIViewModel::GetPlayerItems() const
     {
         return GetInventoryItems(*m_playerInventoryId);
@@ -152,6 +162,21 @@ namespace app
     {
         auto inventory = m_inventoryService.GetInventoryById(inventoryId);
         return inventory ? inventory.value().get().CurrentMoney : 0;
+    }
+
+    const app_domain::Item* TradeUIViewModel::GetInventoryItemByIndex(const std::string& inventoryId, size_t index) const
+    {
+        auto inventoryItemResult = m_inventoryService.GetItemByIndex(inventoryId, index);
+        if (!inventoryItemResult)
+            return nullptr;
+
+        const auto& inventoryItem = inventoryItemResult.value().get();
+
+        auto itemResult = m_itemService.GetItemById(inventoryItem.ItemId);
+        if (!itemResult)
+            return nullptr;
+
+        return &itemResult.value().get();
     }
 
     std::vector<const app_domain::Item*> TradeUIViewModel::GetInventoryItems(const std::string& inventoryId) const

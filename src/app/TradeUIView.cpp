@@ -486,14 +486,12 @@ namespace app
                 playerItemGrid->SetAnchor(0.5f, 0.f);
                 playerItemGrid->SetPivot(1.f, 0.f);
                 playerItemGrid->SetLocalPosition(-40.f, 215.f);
-                playerItemGrid->SetOnItemSlotClick([this](std::size_t index) { if (m_onPlayerItemSlotClick) m_onPlayerItemSlotClick(index); });
                 m_playerItemGrid = playerItemGrid;
 
                 auto* traderItemGrid = m_mainWidget->CreateWidget<ItemGridPanel>(assetManager, columnCount, rowCount, cellSize, spacing);
                 traderItemGrid->SetAnchor(0.5f, 0.f);
                 traderItemGrid->SetPivot(0.f, 0.f);
                 traderItemGrid->SetLocalPosition(40.f, 215.f);
-                traderItemGrid->SetOnItemSlotClick([this](std::size_t index) { if (m_onTraderItemSlotClick) m_onTraderItemSlotClick(index); });
                 m_traderItemGrid = traderItemGrid;
             }
 
@@ -534,6 +532,7 @@ namespace app
 
             {
                 auto* itemPanel = m_mainWidget->CreateWidget<ItemPanel>(assetManager);
+                m_itemPanel = itemPanel;
             }
 
             {
@@ -589,41 +588,57 @@ namespace app
             SetTraderMoney(m_viewModel.GetTraderMoney());
         });
 
-        SetOnPlayerItemSlotClick([this](std::size_t index) {
-            auto canTradeResult = m_viewModel.CanSellItem(index);
-            if (!canTradeResult.has_value())
-            {
-                ShowErrorPanel(canTradeResult.error());
-                return;
-            }
+        if (m_playerItemGrid)
+        {
+            m_playerItemGrid->SetOnItemSlotClick([this](std::size_t index) {
+                auto canTradeResult = m_viewModel.CanSellItem(index);
+                if (!canTradeResult.has_value())
+                {
+                    ShowErrorPanel(canTradeResult.error());
+                    return;
+                }
 
-            auto tradeResult = m_viewModel.SellItem(index);
-            if (!tradeResult.has_value())
-                ShowErrorPanel(tradeResult.error());
-        });
+                auto tradeResult = m_viewModel.SellItem(index);
+                if (!tradeResult.has_value())
+                    ShowErrorPanel(tradeResult.error());
+            });
 
-        SetOnTraderItemSlotClick([this](std::size_t index) {
-            auto canTradeResult = m_viewModel.CanBuyItem(index);
-            if (!canTradeResult.has_value())
-            {
-                ShowErrorPanel(canTradeResult.error());
-                return;
-            }
+            m_playerItemGrid->SetOnItemSlotHoverIn([this](std::size_t index, const sf::Vector2f& position) {
+                auto* item = m_viewModel.GetPlayerItemByIndex(index);
+                if (item)
+                    ShowItemPanel(*item, position);
+            });
 
-            auto tradeResult = m_viewModel.BuyItem(index);
-            if (!tradeResult.has_value())
-                ShowErrorPanel(tradeResult.error());
-        });
-    }
+            m_playerItemGrid->SetOnItemSlotHoverOut([this](std::size_t index) {
+                HideItemPanel();
+            });
+        }
 
-    void TradeUIView::SetOnPlayerItemSlotClick(ItemGridPanel::OnItemSlotClick callback)
-    {
-        m_onPlayerItemSlotClick = std::move(callback);
-    }
+        if (m_traderItemGrid)
+        {
+            m_traderItemGrid->SetOnItemSlotClick([this](std::size_t index) {
+                auto canTradeResult = m_viewModel.CanBuyItem(index);
+                if (!canTradeResult.has_value())
+                {
+                    ShowErrorPanel(canTradeResult.error());
+                    return;
+                }
 
-    void TradeUIView::SetOnTraderItemSlotClick(ItemGridPanel::OnItemSlotClick callback)
-    {
-        m_onTraderItemSlotClick = std::move(callback);
+                auto tradeResult = m_viewModel.BuyItem(index);
+                if (!tradeResult.has_value())
+                    ShowErrorPanel(tradeResult.error());
+            });
+
+            m_traderItemGrid->SetOnItemSlotHoverIn([this](std::size_t index, const sf::Vector2f& position) {
+                auto* item = m_viewModel.GetTraderItemByIndex(index);
+                if (item)
+                    ShowItemPanel(*item, position);
+            });
+
+            m_traderItemGrid->SetOnItemSlotHoverOut([this](std::size_t index) {
+                HideItemPanel();
+            });
+        }
     }
 
     void TradeUIView::SetOnItemFilterButtonClick(ItemFilterPanel::OnFilterButtonClick callback)
@@ -699,6 +714,22 @@ namespace app
     {
         if (m_traderItemGrid)
             m_traderItemGrid->SetItems(items);
+    }
+
+    void TradeUIView::ShowItemPanel(const app_domain::Item& item, const sf::Vector2f& position)
+    {
+        if (!m_itemPanel)
+            return;
+
+        m_itemPanel->Show(item, position, sf::Vector2f(60.f, 60.f), m_appContext.GetRenderWindowSize().y);
+    }
+
+    void TradeUIView::HideItemPanel()
+    {
+        if (!m_itemPanel)
+            return;
+
+        m_itemPanel->Hide();
     }
 
     void TradeUIView::ShowErrorPanel(app_domain::TradeError error)

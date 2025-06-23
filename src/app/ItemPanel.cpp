@@ -28,6 +28,8 @@ namespace app
         auto& linearGradientMirrorTexture = assetManager.GetTexture("UI_Overlay_LinearGradient_Horizontal_Mirror");
 
         auto* backgroundImage = CreateWidget<core::Image>();
+        backgroundImage->SetAnchor(0.f, 0.f);
+        backgroundImage->SetPivot(0.f, 0.f);
         backgroundImage->SetSize(430.f, 100.f);
         backgroundImage->SetColor(sf::Color(25u, 25u, 25u, 255u));
         backgroundImage->SetOutlineThickness(2.f);
@@ -161,43 +163,75 @@ namespace app
             || !m_footerPanel || !m_moneyTextLabel || !m_moneyIconImage || !m_weightTextLabel || !m_weightIconImage)
             return;
 
-        sf::Vector2f padding(20.f, 16.f);
-        float maxTextWidth = 320.f;
+        m_iconImage->SetTexture(m_assetManager.GetTexture(item.IconTextureId));
+        m_iconImage->SetLocalPosition(30.f, -30.f);
 
-        float minBodyPanelSizeY = 150.f;
+        sf::Vector2f padding(20.f, 16.f);
+        float textIconPaddingX = 28.f;
+        float maxTextWidth = 320.f;
+        float minBodyPanelSize = m_iconImage->GetSize().y + m_iconImage->GetLocalPosition().y + padding.y;
         float panelSizeY = padding.y;
 
         sf::Color rarityNameColor(ItemConfig::GetRarityColor(item.Rarity));
-        sf::Color rarityOverlayColor(rarityNameColor);
-        rarityOverlayColor.a = 50u;
 
-        m_rarityOverlayImage->SetColor(rarityOverlayColor);
+        bool isCommon = item.Rarity == app_domain::ItemRarity::Common;
+
+        if (!isCommon)
+        {
+            sf::Color rarityOverlayColor(rarityNameColor);
+            rarityOverlayColor.a = 50u;
+
+            m_rarityOverlayImage->SetColor(rarityOverlayColor);
+            m_rarityOverlayImage->SetActive(true);
+        }
+        else
+        {
+            m_rarityOverlayImage->SetActive(false);
+        }
 
         m_nameTextLabel->SetText(item.Name);
         m_nameTextLabel->SetLocalPosition(padding);
         m_nameTextLabel->SetColor(rarityNameColor);
-        panelSizeY += m_nameTextLabel->GetSize().y + 10.f;
+        panelSizeY += m_nameTextLabel->GetSize().y;
 
-        m_rarityTextLabel->SetLocalPosition(padding.x, panelSizeY);
-        m_rarityTextLabel->SetText("[" + app_domain::ItemRarityHelper::ToString(item.Rarity) + "]");
-        panelSizeY += m_rarityTextLabel->GetSize().y + 20.f;
+        if (!isCommon)
+        {
+            panelSizeY += 10.f;
+            m_rarityTextLabel->SetLocalPosition(padding.x, panelSizeY);
+            m_rarityTextLabel->SetText("[" + app_domain::ItemRarityHelper::ToString(item.Rarity) + "]");
+            m_rarityTextLabel->SetActive(true);
+            panelSizeY += m_rarityTextLabel->GetSize().y;
+        }
+        else
+        {
+            m_rarityTextLabel->SetActive(false);
+        }
 
+        panelSizeY += 20.f;
         m_descriptionIconImage->SetLocalPosition(padding.x, panelSizeY);
+
         panelSizeY += 6.f;
+        m_descriptionTextLabel->SetLocalPosition(padding.x + textIconPaddingX, panelSizeY);
+        m_descriptionTextLabel->SetText(item.Description + ".");
+        panelSizeY += m_descriptionTextLabel->GetSize().y;
 
-        m_descriptionTextLabel->SetLocalPosition(padding.x + 28.f, panelSizeY);
-        m_descriptionTextLabel->SetText(item.Description);
-        panelSizeY += m_descriptionTextLabel->GetSize().y + 26.f;
-
+        panelSizeY += 26.f;
         m_typeIconImage->SetLocalPosition(padding.x, panelSizeY);
+
         panelSizeY += 6.f;
-
-        m_typeTextLabel->SetLocalPosition(padding.x + 28.f, panelSizeY);
+        m_typeTextLabel->SetLocalPosition(padding.x + textIconPaddingX, panelSizeY);
         m_typeTextLabel->SetText(app_domain::ItemTypeHelper::ToString(item.Type));
-        panelSizeY += m_descriptionTextLabel->GetSize().y + 16.f;
+        panelSizeY += m_typeTextLabel->GetSize().y;
 
-        if (panelSizeY < minBodyPanelSizeY)
-            panelSizeY = minBodyPanelSizeY;
+        panelSizeY += padding.y;
+
+        if (panelSizeY < minBodyPanelSize)
+        {
+            panelSizeY = minBodyPanelSize;
+
+            m_typeIconImage->SetLocalPosition(padding.x, panelSizeY - padding.y - m_typeTextLabel->GetSize().y - 6.f);
+            m_typeTextLabel->SetLocalPosition(padding.x + textIconPaddingX, panelSizeY - padding.y - m_typeTextLabel->GetSize().y);
+        }
 
         m_footerPanel->SetLocalPosition(0.f, panelSizeY);
 
@@ -222,9 +256,6 @@ namespace app
         m_backgroundBottomOverlayImage->SetLocalPosition(0.f, panelSizeY - m_backgroundBottomOverlayImage->GetSize().y);
 
         m_backgroundImage->SetSize(panelWidth, panelHeight);
-
-        m_iconImage->SetTexture(m_assetManager.GetTexture(item.IconTextureId));
-        m_iconImage->SetLocalPosition(30.f, -30.f);
 
         sf::Vector2f targetPosition(position + offset);
 
