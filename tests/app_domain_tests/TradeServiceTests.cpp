@@ -505,7 +505,7 @@ public:
     tl::expected<void, InventoryError> TransferMoney(
         const std::string& fromInventoryId,
         const std::string& toInventoryId,
-        int amount) override
+        std::uint32_t amount) override
     {
         if (failTransferMoney)
             return tl::unexpected(InventoryError::NotFound);

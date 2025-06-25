@@ -12,7 +12,7 @@ namespace core
 
 namespace app_domain 
 { 
-    struct InventoryItemDetails;
+    class InventoryItemDetails;
 }
 
 namespace app
@@ -49,6 +49,8 @@ namespace app
             void SetItem(const app_domain::InventoryItemDetails& item);
             void ClearItem();
 
+            size_t GetItemIndex() const;
+
         private:
             core::AssetManager& m_assetManager;
 
@@ -57,6 +59,8 @@ namespace app
             core::Image* m_frameImage = nullptr;
             core::TextLabel* m_countTextLabel = nullptr;
             core::Image* m_selectImage = nullptr;
+
+            size_t m_itemIndex = 0u;
         };
     };
 }

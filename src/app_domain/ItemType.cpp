@@ -19,7 +19,7 @@ namespace app_domain
         return std::string(magic_enum::enum_name(type));
     }
 
-    ItemCategory ItemTypeHelper::GetItemCategory(ItemType type)
+    ItemCategory ItemTypeHelper::ToCategory(ItemType type)
     {
         if (type >= ItemType::Misc && type <= ItemType::Valuable)
             return ItemCategory::Misc;

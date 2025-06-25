@@ -23,16 +23,17 @@ namespace app
         for (size_t index = 0; index < cellCount; ++index)
         {
             auto* itemSlot = CreateWidget<ItemSlot>(assetManager, cellSize);
-            itemSlot->SetOnClick([this, index]() { if (m_onItemSlotClick) m_onItemSlotClick(index); });
-            itemSlot->SetOnHoverIn([this, index, itemSlot](const sf::Vector2f& mousePosition) { 
-                if (!m_onItemSlotHoverIn)
+            itemSlot->SetOnClick([this, itemSlot]() { if (m_onItemSlotClick && itemSlot) m_onItemSlotClick(itemSlot->GetItemIndex()); });
+            itemSlot->SetOnHoverIn([this, index, itemSlot](const sf::Vector2f& mousePosition) 
+            { 
+                if (!m_onItemSlotHoverIn || !itemSlot)
                     return;
 
                 auto* widget = GetWidget(index);
                 if (!widget)
                     return;
 
-                 m_onItemSlotHoverIn(index, widget->GetPosition());
+                 m_onItemSlotHoverIn(itemSlot->GetItemIndex(), widget->GetPosition());
             });
             itemSlot->SetOnHoverOut([this, index]() { if (m_onItemSlotHoverOut) m_onItemSlotHoverOut(index); });
         }
@@ -128,20 +129,22 @@ namespace app
 
         ClearItem();
 
-        m_iconImage->SetTexture(m_assetManager.GetTexture(item.Item.IconTextureId));
+        m_iconImage->SetTexture(m_assetManager.GetTexture(item.GetItem().IconTextureId));
         m_iconImage->SetActive(true);
 
-        if (item.Item.Rarity != app_domain::ItemRarity::Common)
+        if (item.GetItem().Rarity != app_domain::ItemRarity::Common)
         {
-            m_rarityGlowImage->SetColor(ItemConfig::GetRarityColor(item.Item.Rarity));
+            m_rarityGlowImage->SetColor(ItemConfig::GetRarityColor(item.GetItem().Rarity));
             m_rarityGlowImage->SetActive(true);
         }
 
-        if (item.Count > 1u)
+        if (item.GetCount() > 1u)
         {
-            m_countTextLabel->SetText(std::to_string(item.Count));
+            m_countTextLabel->SetText(std::to_string(item.GetCount()));
             m_countTextLabel->SetActive(true);
         }
+
+        m_itemIndex = item.GetIndex();
     }
 
     void ItemGridPanel::ItemSlot::ItemSlot::ClearItem()
@@ -156,4 +159,8 @@ namespace app
         m_countTextLabel->SetActive(false);
     }
 
+    size_t ItemGridPanel::ItemSlot::ItemSlot::GetItemIndex() const
+    {
+        return m_itemIndex;
+    }
 }

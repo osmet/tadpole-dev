@@ -4,10 +4,24 @@ namespace app_domain
 {
     struct Item;
 
-    struct InventoryItemDetails
+    class InventoryItemDetails
     {
-        size_t Index = 0u;
-        const Item& Item;
-        std::uint32_t Count = 0u;
+    public:
+        InventoryItemDetails(std::size_t index, const Item& item, 
+            std::uint32_t count, std::uint64_t modifiedAt);
+
+        std::size_t GetIndex() const;
+        const Item& GetItem() const;
+        std::uint32_t GetCount() const;
+        std::uint64_t GetModifiedAt() const;
+
+        float GetTotalWeight() const;
+        std::uint32_t GetTotalValue() const;
+
+    private:
+        std::size_t m_index = 0u;
+        std::reference_wrapper<const Item> m_item;
+        std::uint32_t m_count = 0u;
+        std::uint64_t m_modifiedAt = 0u;
     };
 }

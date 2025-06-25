@@ -112,7 +112,8 @@ namespace app
         confirmButton->SetLocalPosition(0.f, 0.f);
         confirmButton->SetSize(160.f, 34.f);
         confirmButton->SetColor(sf::Color(48u, 58u, 64u, 255u));
-        confirmButton->SetOnClick([this]() { 
+        confirmButton->SetOnClick([this]() 
+        { 
             SetActive(false); 
 
             if (m_onConfirm)
@@ -145,12 +146,18 @@ namespace app
     }
 
     TradeUIView::ItemFilterPanel::ItemFilterPanel(core::AssetManager& assetManager,
-        const std::vector<ItemFilterDescriptor>& itemFilterDescriptors,
-        OnFilterButtonClick& onFilterButtonClick)
+        const std::vector<ItemFilterDescriptor>& itemFilterDescriptors)
     {
+        std::size_t buttonCount = itemFilterDescriptors.size();
+
+        if (buttonCount == 0u)
+        {
+            SetActive(false);
+            return;
+        }
+
         float buttonSize = 35.f;
         float spacing = 10.f;
-        std::size_t buttonCount = itemFilterDescriptors.size();
 
         SetSpacing(spacing);
         Reserve(buttonCount);
@@ -159,8 +166,10 @@ namespace app
         sf::Color filterButtonNormalColor(0u, 0u, 0u, 50u);
         sf::Color filterButtonHoveredColor(128u, 128u, 128u, 50u);
         sf::Color filterButtonPressedColor(255u, 255u, 255u, 50u);
+        sf::Color filterButtonDisabledColor(255u, 255u, 255u, 50u);
         sf::Color filterButtonFrameColor(128u, 107u, 95u, 255u);
         auto& filterButtonFrameTexture = assetManager.GetTexture("UI_Panel_Circle_Frame");
+
 
         for (const auto& itemFilterDescriptor : itemFilterDescriptors)
         {
@@ -178,15 +187,33 @@ namespace app
             filterButton->SetNormalColor(filterButtonNormalColor);
             filterButton->SetHoveredColor(filterButtonHoveredColor);
             filterButton->SetPressedColor(filterButtonPressedColor);
-            filterButton->SetOnClick([onFilterButtonClick, itemCategory]() { if (onFilterButtonClick) onFilterButtonClick(itemCategory); });
-            filterButton->SetOnHoverIn([this, filterButton, name](const sf::Vector2f& mousePosition) {
+            filterButton->SetDisabledColor(filterButtonDisabledColor);
+            filterButton->SetOnClick([this, filterButton, itemCategory]()
+            { 
+                for (auto* button : m_filterButtons)
+                {
+                    if (button)
+                        button->SetInteractable(true);
+                }
+
+                if (filterButton)
+                    filterButton->SetInteractable(false);
+
+                if (m_onFilterButtonClick) 
+                    m_onFilterButtonClick(itemCategory); 
+
+            });
+            filterButton->SetOnHoverIn([this, filterButton, name](const sf::Vector2f& mousePosition) 
+            {
                 if (m_tooltipPanel && filterButton) 
                     m_tooltipPanel->Show(name, filterButton->GetPosition(), sf::Vector2f(6.f, -12.f));
             });
-            filterButton->SetOnHoverOut([this] {
+            filterButton->SetOnHoverOut([this] 
+            {
                 if (m_tooltipPanel)
                     m_tooltipPanel->Hide();
             });
+            m_filterButtons.push_back(filterButton);
 
             auto* itemCategoryImage = filterButton->CreateWidget<core::Image>();
             itemCategoryImage->SetSize(25.f);
@@ -197,6 +224,9 @@ namespace app
             filterButtonFrameImage->SetTexture(filterButtonFrameTexture);
             filterButtonFrameImage->SetColor(filterButtonFrameColor);
         }
+
+        if (m_filterButtons[0])
+            m_filterButtons[0]->SetInteractable(false);
     }
 
     void TradeUIView::ItemFilterPanel::SetTooltipPanel(TooltipPanel* tooltipPanel)
@@ -204,13 +234,23 @@ namespace app
         m_tooltipPanel = tooltipPanel;
     }
 
-    TradeUIView::ItemSortPanel::ItemSortPanel(core::AssetManager& assetManager,
-        const std::vector<ItemSortDescriptor>& itemSortDescriptors,
-        OnSortButtonClick& onSortButtonClick)
+    void TradeUIView::ItemFilterPanel::SetOnFilterButtonClick(OnFilterButtonClick callback)
     {
+        m_onFilterButtonClick = std::move(callback);
+    }
+
+    TradeUIView::ItemSortPanel::ItemSortPanel(core::AssetManager& assetManager,
+        const std::vector<ItemSortDescriptor>& itemSortDescriptors)
+    {
+        std::size_t buttonCount = itemSortDescriptors.size();
+        if (buttonCount == 0u)
+        {
+            SetActive(false);
+            return;
+        }
+
         float buttonSize = 35.f;
         float spacing = 10.f;
-        std::size_t buttonCount = itemSortDescriptors.size();
         auto& regularFont = assetManager.GetFont("Mignon_Regular");
         auto& sortIconTexture = assetManager.GetTexture("UI_Icon_Sort");
 
@@ -220,11 +260,13 @@ namespace app
         sortByButton->SetSize(185.f, 30.f);
         sortByButton->SetColor(sf::Color::Transparent);
         sortByButton->SetOnClick([this] { ToggleItemSortButtonsPanel(); });
-        sortByButton->SetOnHoverIn([this, sortByButton](const sf::Vector2f& mousePosition) {
+        sortByButton->SetOnHoverIn([this, sortByButton](const sf::Vector2f& mousePosition) 
+        {
             if (m_tooltipPanel && sortByButton)
                 m_tooltipPanel->Show("Sort By", sf::Vector2f(mousePosition.x, sortByButton->GetPosition().y), sf::Vector2f(6.f, 24.f + sortByButton->GetSize().y));
         });
-        sortByButton->SetOnHoverOut([this] { 
+        sortByButton->SetOnHoverOut([this] 
+        { 
             if (m_tooltipPanel)
                 m_tooltipPanel->Hide();
         });
@@ -242,7 +284,7 @@ namespace app
         sortByButtonTextLabel->SetLocalPosition(33.f, -1.f);
         sortByButtonTextLabel->SetFont(regularFont);
         sortByButtonTextLabel->SetFontSize(18u);
-        sortByButtonTextLabel->SetText("Sort By");
+        sortByButtonTextLabel->SetText(itemSortDescriptors[0].second);
 
         sf::Color sortByFrameColor(sf::Color(191u, 163u, 143u, 128u));
         auto& sortByButtonFrameTexture = assetManager.GetTexture("UI_Panel_SortByButton_Frame");
@@ -291,7 +333,16 @@ namespace app
             sortButton->SetPivot(0.f, 0.f);
             sortButton->SetSize(185.f, 35.f);
             sortButton->SetColor(sf::Color::Transparent);
-            sortButton->SetOnClick([onSortButtonClick, sortMode]() { if (onSortButtonClick) onSortButtonClick(sortMode); });
+            sortButton->SetOnClick([this, sortMode, sortModeName, sortByButtonTextLabel]()
+            { 
+                if (sortByButtonTextLabel)
+                    sortByButtonTextLabel->SetText(sortModeName);
+
+                ToggleItemSortButtonsPanel();
+
+                if (m_onSortButtonClick) 
+                    m_onSortButtonClick(sortMode); 
+            });
 
             auto* sortButtonTextLabel = sortButton->CreateWidget<core::TextLabel>();
             sortButtonTextLabel->SetAnchor(0.f, .5f);
@@ -306,6 +357,11 @@ namespace app
     void TradeUIView::ItemSortPanel::SetTooltipPanel(TooltipPanel* tooltipPanel)
     {
         m_tooltipPanel = tooltipPanel;
+    }
+
+    void TradeUIView::ItemSortPanel::SetOnSortButtonClick(OnSortButtonClick callback)
+    {
+        m_onSortButtonClick = std::move(callback);
     }
 
     void TradeUIView::ItemSortPanel::ToggleItemSortButtonsPanel()
@@ -460,7 +516,7 @@ namespace app
                     { app_domain::ItemCategory::Misc, "Miscellaneous", "UI_Icon_Filter_Misc" },
                 };
 
-                auto* itemFilterPanel = m_mainWidget->CreateWidget<ItemFilterPanel>(assetManager, itemFilterDescriptors, m_onItemFilterButtonClick);
+                auto* itemFilterPanel = m_mainWidget->CreateWidget<ItemFilterPanel>(assetManager, itemFilterDescriptors);
                 itemFilterPanel->SetAnchor(.5f, 0.f);
                 itemFilterPanel->SetPivot(.5f, 0.f);
                 itemFilterPanel->SetLocalPosition(0.f, 135.f);
@@ -497,13 +553,13 @@ namespace app
 
             {
                 std::vector<ItemSortPanel::ItemSortDescriptor> itemSortDescriptors = {
-                  { ItemSortMode::Type, "Type" },
-                  { ItemSortMode::Value, "Value" },
-                  { ItemSortMode::Weight, "Weight" },
-                  { ItemSortMode::Name, "Name" }
+                  { app_domain::ItemSortMode::Latest, "Latest" },
+                  { app_domain::ItemSortMode::Type, "Type" },
+                  { app_domain::ItemSortMode::Value, "Value" },
+                  { app_domain::ItemSortMode::Weight, "Weight" },
                 };
 
-                auto* itemSortPanel = m_mainWidget->CreateWidget<ItemSortPanel>(assetManager, itemSortDescriptors, m_onItemSortButtonClick);
+                auto* itemSortPanel = m_mainWidget->CreateWidget<ItemSortPanel>(assetManager, itemSortDescriptors);
                 itemSortPanel->SetAnchor(.5f, 1.f);
                 itemSortPanel->SetPivot(0.f, 1.f);
                 itemSortPanel->SetLocalPosition(-492.f, -95.f);
@@ -566,7 +622,8 @@ namespace app
     }
     
     void TradeUIView::BindViewModel() {
-        m_viewModel.SetOnTradeBegin([this]() {
+        m_viewModel.SetOnTradeBegin([this]() 
+        {
             SetPlayerName(m_viewModel.GetPlayerName());
             SetPlayerPortraitTexture(m_viewModel.GetPlayerPortraitTextureId());
 
@@ -574,7 +631,8 @@ namespace app
             SetTraderPortraitTexture(m_viewModel.GetTraderPortraitTextureId());
         });
 
-        m_viewModel.SetOnPlayerItemsUpdate([this]() {
+        m_viewModel.SetOnPlayerItemsUpdate([this]() 
+        {
             SetPlayerItems(m_viewModel.GetPlayerItems());
 
             SetPlayerMoney(m_viewModel.GetPlayerMoney());
@@ -582,7 +640,8 @@ namespace app
             SetPlayerWeight(m_viewModel.GetPlayerCurrentWeight(), m_viewModel.GetPlayerMaxWeight());
         });
 
-        m_viewModel.SetOnTraderItemsUpdate([this]() {
+        m_viewModel.SetOnTraderItemsUpdate([this]() 
+        {
             SetTraderItems(m_viewModel.GetTraderItems());
 
             SetTraderMoney(m_viewModel.GetTraderMoney());
@@ -590,7 +649,8 @@ namespace app
 
         if (m_playerItemGrid)
         {
-            m_playerItemGrid->SetOnItemSlotClick([this](std::size_t index) {
+            m_playerItemGrid->SetOnItemSlotClick([this](std::size_t index) 
+            {
                 auto canTradeResult = m_viewModel.CanSellItem(index);
                 if (!canTradeResult.has_value())
                 {
@@ -603,20 +663,23 @@ namespace app
                     ShowErrorPanel(tradeResult.error());
             });
 
-            m_playerItemGrid->SetOnItemSlotHoverIn([this](std::size_t index, const sf::Vector2f& position) {
+            m_playerItemGrid->SetOnItemSlotHoverIn([this](std::size_t index, const sf::Vector2f& position) 
+            {
                 auto item = m_viewModel.GetPlayerItem(index);
                 if (item)
-                    ShowItemPanel(item->Item, position);
+                    ShowItemPanel(item->GetItem(), position);
             });
 
-            m_playerItemGrid->SetOnItemSlotHoverOut([this](std::size_t index) {
+            m_playerItemGrid->SetOnItemSlotHoverOut([this](std::size_t index) 
+            {
                 HideItemPanel();
             });
         }
 
         if (m_traderItemGrid)
         {
-            m_traderItemGrid->SetOnItemSlotClick([this](std::size_t index) {
+            m_traderItemGrid->SetOnItemSlotClick([this](std::size_t index) 
+            {
                 auto canTradeResult = m_viewModel.CanBuyItem(index);
                 if (!canTradeResult.has_value())
                 {
@@ -629,26 +692,34 @@ namespace app
                     ShowErrorPanel(tradeResult.error());
             });
 
-            m_traderItemGrid->SetOnItemSlotHoverIn([this](std::size_t index, const sf::Vector2f& position) {
+            m_traderItemGrid->SetOnItemSlotHoverIn([this](std::size_t index, const sf::Vector2f& position) 
+            {
                 auto item = m_viewModel.GetTraderItem(index);
                 if (item)
-                    ShowItemPanel(item->Item, position);
+                    ShowItemPanel(item->GetItem(), position);
             });
 
-            m_traderItemGrid->SetOnItemSlotHoverOut([this](std::size_t index) {
+            m_traderItemGrid->SetOnItemSlotHoverOut([this](std::size_t index) 
+            {
                 HideItemPanel();
             });
         }
-    }
 
-    void TradeUIView::SetOnItemFilterButtonClick(ItemFilterPanel::OnFilterButtonClick callback)
-    {
-        m_onItemFilterButtonClick = std::move(callback);
-    }
-
-    void TradeUIView::SetOnItemSortButtonClick(ItemSortPanel::OnSortButtonClick callback)
-    {
-        m_onItemSortButtonClick = std::move(callback);
+        if (m_itemFilterPanel)
+        {
+            m_itemFilterPanel->SetOnFilterButtonClick([this](app_domain::ItemCategory itemCategory)
+            {
+                m_viewModel.SetItemFilterCategory(itemCategory);
+            });
+        }
+            
+        if (m_itemSortPanel)
+        {
+            m_itemSortPanel->SetOnSortButtonClick([this](app_domain::ItemSortMode itemSortMode)
+            {
+                m_viewModel.SetItemSortMode(itemSortMode);
+            });
+        }
     }
 
     void TradeUIView::SetOnTradeButtonClick(std::function<void()> callback)

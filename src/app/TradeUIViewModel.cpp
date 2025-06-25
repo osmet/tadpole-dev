@@ -45,21 +45,6 @@ namespace app
         return {};
     }
 
-    void TradeUIViewModel::SetOnTradeBegin(OnTradeBegin callback)
-    {
-        m_onTradeBegin = std::move(callback);
-    }
-
-    void TradeUIViewModel::SetOnPlayerItemsUpdate(OnItemsUpdate callback)
-    {
-        m_onPlayerItemsUpdate = std::move(callback);
-    }
-
-    void TradeUIViewModel::SetOnTraderItemsUpdate(OnItemsUpdate callback)
-    {
-        m_onTraderItemsUpdate = std::move(callback);
-    }
-
     tl::expected<void, app_domain::TradeError> TradeUIViewModel::CanBuyItem(std::size_t itemIndex) const
     {
         return m_tradeService.CanTradeItem(m_playerCharacterId, m_traderCharacterId, itemIndex);
@@ -149,6 +134,41 @@ namespace app
         return m_traderItemsCache;
     }
 
+    void TradeUIViewModel::SetItemFilterCategory(app_domain::ItemCategory itemFilterCategory)
+    {
+        if (m_itemFilterCategory == itemFilterCategory)
+            return;
+
+        m_itemFilterCategory = itemFilterCategory;
+
+        UpdateItems();
+    }
+
+    void TradeUIViewModel::SetItemSortMode(app_domain::ItemSortMode itemSortMode)
+    {
+        if (m_itemSortMode == itemSortMode)
+            return;
+
+        m_itemSortMode = itemSortMode;
+
+        UpdateItems();
+    }
+
+    void TradeUIViewModel::SetOnTradeBegin(OnTradeBegin callback)
+    {
+        m_onTradeBegin = std::move(callback);
+    }
+
+    void TradeUIViewModel::SetOnPlayerItemsUpdate(OnItemsUpdate callback)
+    {
+        m_onPlayerItemsUpdate = std::move(callback);
+    }
+
+    void TradeUIViewModel::SetOnTraderItemsUpdate(OnItemsUpdate callback)
+    {
+        m_onTraderItemsUpdate = std::move(callback);
+    }
+
     void TradeUIViewModel::UpdateItems()
     {
         LoadInventoryItems(m_playerInventoryId, m_playerItemsCache);
@@ -176,21 +196,15 @@ namespace app
         return result.value();
     }
 
-    void TradeUIViewModel::LoadInventoryItems(const std::string& inventoryId, std::vector<app_domain::InventoryItemDetails>& out_items) const
+    void TradeUIViewModel::LoadInventoryItems(const std::string& inventoryId, 
+        std::vector<app_domain::InventoryItemDetails>& out_items) const
     {
         out_items.clear();
 
-        auto inventoryResult = m_inventoryService.GetInventoryById(inventoryId);
-        if (!inventoryResult)
-            return;
+        auto result = m_inventoryService.GetFilterSortItemDetailsList(inventoryId,
+            m_itemFilterCategory, m_itemSortMode);
 
-        const auto& inventory = inventoryResult.value().get();
-
-        for (size_t itemIndex = 0; itemIndex < inventory.Items.size(); ++itemIndex)
-        {
-            auto itemDetailsResult = m_inventoryService.GetItemDetails(inventoryId, itemIndex);
-            if (itemDetailsResult)
-                out_items.push_back(itemDetailsResult.value());
-        }
+        if (result)
+            out_items = std::move(result.value().Items);
     }
 }

@@ -7,7 +7,7 @@ namespace app_domain
     struct Inventory
     {
         std::string Id;
-        std::int32_t CurrentMoney = 0;
+        std::uint32_t CurrentMoney = 0;
         std::vector<InventoryItem> Items;
     };
 

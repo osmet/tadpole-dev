@@ -42,14 +42,23 @@ namespace app
             inventory.Id = id;
             inventory.CurrentMoney = value["CurrentMoney"].GetInt();
 
-            for (const auto& item : value["Items"].GetArray())
+            size_t itemCount = value["Items"].Size();
+
+            for (size_t itemIndex = 0; itemIndex < itemCount; ++itemIndex)
             {
+                const auto& item = value["Items"][itemIndex];
+
                 assert(item.HasMember("ItemId") && item["ItemId"].IsString());
                 assert(item.HasMember("Count") && item["Count"].IsInt());
 
                 app_domain::InventoryItem inventoryItem;
                 inventoryItem.ItemId = item["ItemId"].GetString();
                 inventoryItem.Count = item["Count"].GetInt();
+
+                if (item.HasMember("ModifiedAt") && item["ModifiedAt"].IsUint64())
+                    inventoryItem.ModifiedAt = item["ModifiedAt"].GetUint64();
+                else
+                    inventoryItem.ModifiedAt = static_cast<uint64_t>(itemCount - itemIndex - 1u); // Fallback: Get ModifiedAt by reverse item index
 
                 inventory.Items.push_back(std::move(inventoryItem));
             }
@@ -82,6 +91,8 @@ namespace app
                 rapidjson::Value itemObj(rapidjson::kObjectType);
                 itemObj.AddMember("ItemId", rapidjson::Value(item.ItemId.c_str(), allocator), allocator);
                 itemObj.AddMember("Count", item.Count, allocator);
+                itemObj.AddMember("ModifiedAt", item.ModifiedAt, allocator);
+
                 items.PushBack(itemObj, allocator);
             }
 

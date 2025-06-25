@@ -17,6 +17,9 @@
     <Filter Include="Source Files\trade">
       <UniqueIdentifier>{5c138cc4-31a0-4287-ac24-d8c9a3c50f5f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\common">
+      <UniqueIdentifier>{42af48b6-7b16-4c72-8fe0-991ea0bd4963}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Precompiled.cpp">
@@ -61,6 +64,12 @@
     <ClCompile Include="InventoryItemDetails.cpp">
       <Filter>Source Files\inventories</Filter>
     </ClCompile>
+    <ClCompile Include="ItemSortMode.cpp">
+      <Filter>Source Files\items</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeProvider.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Precompiled.h">
@@ -104,6 +113,12 @@
     </ClInclude>
     <ClInclude Include="InventoryItemDetails.h">
       <Filter>Source Files\inventories</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemSortMode.h">
+      <Filter>Source Files\items</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeProvider.h">
+      <Filter>Source Files\common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

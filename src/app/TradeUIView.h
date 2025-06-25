@@ -5,9 +5,9 @@
 #include "../core/CanvasPanel.h"
 #include "../core/GridPanel.h"
 #include "../app_domain/ItemCategory.h"
+#include "../app_domain/ItemSortMode.h"
 #include "TradeUIViewModel.h"
 #include "ItemGridPanel.h"
-
 
 namespace core 
 { 
@@ -18,7 +18,7 @@ namespace core
 
 namespace app_domain 
 { 
-    struct InventoryItemDetails;
+    class InventoryItemDetails;
 }
 
 namespace app
@@ -74,40 +74,40 @@ namespace app
             using OnFilterButtonClick = std::function<void(app_domain::ItemCategory)>;
 
             ItemFilterPanel(core::AssetManager& assetManager,
-                const std::vector<ItemFilterDescriptor>& itemFilterDescriptors,
-                OnFilterButtonClick& onFilterButtonClick);
+                const std::vector<ItemFilterDescriptor>& itemFilterDescriptors);
 
             void SetTooltipPanel(TooltipPanel* tooltipPanel);
 
+            void SetOnFilterButtonClick(OnFilterButtonClick callback);
+
         private:
             TooltipPanel* m_tooltipPanel = nullptr;
-        };
 
-        enum class ItemSortMode : uint8_t
-        {
-            Type = 0,
-            Value = 1,
-            Weight = 2,
-            Name = 3
+            std::vector<core::Button*> m_filterButtons;
+
+            ItemFilterPanel::OnFilterButtonClick m_onFilterButtonClick;
         };
 
         class ItemSortPanel final : public core::CanvasPanel
         {
         public:
-            using ItemSortDescriptor = std::pair<ItemSortMode, std::string>;
-            using OnSortButtonClick = std::function<void(ItemSortMode)>;
+            using ItemSortDescriptor = std::pair<app_domain::ItemSortMode, std::string>;
+            using OnSortButtonClick = std::function<void(app_domain::ItemSortMode)>;
 
             ItemSortPanel(core::AssetManager& assetManager,
-                const std::vector<ItemSortDescriptor>& itemSortDescriptors,
-                OnSortButtonClick& onSortButtonClick);
+                const std::vector<ItemSortDescriptor>& itemSortDescriptors);
 
             void SetTooltipPanel(TooltipPanel* tooltipPanel);
+
+            void SetOnSortButtonClick(OnSortButtonClick callback);
 
         private:
             void ToggleItemSortButtonsPanel();
 
             core::Widget* m_itemSortButtonsPanel = nullptr;
             TooltipPanel* m_tooltipPanel = nullptr;
+
+            ItemSortPanel::OnSortButtonClick m_onSortButtonClick;
         };
 
         class CharacterInfoPanel final : public core::CanvasPanel
@@ -172,8 +172,6 @@ namespace app
         ItemPanel* m_itemPanel = nullptr;
         ErrorPanel* m_errorPanel = nullptr;
 
-        ItemFilterPanel::OnFilterButtonClick m_onItemFilterButtonClick;
-        ItemSortPanel::OnSortButtonClick m_onItemSortButtonClick;
         std::function<void()> m_onTradeButtonClick;
     };
 }

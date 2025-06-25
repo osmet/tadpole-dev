@@ -4,7 +4,7 @@
 
 namespace app_domain
 {
-    // IMPORTANT: Update ItemTypeHelper::GetItemCategory if ItemType changes
+    // IMPORTANT: Update ItemTypeHelper::ToCategory if ItemType changes
     enum class ItemType : std::int8_t
     {
         // Misc (0–10)
@@ -44,6 +44,6 @@ namespace app_domain
         static ItemType FromString(const std::string& str);
         static std::string ToString(ItemType type);
 
-        static ItemCategory GetItemCategory(ItemType type);
+        static ItemCategory ToCategory(ItemType type);
     };
 }

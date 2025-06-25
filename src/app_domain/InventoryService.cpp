@@ -1,5 +1,6 @@
 ﻿#include "Precompiled.h"
 #include "InventoryService.h"
+#include "TimeProvider.h"
 
 namespace app_domain
 {
@@ -53,13 +54,85 @@ namespace app_domain
 
         return InventoryItemDetails {
             itemIndex,
-            itemResult.value().get(),
-            inventoryItem.Count
+            std::cref(itemResult.value().get()),
+            inventoryItem.Count,
+            inventoryItem.ModifiedAt
         };
     }
 
+    tl::expected<InventoryService::ItemDetailsListResult, InventoryError>
+        InventoryService::GetFilterSortItemDetailsList(const std::string& inventoryId,
+            ItemCategory itemFilterCategory, ItemSortMode itemSortMode) const
+    {
+        auto inventoryResult = GetInventoryById(inventoryId);
+        if (!inventoryResult)
+            return tl::unexpected(inventoryResult.error());
+
+        const auto& inventory = inventoryResult.value().get();
+        const auto& inventoryItems = inventoryResult->get().Items;
+
+        ItemDetailsListResult result;
+        result.Items.reserve(inventoryItems.size());
+
+        for (size_t itemIndex = 0; itemIndex < inventory.Items.size(); ++itemIndex)
+        {
+            auto itemDetailsResult = GetItemDetails(inventoryId, itemIndex);
+            if (!itemDetailsResult)
+            {
+                result.FailedIndices.push_back(itemIndex);
+                continue;
+            }
+        
+            auto& itemDetails = itemDetailsResult.value();
+
+            if (itemFilterCategory == app_domain::ItemCategory::All 
+                || app_domain::ItemTypeHelper::ToCategory(itemDetails.GetItem().Type) == itemFilterCategory)
+                result.Items.emplace_back(std::move(itemDetails));
+        }
+
+        std::stable_sort(result.Items.begin(), result.Items.end(),
+            [itemSortMode](const app_domain::InventoryItemDetails& a, const app_domain::InventoryItemDetails& b)
+        {
+            // Primary sort keys
+            switch (itemSortMode)
+            {
+            case app_domain::ItemSortMode::Name:
+                return a.GetItem().Name < b.GetItem().Name; // Asc
+
+            case app_domain::ItemSortMode::Latest:
+                if (a.GetModifiedAt() != b.GetModifiedAt())
+                    return a.GetModifiedAt() > b.GetModifiedAt(); // Asc
+                break;
+
+            case app_domain::ItemSortMode::Type:
+                if (a.GetItem().Type != b.GetItem().Type)
+                    return a.GetItem().Type < b.GetItem().Type; // Asc
+                break;
+
+            case app_domain::ItemSortMode::Value:
+                if (a.GetTotalValue() != b.GetTotalValue())
+                    return a.GetTotalValue() > b.GetTotalValue(); // Desc
+                break;
+
+            case app_domain::ItemSortMode::Weight:
+                if (a.GetTotalWeight() != b.GetTotalWeight())
+                    return a.GetTotalWeight() > b.GetTotalWeight(); // Desc
+                break;
+
+            default:
+                return false;
+            }
+
+            // Secondary sort key: Name (for grouping of identical items)
+            return a.GetItem().Name < b.GetItem().Name; // Asc
+        });
+
+
+        return result;
+    }
+
     tl::expected<void, InventoryError>
-        InventoryService::TransferMoney(const std::string& fromId, const std::string& toId, int32_t amount)
+        InventoryService::TransferMoney(const std::string& fromId, const std::string& toId, std::uint32_t amount)
     {
         if (amount <= 0)
             return tl::unexpected(InventoryError::InvalidAmount);
@@ -94,7 +167,9 @@ namespace app_domain
         if (itemIndex >= fromInventory.Items.size())
             return tl::unexpected(InventoryError::IndexOutOfRange);
 
-        toInventory.Items.push_back(std::move(fromInventory.Items[itemIndex]));
+        const auto& inventoryItem = fromInventory.Items[itemIndex];
+        AddItemInternal(toInventory, inventoryItem.ItemId, inventoryItem.Count);
+
         fromInventory.Items.erase(fromInventory.Items.begin() + itemIndex);
 
         return {};
@@ -120,5 +195,15 @@ namespace app_domain
         }
 
         return currentWeight;
+    }
+
+    void InventoryService::AddItemInternal(Inventory& inventory, const std::string& itemId, std::uint32_t count)
+    {
+        InventoryItem inventoryItem;
+        inventoryItem.ItemId = itemId;
+        inventoryItem.Count = count;
+        inventoryItem.ModifiedAt = app_domain::TimeProvider::GetUnixTimeMilliseconds();
+
+        inventory.Items.emplace_back(std::move(inventoryItem));
     }
 }
