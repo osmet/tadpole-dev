@@ -22,7 +22,7 @@ namespace app
     public:
         using OnItemSlotClick = std::function<void(std::size_t index)>;
         using OnItemSlotHoverIn = std::function<void(std::size_t index, const sf::Vector2f& position)>;
-        using OnItemSlotHoverOut = std::function<void(std::size_t index)>;
+        using OnItemSlotHoverOut = std::function<void()>;
 
         ItemGridPanel(core::AssetManager& assetManager,
             size_t columnCount, size_t rowCount, float cellSize, float spacing);
@@ -49,6 +49,7 @@ namespace app
             void SetItem(const app_domain::InventoryItemDetails& item);
             void ClearItem();
 
+            bool HasItem() const;
             size_t GetItemIndex() const;
 
         private:
@@ -60,6 +61,7 @@ namespace app
             core::TextLabel* m_countTextLabel = nullptr;
             core::Image* m_selectImage = nullptr;
 
+            bool m_hasItem = false;
             size_t m_itemIndex = 0u;
         };
     };

@@ -23,10 +23,16 @@ namespace app
         for (size_t index = 0; index < cellCount; ++index)
         {
             auto* itemSlot = CreateWidget<ItemSlot>(assetManager, cellSize);
-            itemSlot->SetOnClick([this, itemSlot]() { if (m_onItemSlotClick && itemSlot) m_onItemSlotClick(itemSlot->GetItemIndex()); });
+
+            itemSlot->SetOnClick([this, itemSlot]() 
+            { 
+                if (m_onItemSlotClick && itemSlot && itemSlot->HasItem()) 
+                    m_onItemSlotClick(itemSlot->GetItemIndex()); 
+            });
+
             itemSlot->SetOnHoverIn([this, index, itemSlot](const sf::Vector2f& mousePosition) 
             { 
-                if (!m_onItemSlotHoverIn || !itemSlot)
+                if (!m_onItemSlotHoverIn || !itemSlot || !itemSlot->HasItem())
                     return;
 
                 auto* widget = GetWidget(index);
@@ -35,7 +41,12 @@ namespace app
 
                  m_onItemSlotHoverIn(itemSlot->GetItemIndex(), widget->GetPosition());
             });
-            itemSlot->SetOnHoverOut([this, index]() { if (m_onItemSlotHoverOut) m_onItemSlotHoverOut(index); });
+
+            itemSlot->SetOnHoverOut([this]() 
+            { 
+                if (m_onItemSlotHoverOut)
+                    m_onItemSlotHoverOut(); 
+            });
         }
     }
 
@@ -124,10 +135,11 @@ namespace app
 
     void ItemGridPanel::ItemSlot::SetItem(const app_domain::InventoryItemDetails& item)
     {
+        m_hasItem = true;
+        m_itemIndex = item.GetIndex();
+
         if (!m_iconImage || !m_rarityGlowImage || !m_countTextLabel)
             return;
-
-        ClearItem();
 
         m_iconImage->SetTexture(m_assetManager.GetTexture(item.GetItem().IconTextureId));
         m_iconImage->SetActive(true);
@@ -143,12 +155,12 @@ namespace app
             m_countTextLabel->SetText(std::to_string(item.GetCount()));
             m_countTextLabel->SetActive(true);
         }
-
-        m_itemIndex = item.GetIndex();
     }
 
     void ItemGridPanel::ItemSlot::ItemSlot::ClearItem()
     {
+        m_hasItem = false;
+
         if (!m_iconImage || !m_rarityGlowImage || !m_countTextLabel)
             return;
 
@@ -157,6 +169,11 @@ namespace app
         m_rarityGlowImage->SetActive(false);
 
         m_countTextLabel->SetActive(false);
+    }
+
+    bool ItemGridPanel::ItemSlot::ItemSlot::HasItem() const
+    {
+        return m_hasItem;
     }
 
     size_t ItemGridPanel::ItemSlot::ItemSlot::GetItemIndex() const

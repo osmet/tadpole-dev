@@ -670,7 +670,7 @@ namespace app
                     ShowItemPanel(item->GetItem(), position);
             });
 
-            m_playerItemGrid->SetOnItemSlotHoverOut([this](std::size_t index) 
+            m_playerItemGrid->SetOnItemSlotHoverOut([this]() 
             {
                 HideItemPanel();
             });
@@ -699,7 +699,7 @@ namespace app
                     ShowItemPanel(item->GetItem(), position);
             });
 
-            m_traderItemGrid->SetOnItemSlotHoverOut([this](std::size_t index) 
+            m_traderItemGrid->SetOnItemSlotHoverOut([this]() 
             {
                 HideItemPanel();
             });
