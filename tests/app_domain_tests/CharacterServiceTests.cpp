@@ -1,46 +1,28 @@
-#include <catch.hpp>
-#include <tl/expected.hpp>
-#include "CharacterService.h"
+#include "TestContext.h"
 
 using namespace app_domain;
 
 TEST_CASE("CharacterService::GetCharacterById_CharacterExists_ReturnsCharacter")
 {
-    Character character1;
-    character1.Id = "character_1";
-    character1.Name = "Character1";
-    character1.InventoryId = "inventory_1";
+    TestContext context;
 
-    Character character2;
-    character2.Id = "character_2";
-
-    CharacterMap characters;
-    characters["character_1"] = character1;
-    characters["character_2"] = character2;
-
-    CharacterService service(characters);
-
-    auto result = service.GetCharacterById("character_1");
+    auto result = context.CharacterService.GetCharacterById("character_1");
 
     REQUIRE(result.has_value());
     const auto& character = result.value().get();
     REQUIRE(character.Id == "character_1");
-    REQUIRE(character.Name == "Character1");
+    REQUIRE(character.Name == "Character 1");
     REQUIRE(character.InventoryId == "inventory_1");
 }
 
-TEST_CASE("CharacterService::GetCharacterById_CharacterDoesNotExist_ReturnsNotFoundError")
+TEST_CASE("CharacterService::GetCharacterById_CharacterDoesNotExist_ReturnsNotFound")
 {
-    Character character1;
-    character1.Id = "character_1";
-    
-    CharacterMap characters;
-    characters["character_1"] = character1;
+    TestContext context;
 
-    CharacterService service(characters);
+    context.Characters.clear();
 
-    auto result = service.GetCharacterById("character_2");
+    auto result = context.CharacterService.GetCharacterById("character_100");
 
-    REQUIRE_FALSE(result.has_value());
+    REQUIRE(!result.has_value());
     REQUIRE(result.error() == CharacterError::NotFound);
 }

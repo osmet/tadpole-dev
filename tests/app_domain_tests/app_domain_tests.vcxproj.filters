@@ -17,6 +17,9 @@
     <Filter Include="Source Files\trade">
       <UniqueIdentifier>{0b84c23f-0399-4ddf-b8d7-d42d28af3744}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\common">
+      <UniqueIdentifier>{a9521774-c535-4299-90fe-65d9da91f44e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -34,5 +37,13 @@
     <ClCompile Include="TradeServiceTests.cpp">
       <Filter>Source Files\trade</Filter>
     </ClCompile>
+    <ClCompile Include="TestContext.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TestContext.h">
+      <Filter>Source Files\common</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

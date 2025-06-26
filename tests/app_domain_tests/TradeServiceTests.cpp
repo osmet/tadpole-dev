@@ -1,663 +1,242 @@
-﻿#include <catch.hpp>
-#include <tl/expected.hpp>
-#include "TradeService.h"
-#include "CharacterService.h"
-#include "InventoryService.h"
-#include "ItemService.h"
+﻿#include "TestContext.h"
 
 using namespace app_domain;
 
 TEST_CASE("TradeService::TradeItem_FewValidTrades_Succeeds")
 {
-    Item item1;
-    item1.Id = "item_1";
-    item1.Value = 100;
-
-    Item item2;
-    item2.Id = "item_2";
-    item2.Value = 200;
-
-    Item item3;
-    item3.Id = "item_3";
-    item3.Value = 100;
-
-    ItemMap items{
-        {item1.Id, item1},
-        {item2.Id, item2},
-        {item3.Id, item3}
-    };
-    ItemService itemService(items);
-
-    Character buyer;
-    buyer.Id = "buyer";
-    buyer.Name = "Buyer";
-    buyer.InventoryId = "inventory_buyer";
-
-    Character seller;
-    seller.Id = "seller";
-    seller.Name = "Seller";
-    seller.InventoryId = "inventory_seller";
-
-    Character third;
-    third.Id = "third";
-    third.Name = "Third";
-    third.InventoryId = "inventory_third";
-
-    CharacterMap characters{
-        {buyer.Id, buyer},
-        {seller.Id, seller},
-        {third.Id, third}
-    };
-    CharacterService characterService(characters);
-
-    InventoryItem inventoryItem1;
-    inventoryItem1.ItemId = "item_1";
-    inventoryItem1.Count = 2;
-
-    InventoryItem inventoryItem2;
-    inventoryItem2.ItemId = "item_2";
-    inventoryItem2.Count = 3;
-
-    InventoryItem inventoryItem3;
-    inventoryItem3.ItemId = "item_3";
-    inventoryItem3.Count = 1;
-
-    Inventory buyerInventory;
-    buyerInventory.Id = "inventory_buyer";
-    buyerInventory.CurrentMoney = 1000;
-
-    Inventory sellerInventory;
-    sellerInventory.Id = "inventory_seller";
-    sellerInventory.CurrentMoney = 500;
-    sellerInventory.Items.push_back(inventoryItem1);
-    sellerInventory.Items.push_back(inventoryItem2);
-
-    Inventory thirdInventory;
-    thirdInventory.Id = "inventory_third";
-    thirdInventory.CurrentMoney = 400;
-    thirdInventory.Items.push_back(inventoryItem3);
-
-    InventoryMap inventories{
-        {buyerInventory.Id, buyerInventory},
-        {sellerInventory.Id, sellerInventory},
-        {thirdInventory.Id, thirdInventory}
-    };
-    InventoryService inventoryService(inventories, itemService);
-
-    TradeService tradeService(itemService, characterService, inventoryService);
+    TestContext context;
 
     {
-        auto result = tradeService.TradeItem("buyer", "seller", 0);
+        auto result = context.TradeService.TradeItem("character_1", "character_2", 0);
 
         REQUIRE(result.has_value());
-        REQUIRE(inventories["inventory_buyer"].CurrentMoney == 800);
-        REQUIRE(inventories["inventory_seller"].CurrentMoney == 700);
-        REQUIRE(inventories["inventory_buyer"].Items.size() == 1);
-        REQUIRE(inventories["inventory_buyer"].Items[0].ItemId == "item_1");
-        REQUIRE(inventories["inventory_seller"].Items.size() == 1);
+        REQUIRE(context.Inventories["inventory_1"].CurrentMoney == 800);
+        REQUIRE(context.Inventories["inventory_2"].CurrentMoney == 700);
+        REQUIRE(context.Inventories["inventory_1"].Items.size() == 1);
+        REQUIRE(context.Inventories["inventory_1"].Items[0].ItemId == "sword");
+        REQUIRE(context.Inventories["inventory_2"].Items.size() == 1);
     }
 
     {
-        auto result = tradeService.TradeItem("buyer", "seller", 0);
+        auto result = context.TradeService.TradeItem("character_1", "character_2", 0);
 
         REQUIRE(result.has_value());
-        REQUIRE(inventories["inventory_buyer"].CurrentMoney == 200);
-        REQUIRE(inventories["inventory_seller"].CurrentMoney == 1300);
-        REQUIRE(inventories["inventory_buyer"].Items.size() == 2);
-        REQUIRE(inventories["inventory_buyer"].Items[1].ItemId == "item_2");
-        REQUIRE(inventories["inventory_seller"].Items.empty());
+        REQUIRE(context.Inventories["inventory_1"].CurrentMoney == 200);
+        REQUIRE(context.Inventories["inventory_2"].CurrentMoney == 1300);
+        REQUIRE(context.Inventories["inventory_1"].Items.size() == 2);
+        REQUIRE(context.Inventories["inventory_1"].Items[1].ItemId == "shield");
+        REQUIRE(context.Inventories["inventory_2"].Items.empty());
     }
 
     {
-        auto result = tradeService.TradeItem("buyer", "third", 0);
+        auto result = context.TradeService.TradeItem("character_1", "character_3", 0);
 
         REQUIRE(result.has_value());
-        REQUIRE(inventories["inventory_buyer"].CurrentMoney == 100);
-        REQUIRE(inventories["inventory_third"].CurrentMoney == 500);
-        REQUIRE(inventories["inventory_buyer"].Items.size() == 3);
-        REQUIRE(inventories["inventory_buyer"].Items[2].ItemId == "item_3");
-        REQUIRE(inventories["inventory_third"].Items.empty());
+        REQUIRE(context.Inventories["inventory_1"].CurrentMoney == 100);
+        REQUIRE(context.Inventories["inventory_3"].CurrentMoney == 500);
+        REQUIRE(context.Inventories["inventory_1"].Items.size() == 3);
+        REQUIRE(context.Inventories["inventory_1"].Items[2].ItemId == "tool");
+        REQUIRE(context.Inventories["inventory_3"].Items.empty());
     }
 
     {
-        const auto& buyerInventory = inventories["inventory_buyer"];
+        const auto& buyerInventory = context.Inventories["inventory_1"];
 
         REQUIRE(buyerInventory.CurrentMoney == 100);
         REQUIRE(buyerInventory.Items.size() == 3);
-        REQUIRE(buyerInventory.Items[0].ItemId == "item_1");
-        REQUIRE(buyerInventory.Items[1].ItemId == "item_2");
-        REQUIRE(buyerInventory.Items[2].ItemId == "item_3");
+        REQUIRE(buyerInventory.Items[0].ItemId == "sword");
+        REQUIRE(buyerInventory.Items[1].ItemId == "shield");
+        REQUIRE(buyerInventory.Items[2].ItemId == "tool");
     }
 }
 
 TEST_CASE("TradeService::TradeItem_BuyerNotFound_ReturnsCharacterNotFound")
 {
-    ItemMap items;
-    ItemService itemService(items);
+    TestContext context;
 
-    CharacterMap characters; // Empty
-    CharacterService characterService(characters);
+    context.Characters.clear();
 
-    InventoryMap inventories;
-    InventoryService inventoryService(inventories, itemService);
+    auto result = context.TradeService.TradeItem("character_1", "character_2", 0);
 
-    TradeService tradeService(itemService, characterService, inventoryService);
-
-    auto result = tradeService.TradeItem("buyer", "seller", 0);
-
-    REQUIRE_FALSE(result.has_value());
+    REQUIRE(!result.has_value());
     REQUIRE(result.error() == TradeError::CharacterNotFound);
 }
 
 TEST_CASE("TradeService::TradeItem_InventoryNotFound_ReturnsInventoryNotFound")
 {
-    ItemMap items;
-    ItemService itemService(items);
+    TestContext context;
 
-    Character buyer;
-    buyer.Id = "buyer";
-    buyer.InventoryId = "inventory_buyer";
+    context.Inventories.clear();
 
-    Character seller;
-    seller.Id = "seller";
-    seller.InventoryId = "inventory_seller";
+    auto result = context.TradeService.TradeItem("character_1", "character_2", 0);
 
-    CharacterMap characters{
-        {"buyer", buyer},
-        {"seller", seller}
-    };
-    CharacterService characterService(characters);
-
-    InventoryMap inventories; // Missing inventories
-    InventoryService inventoryService(inventories, itemService);
-
-    TradeService tradeService(itemService, characterService, inventoryService);
-
-    auto result = tradeService.TradeItem("buyer", "seller", 0);
-
-    REQUIRE_FALSE(result.has_value());
+    REQUIRE(!result.has_value());
     REQUIRE(result.error() == TradeError::InventoryNotFound);
 }
 
 TEST_CASE("TradeService::TradeItem_ItemIndexInvalid_ReturnsInventoryItemNotFound")
 {
-    ItemMap items;
-    ItemService itemService(items);
+    TestContext context;
 
-    Character buyer;
-    buyer.Id = "buyer";
-    buyer.InventoryId = "inventory_buyer";
+    context.Inventories["inventory_2"].Items.clear();
 
-    Character seller;
-    seller.Id = "seller";
-    seller.InventoryId = "inventory_seller";
+    auto result = context.TradeService.TradeItem("character_1", "character_2", 0);
 
-    CharacterMap characters{
-        {"buyer", buyer},
-        {"seller", seller}
-    };
-    CharacterService characterService(characters);
-
-    Inventory buyerInventory;
-    buyerInventory.Id = "inventory_buyer";
-    buyerInventory.CurrentMoney = 1000;
-
-    Inventory sellerInventory;
-    sellerInventory.Id = "inventory_seller";
-    sellerInventory.CurrentMoney = 500;
-
-    InventoryMap inventories{
-        {buyerInventory.Id, buyerInventory},
-        {sellerInventory.Id, sellerInventory}
-    };
-    InventoryService inventoryService(inventories, itemService);
-
-    TradeService tradeService(itemService, characterService, inventoryService);
-
-    auto result = tradeService.TradeItem("buyer", "seller", 0);
-
-    REQUIRE_FALSE(result.has_value());
+    REQUIRE(!result.has_value());
     REQUIRE(result.error() == TradeError::InventoryItemNotFound);
 }
 
 TEST_CASE("TradeService::TradeItem_MissingItem_ReturnsItemNotFound")
 {
-    ItemMap items; // Item is missing
-    ItemService itemService(items);
+    TestContext context;
 
-    Character buyer;
-    buyer.Id = "buyer";
-    buyer.InventoryId = "inventory_buyer";
+    context.Inventories["inventory_2"].Items.clear();
+    context.Inventories["inventory_2"].Items.push_back({ "missing_item", 2 });
 
-    Character seller;
-    seller.Id = "seller";
-    seller.InventoryId = "inventory_seller";
+    auto result = context.TradeService.TradeItem("character_1", "character_2", 0);
 
-    CharacterMap characters{
-        {"buyer", buyer},
-        {"seller", seller}
-    };
-    CharacterService characterService(characters);
-
-    InventoryItem inventoryItem1;
-    inventoryItem1.ItemId = "missing_item";
-    inventoryItem1.Count = 2;
-    
-
-    Inventory buyerInventory;
-    buyerInventory.Id = "inventory_buyer";
-    buyerInventory.CurrentMoney = 1000;
-
-    Inventory sellerInventory;
-    sellerInventory.Id = "inventory_seller";
-    sellerInventory.CurrentMoney = 500;
-    sellerInventory.Items.push_back(inventoryItem1);
-
-    InventoryMap inventories{
-        {buyerInventory.Id, buyerInventory},
-        {sellerInventory.Id, sellerInventory}
-    };
-    InventoryService inventoryService(inventories, itemService);
-
-    TradeService tradeService(itemService, characterService, inventoryService);
-
-    auto result = tradeService.TradeItem("buyer", "seller", 0);
-
-    REQUIRE_FALSE(result.has_value());
+    REQUIRE(!result.has_value());
     REQUIRE(result.error() == TradeError::ItemNotFound);
 }
 
 TEST_CASE("TradeService::TradeItem_NotEnoughMoney_ReturnsNotEnoughMoney")
 {
-    Item item;
-    item.Id = "item_1";
-    item.Value = 100;
+    TestContext context;
 
-    ItemMap items{
-        {item.Id, item}
-    };
-    ItemService itemService(items);
+    context.Inventories["inventory_1"].CurrentMoney = 50;
 
-    Character buyer;
-    buyer.Id = "buyer";
-    buyer.InventoryId = "inventory_buyer";
+    auto result = context.TradeService.TradeItem("character_1", "character_2", 0);
 
-    Character seller;
-    seller.Id = "seller";
-    seller.InventoryId = "inventory_seller";
-
-    CharacterMap characters{
-        {"buyer", buyer},
-        {"seller", seller}
-    };
-    CharacterService characterService(characters);
-
-    InventoryItem inventoryItem1;
-    inventoryItem1.ItemId = "item_1";
-    inventoryItem1.Count = 2;
-
-    Inventory buyerInventory;
-    buyerInventory.Id = "inventory_buyer";
-    buyerInventory.CurrentMoney = 50; // Not enough
-
-    Inventory sellerInventory;
-    sellerInventory.Id = "inventory_seller";
-    sellerInventory.CurrentMoney = 500;
-    sellerInventory.Items.push_back(inventoryItem1);
-
-    InventoryMap inventories{
-        {buyerInventory.Id, buyerInventory},
-        {sellerInventory.Id, sellerInventory}
-    };
-    InventoryService inventoryService(inventories, itemService);
-
-    TradeService tradeService(itemService, characterService, inventoryService);
-
-    auto result = tradeService.TradeItem("buyer", "seller", 0);
-
-    REQUIRE_FALSE(result.has_value());
+    REQUIRE(!result.has_value());
     REQUIRE(result.error() == TradeError::NotEnoughMoney);
 }
 
 TEST_CASE("TradeService::TradeItem_EmptyItemId_ReturnsItemNotFound")
 {
-    ItemMap items;
-    ItemService itemService(items);
+    TestContext context;
 
-    Character buyer;
-    buyer.Id = "buyer";
-    buyer.Name = "Buyer";
-    buyer.InventoryId = "inventory_buyer";
+    context.Inventories["inventory_2"].Items.clear();
+    context.Inventories["inventory_2"].Items.push_back({ "", 2 });
 
-    Character seller;
-    seller.Id = "seller";
-    seller.Name = "Seller";
-    seller.InventoryId = "inventory_seller";
+    auto result = context.TradeService.TradeItem("character_1", "character_2", 0);
 
-    CharacterMap characters;
-    characters[buyer.Id] = buyer;
-    characters[seller.Id] = seller;
-    CharacterService characterService(characters);
-
-    InventoryItem invalidItem;
-    invalidItem.ItemId = "";
-    invalidItem.Count = 2;
-
-    Inventory buyerInventory;
-    buyerInventory.Id = "inventory_buyer";
-    buyerInventory.CurrentMoney = 1000;
-
-    Inventory sellerInventory;
-    sellerInventory.Id = "inventory_seller";
-    sellerInventory.CurrentMoney = 500;
-    sellerInventory.Items.push_back(invalidItem);
-
-    InventoryMap inventories;
-    inventories[buyerInventory.Id] = buyerInventory;
-    inventories[sellerInventory.Id] = sellerInventory;
-
-    InventoryService inventoryService(inventories, itemService);
-    TradeService tradeService(itemService, characterService, inventoryService);
-
-    auto result = tradeService.TradeItem("buyer", "seller", 0);
-    REQUIRE_FALSE(result.has_value());
+    REQUIRE(!result.has_value());
     REQUIRE(result.error() == TradeError::ItemNotFound);
 }
 
 TEST_CASE("TradeService::IsItemTradable_ReturnsCorrectValue")
 {
-    Item item1;
-    item1.Id = "item_1";
-    item1.Value = 100;
-    item1.IsStoryItem = false; // Tradable
+    TestContext context;
 
-    Item item2;
-    item2.Id = "item_2";
-    item2.Value = 200;
-    item2.IsStoryItem = true; // Not tradable
+    context.Items["sword"].IsStoryItem = false;
+    context.Items["shield"].IsStoryItem = true;
 
-    ItemMap items{
-        {item1.Id, item1},
-        {item2.Id, item2}
-    };
-    ItemService itemService(items);
-
-    InventoryItem inventoryItem1;
-    inventoryItem1.ItemId = "item_1";
-    inventoryItem1.Count = 2;
-
-    InventoryItem inventoryItem2;
-    inventoryItem2.ItemId = "item_2";
-    inventoryItem1.Count = 3;
-
-    Inventory inventory;
-    inventory.Id = "inventory";
-    inventory.Items.push_back(inventoryItem1);
-    inventory.Items.push_back(inventoryItem2);
-
-    InventoryMap inventories{
-        {inventory.Id, inventory}
-    };
-    InventoryService inventoryService(inventories, itemService);
-
-    CharacterMap characters;
-    CharacterService characterService(characters);
-
-    TradeService tradeService(itemService, characterService, inventoryService);
-
-    auto itemDetails1 = inventoryService.GetItemDetails(inventory.Id, 0);
-    auto itemDetails2 = inventoryService.GetItemDetails(inventory.Id, 1);
-
-    REQUIRE(itemDetails1.has_value());
-    REQUIRE(itemDetails2.has_value());
-
-    REQUIRE(tradeService.IsItemTradable(itemDetails1.value().GetItem()));
-    REQUIRE(!tradeService.IsItemTradable(itemDetails2.value().GetItem()));
+    REQUIRE(context.TradeService.IsItemTradable(context.Items["sword"]));
+    REQUIRE(!context.TradeService.IsItemTradable(context.Items["shield"]));
 }
 
 TEST_CASE("TradeService::TradeItem_ItemNotTradable_ReturnsItemNotTradable")
 {
-    Item item;
-    item.Id = "item_1";
-    item.Value = 100;
-    item.IsStoryItem = true;
+    TestContext context;
 
-    ItemMap items{
-        {item.Id, item}
-    };
-    ItemService itemService(items);
+    context.Items["sword"].IsStoryItem = true;
 
-    Character buyer;
-    buyer.Id = "buyer";
-    buyer.Name = "Buyer";
-    buyer.InventoryId = "inventory_buyer";
+    auto result = context.TradeService.TradeItem("character_1", "character_2", 0);
 
-    Character seller;
-    seller.Id = "seller";
-    seller.Name = "Seller";
-    seller.InventoryId = "inventory_seller";
-
-    CharacterMap characters;
-    characters[buyer.Id] = buyer;
-    characters[seller.Id] = seller;
-    CharacterService characterService(characters);
-
-    InventoryItem inventoryItem1;
-    inventoryItem1.ItemId = "item_1";
-    inventoryItem1.Count = 2;
-
-    Inventory buyerInventory;
-    buyerInventory.Id = "inventory_buyer";
-    buyerInventory.CurrentMoney = 1000;
-
-    Inventory sellerInventory;
-    sellerInventory.Id = "inventory_seller";
-    sellerInventory.CurrentMoney = 500;
-    sellerInventory.Items.push_back(inventoryItem1);
-
-    InventoryMap inventories;
-    inventories[buyerInventory.Id] = buyerInventory;
-    inventories[sellerInventory.Id] = sellerInventory;
-
-    InventoryService inventoryService(inventories, itemService);
-    TradeService tradeService(itemService, characterService, inventoryService);
-
-    auto result = tradeService.TradeItem("buyer", "seller", 0);
-    REQUIRE_FALSE(result.has_value());
+    REQUIRE(!result.has_value());
     REQUIRE(result.error() == TradeError::ItemNotTradable);
 }
 
 TEST_CASE("TradeService::TradeItem_SameCharacter_ReturnsTradeWithSelfNotAllowed")
 {
-    Item item;
-    item.Id = "item_1";
-    item.Value = 100;
+    TestContext context;
 
-    ItemMap items;
-    items[item.Id] = item;
-    ItemService itemService(items);
+    auto result = context.TradeService.TradeItem("character_1", "character_1", 0);
 
-    Character character;
-    character.Id = "buyer";
-    character.Name = "Buyer";
-    character.InventoryId = "inventory_buyer";
-
-    CharacterMap characters;
-    characters[character.Id] = character;
-    CharacterService characterService(characters);
-
-    InventoryItem inventoryItem1;
-    inventoryItem1.ItemId = "item_1";
-    inventoryItem1.Count = 2;
-
-    Inventory inventory;
-    inventory.Id = "inventory_buyer";
-    inventory.CurrentMoney = 1000;
-    inventory.Items.push_back(inventoryItem1);
-
-    InventoryMap inventories;
-    inventories[inventory.Id] = inventory;
-
-    InventoryService inventoryService(inventories, itemService);
-    TradeService tradeService(itemService, characterService, inventoryService);
-
-    auto result = tradeService.TradeItem("buyer", "buyer", 0);
-    REQUIRE_FALSE(result.has_value());
+    REQUIRE(!result.has_value());
     REQUIRE(result.error() == TradeError::TradeWithSelfNotAllowed);
 }
 
-TEST_CASE("TradeService::CanTradeItem_InvalidIndex_ReturnsError")
+TEST_CASE("TradeService::CanTradeItem_InvalidIndex_ReturnsInventoryItemNotFound")
 {
-    Item item;
-    item.Id = "item_1";
-    item.Value = 100;
+    TestContext context;
 
-    ItemMap items;
-    items[item.Id] = item;
-    ItemService itemService(items);
+    auto result = context.TradeService.CanTradeItem("character_1", "character_2", 5);
 
-    Character buyer;
-    buyer.Id = "buyer";
-    buyer.Name = "Buyer";
-    buyer.InventoryId = "inventory_buyer";
-
-    Character seller;
-    seller.Id = "seller";
-    seller.Name = "Seller";
-    seller.InventoryId = "inventory_seller";
-
-    CharacterMap characters;
-    characters[buyer.Id] = buyer;
-    characters[seller.Id] = seller;
-    CharacterService characterService(characters);
-
-    Inventory buyerInventory;
-    buyerInventory.Id = "inventory_buyer";
-    buyerInventory.CurrentMoney = 1000;
-
-    Inventory sellerInventory;
-    sellerInventory.Id = "inventory_seller";
-    sellerInventory.CurrentMoney = 100;
-
-    InventoryMap inventories;
-    inventories[buyerInventory.Id] = buyerInventory;
-    inventories[sellerInventory.Id] = sellerInventory;
-
-    InventoryService inventoryService(inventories, itemService);
-    TradeService tradeService(itemService, characterService, inventoryService);
-
-    auto result = tradeService.CanTradeItem("buyer", "seller", -1);
-    REQUIRE_FALSE(result.has_value());
+    REQUIRE(!result.has_value());
     REQUIRE(result.error() == TradeError::InventoryItemNotFound);
 }
 
-class MockInventoryService : public InventoryService
+namespace
 {
-public:
-    bool failTransferMoney = false;
-    bool failTransferItem = false;
-
-    MockInventoryService(InventoryMap& inventories, IItemService& itemService)
-        : InventoryService(inventories, itemService)
+    class MockInventoryService : public InventoryService
     {
-    }
+    public:
 
-    tl::expected<void, InventoryError> TransferMoney(
-        const std::string& fromInventoryId,
-        const std::string& toInventoryId,
-        std::uint32_t amount) override
-    {
-        if (failTransferMoney)
-            return tl::unexpected(InventoryError::NotFound);
+        bool FailTransferMoney = false;
+        bool FailTransferItem = false;
 
-        return InventoryService::TransferMoney(fromInventoryId, toInventoryId, amount);
-    }
+        using InventoryService::InventoryService;
 
-    tl::expected<void, InventoryError> TransferItem(
-        const std::string& fromInventoryId,
-        const std::string& toInventoryId,
-        std::size_t itemIndex) override
-    {
-        if (failTransferItem)
-            return tl::unexpected(InventoryError::NotFound);
+        tl::expected<void, InventoryError> TransferMoney(
+            const std::string& fromInventoryId,
+            const std::string& toInventoryId,
+            std::uint32_t amount) override
+        {
+            if (FailTransferMoney)
+                return tl::unexpected(InventoryError::NotFound);
 
-        return InventoryService::TransferItem(fromInventoryId, toInventoryId, itemIndex);
-    }
-};
+            return InventoryService::TransferMoney(fromInventoryId, toInventoryId, amount);
+        }
+
+        tl::expected<void, InventoryError> TransferItem(
+            const std::string& fromInventoryId,
+            const std::string& toInventoryId,
+            std::size_t itemIndex) override
+        {
+            if (FailTransferItem)
+                return tl::unexpected(InventoryError::NotFound);
+
+            return InventoryService::TransferItem(fromInventoryId, toInventoryId, itemIndex);
+        }
+    };
+}
 
 TEST_CASE("TradeService::TradeItem_TransferFails_ReturnsTransferFailed")
 {
-    Item item;
-    item.Id = "item_1";
-    item.Value = 100;
+    TestContext context;
 
-    ItemMap items;
-    items[item.Id] = item;
-    ItemService itemService(items);
-
-    Character buyer;
-    buyer.Id = "buyer";
-    buyer.Name = "Buyer";
-    buyer.InventoryId = "inventory_buyer";
-
-    Character seller;
-    seller.Id = "seller";
-    seller.Name = "Seller";
-    seller.InventoryId = "inventory_seller";
-
-    CharacterMap characters;
-    characters[buyer.Id] = buyer;
-    characters[seller.Id] = seller;
-    CharacterService characterService(characters);
-
-    InventoryItem inventoryItem1;
-    inventoryItem1.ItemId = "item_1";
-    inventoryItem1.Count = 2;
-
-    Inventory buyerInventory;
-    buyerInventory.Id = "inventory_buyer";
-    buyerInventory.CurrentMoney = 1000;
-
-    Inventory sellerInventory;
-    sellerInventory.Id = "inventory_seller";
-    sellerInventory.CurrentMoney = 500;
-    sellerInventory.Items.push_back(inventoryItem1);
-
-    InventoryMap inventories;
-    inventories[buyerInventory.Id] = buyerInventory;
-    inventories[sellerInventory.Id] = sellerInventory;
-
-    MockInventoryService mockInventoryService(inventories, itemService);
-    TradeService tradeService(itemService, characterService, mockInventoryService);
+    MockInventoryService mockInventoryService(context.Inventories, context.ItemService);
+    TradeService tradeService(context.ItemService, context.CharacterService, mockInventoryService);
 
     SECTION("TransferMoney fails")
     {
-        mockInventoryService.failTransferMoney = true;
-        mockInventoryService.failTransferItem = false;
+        mockInventoryService.FailTransferMoney = true;
+        mockInventoryService.FailTransferItem = false;
 
-        auto result = tradeService.TradeItem("buyer", "seller", 0);
+        auto result = tradeService.TradeItem("character_1", "character_2", 0);
 
-        REQUIRE_FALSE(result.has_value());
+        REQUIRE(!result.has_value());
         REQUIRE(result.error() == TradeError::TransferFailed);
     }
 
     SECTION("TransferItem fails")
     {
-        mockInventoryService.failTransferMoney = false;
-        mockInventoryService.failTransferItem = true;
+        mockInventoryService.FailTransferMoney = false;
+        mockInventoryService.FailTransferItem = true;
 
-        auto result = tradeService.TradeItem("buyer", "seller", 0);
+        auto result = tradeService.TradeItem("character_1", "character_2", 0);
 
-        REQUIRE_FALSE(result.has_value());
+        REQUIRE(!result.has_value());
         REQUIRE(result.error() == TradeError::TransferFailed);
     }
 
     SECTION("Both succeed")
     {
-        mockInventoryService.failTransferMoney = false;
-        mockInventoryService.failTransferItem = false;
+        mockInventoryService.FailTransferMoney = false;
+        mockInventoryService.FailTransferItem = false;
 
-        auto result = tradeService.TradeItem("buyer", "seller", 0);
+        auto result = tradeService.TradeItem("character_1", "character_2", 0);
 
         REQUIRE(result.has_value());
     }

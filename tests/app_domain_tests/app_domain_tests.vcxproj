@@ -23,12 +23,16 @@
     <ClCompile Include="InventoryServiceTests.cpp" />
     <ClCompile Include="ItemServiceTests.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="TestContext.cpp" />
     <ClCompile Include="TradeServiceTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\app_domain\app_domain.vcxproj">
       <Project>{6b036087-9460-46f6-b120-70b4625cec04}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TestContext.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -108,7 +112,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)external\expected-1.1.0\include\;$(SolutionDir)external\Catch2-2.13.10\include\;$(SolutionDir)external\magic_enum-v0.9.7\include\;$(SolutionDir)src\app_domain\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -124,7 +128,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)external\expected-1.1.0\include\;$(SolutionDir)external\Catch2-2.13.10\include\;$(SolutionDir)external\magic_enum-v0.9.7\include\;$(SolutionDir)src\app_domain\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -140,7 +144,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)external\expected-1.1.0\include\;$(SolutionDir)external\Catch2-2.13.10\include\;$(SolutionDir)external\magic_enum-v0.9.7\include\;$(SolutionDir)src\app_domain\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -156,7 +160,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)external\expected-1.1.0\include\;$(SolutionDir)external\Catch2-2.13.10\include\;$(SolutionDir)external\magic_enum-v0.9.7\include\;$(SolutionDir)src\app_domain\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>

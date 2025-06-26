@@ -1,40 +1,25 @@
-#include <catch.hpp>
-#include <tl/expected.hpp>
-#include "ItemService.h"
+#include "TestContext.h"
 
 using namespace app_domain;
 
 TEST_CASE("ItemService::GetItemById_ItemExists_ReturnsItem")
 {
-    Item item;
-    item.Id = "item_1";
-    item.Name = "Sword";
+    TestContext context;
 
-    ItemMap items;
-    items["item_1"] = item;
-
-    ItemService service(items);
-
-    auto result = service.GetItemById("item_1");
+    auto result = context.ItemService.GetItemById("sword");
 
     REQUIRE(result.has_value());
-    const auto& found = result.value().get();
-    REQUIRE(found.Id == "item_1");
-    REQUIRE(found.Name == "Sword");
+    const auto& item = result.value().get();
+    REQUIRE(item.Id == "sword");
+    REQUIRE(item.Name == "Sword");
 }
 
-TEST_CASE("ItemService::GetItemById_ItemDoesNotExist_ReturnsNotFoundError")
+TEST_CASE("ItemService::GetItemById_ItemDoesNotExist_ReturnsNotFound")
 {
-    Item item;
-    item.Id = "item_1";
+    TestContext context;
 
-    ItemMap items;
-    items["item_1"] = item;
+    auto result = context.ItemService.GetItemById("item_100");
 
-    ItemService service(items);
-
-    auto result = service.GetItemById("item_2");
-
-    REQUIRE_FALSE(result.has_value());
+    REQUIRE(!result.has_value());
     REQUIRE(result.error() == ItemError::NotFound);
 }
