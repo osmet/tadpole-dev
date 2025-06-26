@@ -11,11 +11,11 @@ TEST_CASE("TradeService::TradeItem_FewValidTrades_Succeeds")
 {
     Item item1;
     item1.Id = "item_1";
-    item1.Value = 200;
+    item1.Value = 100;
 
     Item item2;
     item2.Id = "item_2";
-    item2.Value = 300;
+    item2.Value = 200;
 
     Item item3;
     item3.Id = "item_3";
@@ -50,29 +50,32 @@ TEST_CASE("TradeService::TradeItem_FewValidTrades_Succeeds")
     };
     CharacterService characterService(characters);
 
+    InventoryItem inventoryItem1;
+    inventoryItem1.ItemId = "item_1";
+    inventoryItem1.Count = 2;
+
+    InventoryItem inventoryItem2;
+    inventoryItem2.ItemId = "item_2";
+    inventoryItem2.Count = 3;
+
+    InventoryItem inventoryItem3;
+    inventoryItem3.ItemId = "item_3";
+    inventoryItem3.Count = 1;
+
     Inventory buyerInventory;
     buyerInventory.Id = "inventory_buyer";
     buyerInventory.CurrentMoney = 1000;
 
-    InventoryItem inventoryItem1;
-    inventoryItem1.ItemId = "item_1";
-
-    InventoryItem inventoryItem2;
-    inventoryItem2.ItemId = "item_2";
-
-    InventoryItem inventoryItem3;
-    inventoryItem3.ItemId = "item_3";
-
     Inventory sellerInventory;
     sellerInventory.Id = "inventory_seller";
     sellerInventory.CurrentMoney = 500;
-    sellerInventory.Items.push_back(inventoryItem1); // Index 0
-    sellerInventory.Items.push_back(inventoryItem2); // Index 1
+    sellerInventory.Items.push_back(inventoryItem1);
+    sellerInventory.Items.push_back(inventoryItem2);
 
     Inventory thirdInventory;
     thirdInventory.Id = "inventory_third";
-    thirdInventory.CurrentMoney = 200;
-    thirdInventory.Items.push_back(inventoryItem3); // Index 0
+    thirdInventory.CurrentMoney = 400;
+    thirdInventory.Items.push_back(inventoryItem3);
 
     InventoryMap inventories{
         {buyerInventory.Id, buyerInventory},
@@ -91,15 +94,15 @@ TEST_CASE("TradeService::TradeItem_FewValidTrades_Succeeds")
         REQUIRE(inventories["inventory_seller"].CurrentMoney == 700);
         REQUIRE(inventories["inventory_buyer"].Items.size() == 1);
         REQUIRE(inventories["inventory_buyer"].Items[0].ItemId == "item_1");
-        REQUIRE(inventories["inventory_seller"].Items.size() == 1); // item_2 left
+        REQUIRE(inventories["inventory_seller"].Items.size() == 1);
     }
 
     {
-        auto result = tradeService.TradeItem("buyer", "seller", 0); // Index 0 again, since item_2 moved up
+        auto result = tradeService.TradeItem("buyer", "seller", 0);
 
         REQUIRE(result.has_value());
-        REQUIRE(inventories["inventory_buyer"].CurrentMoney == 500);
-        REQUIRE(inventories["inventory_seller"].CurrentMoney == 1000);
+        REQUIRE(inventories["inventory_buyer"].CurrentMoney == 200);
+        REQUIRE(inventories["inventory_seller"].CurrentMoney == 1300);
         REQUIRE(inventories["inventory_buyer"].Items.size() == 2);
         REQUIRE(inventories["inventory_buyer"].Items[1].ItemId == "item_2");
         REQUIRE(inventories["inventory_seller"].Items.empty());
@@ -109,21 +112,21 @@ TEST_CASE("TradeService::TradeItem_FewValidTrades_Succeeds")
         auto result = tradeService.TradeItem("buyer", "third", 0);
 
         REQUIRE(result.has_value());
-        REQUIRE(inventories["inventory_buyer"].CurrentMoney == 400);
-        REQUIRE(inventories["inventory_third"].CurrentMoney == 300);
+        REQUIRE(inventories["inventory_buyer"].CurrentMoney == 100);
+        REQUIRE(inventories["inventory_third"].CurrentMoney == 500);
         REQUIRE(inventories["inventory_buyer"].Items.size() == 3);
         REQUIRE(inventories["inventory_buyer"].Items[2].ItemId == "item_3");
         REQUIRE(inventories["inventory_third"].Items.empty());
     }
 
     {
-        const auto& buyerInv = inventories["inventory_buyer"];
+        const auto& buyerInventory = inventories["inventory_buyer"];
 
-        REQUIRE(buyerInv.CurrentMoney == 400);
-        REQUIRE(buyerInv.Items.size() == 3);
-        REQUIRE(buyerInv.Items[0].ItemId == "item_1");
-        REQUIRE(buyerInv.Items[1].ItemId == "item_2");
-        REQUIRE(buyerInv.Items[2].ItemId == "item_3");
+        REQUIRE(buyerInventory.CurrentMoney == 100);
+        REQUIRE(buyerInventory.Items.size() == 3);
+        REQUIRE(buyerInventory.Items[0].ItemId == "item_1");
+        REQUIRE(buyerInventory.Items[1].ItemId == "item_2");
+        REQUIRE(buyerInventory.Items[2].ItemId == "item_3");
     }
 }
 
@@ -236,8 +239,10 @@ TEST_CASE("TradeService::TradeItem_MissingItem_ReturnsItemNotFound")
     };
     CharacterService characterService(characters);
 
-    InventoryItem item;
-    item.ItemId = "missing_item";
+    InventoryItem inventoryItem1;
+    inventoryItem1.ItemId = "missing_item";
+    inventoryItem1.Count = 2;
+    
 
     Inventory buyerInventory;
     buyerInventory.Id = "inventory_buyer";
@@ -246,7 +251,7 @@ TEST_CASE("TradeService::TradeItem_MissingItem_ReturnsItemNotFound")
     Inventory sellerInventory;
     sellerInventory.Id = "inventory_seller";
     sellerInventory.CurrentMoney = 500;
-    sellerInventory.Items.push_back(item);
+    sellerInventory.Items.push_back(inventoryItem1);
 
     InventoryMap inventories{
         {buyerInventory.Id, buyerInventory},
@@ -289,6 +294,7 @@ TEST_CASE("TradeService::TradeItem_NotEnoughMoney_ReturnsNotEnoughMoney")
 
     InventoryItem inventoryItem1;
     inventoryItem1.ItemId = "item_1";
+    inventoryItem1.Count = 2;
 
     Inventory buyerInventory;
     buyerInventory.Id = "inventory_buyer";
@@ -335,6 +341,7 @@ TEST_CASE("TradeService::TradeItem_EmptyItemId_ReturnsItemNotFound")
 
     InventoryItem invalidItem;
     invalidItem.ItemId = "";
+    invalidItem.Count = 2;
 
     Inventory buyerInventory;
     buyerInventory.Id = "inventory_buyer";
@@ -377,9 +384,11 @@ TEST_CASE("TradeService::IsItemTradable_ReturnsCorrectValue")
 
     InventoryItem inventoryItem1;
     inventoryItem1.ItemId = "item_1";
+    inventoryItem1.Count = 2;
 
     InventoryItem inventoryItem2;
     inventoryItem2.ItemId = "item_2";
+    inventoryItem1.Count = 3;
 
     Inventory inventory;
     inventory.Id = "inventory";
@@ -433,8 +442,9 @@ TEST_CASE("TradeService::TradeItem_ItemNotTradable_ReturnsItemNotTradable")
     characters[seller.Id] = seller;
     CharacterService characterService(characters);
 
-    InventoryItem tradableItem;
-    tradableItem.ItemId = "item_1";
+    InventoryItem inventoryItem1;
+    inventoryItem1.ItemId = "item_1";
+    inventoryItem1.Count = 2;
 
     Inventory buyerInventory;
     buyerInventory.Id = "inventory_buyer";
@@ -443,7 +453,7 @@ TEST_CASE("TradeService::TradeItem_ItemNotTradable_ReturnsItemNotTradable")
     Inventory sellerInventory;
     sellerInventory.Id = "inventory_seller";
     sellerInventory.CurrentMoney = 500;
-    sellerInventory.Items.push_back(tradableItem);
+    sellerInventory.Items.push_back(inventoryItem1);
 
     InventoryMap inventories;
     inventories[buyerInventory.Id] = buyerInventory;
@@ -476,13 +486,14 @@ TEST_CASE("TradeService::TradeItem_SameCharacter_ReturnsTradeWithSelfNotAllowed"
     characters[character.Id] = character;
     CharacterService characterService(characters);
 
-    InventoryItem inventoryItem;
-    inventoryItem.ItemId = "item_1";
+    InventoryItem inventoryItem1;
+    inventoryItem1.ItemId = "item_1";
+    inventoryItem1.Count = 2;
 
     Inventory inventory;
     inventory.Id = "inventory_buyer";
     inventory.CurrentMoney = 1000;
-    inventory.Items.push_back(inventoryItem);
+    inventory.Items.push_back(inventoryItem1);
 
     InventoryMap inventories;
     inventories[inventory.Id] = inventory;
@@ -599,8 +610,9 @@ TEST_CASE("TradeService::TradeItem_TransferFails_ReturnsTransferFailed")
     characters[seller.Id] = seller;
     CharacterService characterService(characters);
 
-    InventoryItem tradableItem;
-    tradableItem.ItemId = "item_1";
+    InventoryItem inventoryItem1;
+    inventoryItem1.ItemId = "item_1";
+    inventoryItem1.Count = 2;
 
     Inventory buyerInventory;
     buyerInventory.Id = "inventory_buyer";
@@ -609,7 +621,7 @@ TEST_CASE("TradeService::TradeItem_TransferFails_ReturnsTransferFailed")
     Inventory sellerInventory;
     sellerInventory.Id = "inventory_seller";
     sellerInventory.CurrentMoney = 500;
-    sellerInventory.Items.push_back(tradableItem);
+    sellerInventory.Items.push_back(inventoryItem1);
 
     InventoryMap inventories;
     inventories[buyerInventory.Id] = buyerInventory;

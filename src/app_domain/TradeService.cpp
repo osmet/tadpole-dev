@@ -67,22 +67,30 @@ namespace app_domain
     tl::expected<void, TradeError> TradeService::CanTradeItemInternal(const TradeContext& context,
         std::size_t itemIndex) const
     {
-        auto sellerInventoryItemResult = m_inventoryService.GetItem(context.SellerInventory.Id, itemIndex);
+        const auto& sellerInventoryItemResult = m_inventoryService.GetItemDetails(context.SellerInventory.Id, itemIndex);
         if (!sellerInventoryItemResult)
-            return tl::unexpected(TradeError::InventoryItemNotFound);
+        {
+            switch (sellerInventoryItemResult.error())
+            {
+            case InventoryError::NotFound:         
+                return tl::unexpected(TradeError::InventoryNotFound);
+            case InventoryError::IndexOutOfRange:  
+                return tl::unexpected(TradeError::InventoryItemNotFound);
+            case InventoryError::ItemNotFound:     
+                return tl::unexpected(TradeError::ItemNotFound);
+            }
+        }
 
-        const auto& sellerInventoryItem = sellerInventoryItemResult.value().get();
+        const auto& sellerInventoryItem = sellerInventoryItemResult.value();
 
-        auto itemResult = m_itemService.GetItemById(sellerInventoryItem.ItemId);
-        if (!itemResult)
-            return tl::unexpected(TradeError::ItemNotFound);
-
-        const auto& item = itemResult.value().get();
+        const auto& item = sellerInventoryItem.GetItem();
 
         if (!IsItemTradable(item))
             return tl::unexpected(TradeError::ItemNotTradable);
 
-        if (context.BuyerInventory.CurrentMoney < item.Value)
+        const uint32_t itemTotalValue = sellerInventoryItemResult.value().GetTotalValue();
+
+        if (context.BuyerInventory.CurrentMoney < itemTotalValue)
             return tl::unexpected(TradeError::NotEnoughMoney);
 
         return {};
@@ -91,16 +99,15 @@ namespace app_domain
     tl::expected<void, TradeError> TradeService::TradeItemInternal(const TradeContext& context,
         std::size_t itemIndex) const
     {
-        auto canTrade = CanTradeItemInternal(context, itemIndex);
-        if (!canTrade)
-            return tl::unexpected(canTrade.error());
+        auto canTradeResult = CanTradeItemInternal(context, itemIndex);
+        if (!canTradeResult)
+            return tl::unexpected(canTradeResult.error());
 
-        const auto& sellerInventoryItem = m_inventoryService.GetItem(context.SellerInventory.Id, itemIndex).value().get();
-        const auto& item = m_itemService.GetItemById(sellerInventoryItem.ItemId).value().get();
+        const auto& sellerInventoryItemResult = m_inventoryService.GetItemDetails(context.SellerInventory.Id, itemIndex);
 
-        const auto itemValue = item.Value;
+        const uint32_t itemTotalValue = sellerInventoryItemResult.value().GetTotalValue();
 
-        if (!m_inventoryService.TransferMoney(context.BuyerInventory.Id, context.SellerInventory.Id, itemValue))
+        if (!m_inventoryService.TransferMoney(context.BuyerInventory.Id, context.SellerInventory.Id, itemTotalValue))
             return tl::unexpected(TradeError::TransferFailed);
 
         if (!m_inventoryService.TransferItem(context.SellerInventory.Id, context.BuyerInventory.Id, itemIndex))

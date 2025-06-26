@@ -188,14 +188,15 @@ namespace app_domain
         const auto& inventory = it->second;
 
         float currentWeight = 0.0f;
-        for (const auto& inventoryItem : inventory.Items)
+        for (size_t itemIndex = 0; itemIndex < inventory.Items.size(); ++itemIndex)
         {
-            auto itemResult = m_itemService.GetItemById(inventoryItem.ItemId);
-            if (itemResult.has_value())
-            {
-                const auto& item = itemResult.value().get();
-                currentWeight += item.Weight * static_cast<float>(inventoryItem.Count);
-            }
+            auto itemDetailsResult = GetItemDetails(inventoryId, itemIndex);
+            if (!itemDetailsResult)
+                continue;
+
+            auto& itemDetails = itemDetailsResult.value();
+
+            currentWeight += itemDetails.GetTotalWeight();
         }
 
         return currentWeight;
