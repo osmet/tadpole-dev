@@ -35,6 +35,8 @@ namespace app_domain
         tl::expected<TradeContext, TradeError> MakeContext(const std::string& buyerCharacterId,
             const std::string& sellerCharacterId) const;
 
+        bool IsItemTradable(const Item& item) const;
+
         tl::expected<void, TradeError> CanTradeItem(const std::string& buyerCharacterId,
             const std::string& sellerCharacterId,
             std::size_t itemIndex) const;

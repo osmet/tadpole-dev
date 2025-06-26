@@ -37,6 +37,11 @@ namespace app_domain
         };
     }
 
+    bool TradeService::IsItemTradable(const Item& item) const
+    {
+        return !item.IsStoryItem;
+    }
+
     tl::expected<void, TradeError> TradeService::CanTradeItem(const std::string& buyerCharacterId,
         const std::string& sellerCharacterId,
         std::size_t itemIndex) const
@@ -74,7 +79,7 @@ namespace app_domain
 
         const auto& item = itemResult.value().get();
 
-        if (item.IsStoryItem)
+        if (!IsItemTradable(item))
             return tl::unexpected(TradeError::ItemNotTradable);
 
         if (context.BuyerInventory.CurrentMoney < item.Value)

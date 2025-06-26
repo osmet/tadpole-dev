@@ -31,7 +31,8 @@
         { "ItemId": "Meat1", "Count": 7 },
         { "ItemId": "Meat2", "Count": 3 },
         { "ItemId": "Bow", "Count": 1 },
-        { "ItemId": "Greataxe", "Count": 1 }
+        { "ItemId": "Greataxe", "Count": 1 },
+        { "ItemId": "StoryItem", "Count": 1 }
       ]
     },
     "Wizard_Main": {

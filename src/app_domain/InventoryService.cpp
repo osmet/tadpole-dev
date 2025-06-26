@@ -62,7 +62,8 @@ namespace app_domain
 
     tl::expected<InventoryService::ItemDetailsListResult, InventoryError>
         InventoryService::GetFilterSortItemDetailsList(const std::string& inventoryId,
-            ItemCategory itemFilterCategory, ItemSortMode itemSortMode) const
+            ItemCategory itemFilterCategory, ItemSortMode itemSortMode,
+            std::function<bool(const InventoryItemDetails&)> customFilter) const
     {
         auto inventoryResult = GetInventoryById(inventoryId);
         if (!inventoryResult)
@@ -85,8 +86,12 @@ namespace app_domain
         
             auto& itemDetails = itemDetailsResult.value();
 
-            if (itemFilterCategory == app_domain::ItemCategory::All 
-                || app_domain::ItemTypeHelper::ToCategory(itemDetails.GetItem().Type) == itemFilterCategory)
+            bool categoryFilterPassed = itemFilterCategory == app_domain::ItemCategory::All
+                || app_domain::ItemTypeHelper::ToCategory(itemDetails.GetItem().Type) == itemFilterCategory;
+
+            bool customFilterPassed = !customFilter || customFilter(itemDetails);
+
+            if (categoryFilterPassed && customFilterPassed)
                 result.Items.emplace_back(std::move(itemDetails));
         }
 
@@ -126,7 +131,6 @@ namespace app_domain
             // Secondary sort key: Name (for grouping of identical items)
             return a.GetItem().Name < b.GetItem().Name; // Asc
         });
-
 
         return result;
     }

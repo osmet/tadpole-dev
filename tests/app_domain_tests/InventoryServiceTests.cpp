@@ -613,6 +613,43 @@ TEST_CASE("InventoryService::GetFilterSortItemDetailsList_FilterByScrollsAndTool
     REQUIRE(result->FailedIndices.empty());
 }
 
+TEST_CASE("InventoryService::GetFilterSortItemDetailsList_CustomFilter_ReturnsFilteredList")
+{
+    Inventory inventory;
+    inventory.Id = "inventory_1";
+    inventory.Items = {
+         { "item_3", 1 }, // Health Potion
+         { "item_2", 1 }, // Armor
+         { "item_9", 1 }, // Mana Potion
+         { "item_1", 1 }, // Weapon
+         { "item_3", 1 }  // Health Potion
+    };
+
+    InventoryMap inventories;
+    inventories["inventory_1"] = inventory;
+
+    MockItemService mockItemService;
+    InventoryService service(inventories, mockItemService);
+
+    auto customFilter = [](const app_domain::InventoryItemDetails& details)
+    {
+        return details.GetItem().Value < 100u;
+    };
+
+    auto result = service.GetFilterSortItemDetailsList(
+        "inventory_1",
+        app_domain::ItemCategory::All,
+        app_domain::ItemSortMode::Name,
+        customFilter
+    );
+
+    REQUIRE(result.has_value());
+    REQUIRE(result->Items.size() == 3u);
+    REQUIRE(result->Items[0].GetItem().Id == "item_3");
+    REQUIRE(result->Items[1].GetItem().Id == "item_3");
+    REQUIRE(result->Items[2].GetItem().Id == "item_9");
+}
+
 TEST_CASE("InventoryService::GetFilterSortItemDetailsList_SortByName_ReturnsSortedList")
 {
     Inventory inventory;

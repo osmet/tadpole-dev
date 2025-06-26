@@ -40,7 +40,8 @@ namespace app_domain
 
         tl::expected<ItemDetailsListResult, InventoryError>
             GetFilterSortItemDetailsList(const std::string& inventoryId,
-                ItemCategory itemFilterCategory, ItemSortMode itemSortMode) const;
+                ItemCategory itemFilterCategory, ItemSortMode itemSortMode,
+                std::function<bool(const InventoryItemDetails&)> customFilter = nullptr) const;
 
         virtual tl::expected<void, InventoryError>
             TransferMoney(const std::string& fromId, const std::string& toId, std::uint32_t amount);

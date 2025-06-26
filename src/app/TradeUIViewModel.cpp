@@ -202,7 +202,8 @@ namespace app
         out_items.clear();
 
         auto result = m_inventoryService.GetFilterSortItemDetailsList(inventoryId,
-            m_itemFilterCategory, m_itemSortMode);
+            m_itemFilterCategory, m_itemSortMode,
+            [this](const app_domain::InventoryItemDetails& item) { return m_tradeService.IsItemTradable(item.GetItem()); });
 
         if (result)
             out_items = std::move(result.value().Items);

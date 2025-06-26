@@ -357,6 +357,55 @@ TEST_CASE("TradeService::TradeItem_EmptyItemId_ReturnsItemNotFound")
     REQUIRE(result.error() == TradeError::ItemNotFound);
 }
 
+TEST_CASE("TradeService::IsItemTradable_ReturnsCorrectValue")
+{
+    Item item1;
+    item1.Id = "item_1";
+    item1.Value = 100;
+    item1.IsStoryItem = false; // Tradable
+
+    Item item2;
+    item2.Id = "item_2";
+    item2.Value = 200;
+    item2.IsStoryItem = true; // Not tradable
+
+    ItemMap items{
+        {item1.Id, item1},
+        {item2.Id, item2}
+    };
+    ItemService itemService(items);
+
+    InventoryItem inventoryItem1;
+    inventoryItem1.ItemId = "item_1";
+
+    InventoryItem inventoryItem2;
+    inventoryItem2.ItemId = "item_2";
+
+    Inventory inventory;
+    inventory.Id = "inventory";
+    inventory.Items.push_back(inventoryItem1);
+    inventory.Items.push_back(inventoryItem2);
+
+    InventoryMap inventories{
+        {inventory.Id, inventory}
+    };
+    InventoryService inventoryService(inventories, itemService);
+
+    CharacterMap characters;
+    CharacterService characterService(characters);
+
+    TradeService tradeService(itemService, characterService, inventoryService);
+
+    auto itemDetails1 = inventoryService.GetItemDetails(inventory.Id, 0);
+    auto itemDetails2 = inventoryService.GetItemDetails(inventory.Id, 1);
+
+    REQUIRE(itemDetails1.has_value());
+    REQUIRE(itemDetails2.has_value());
+
+    REQUIRE(tradeService.IsItemTradable(itemDetails1.value().GetItem()));
+    REQUIRE(!tradeService.IsItemTradable(itemDetails2.value().GetItem()));
+}
+
 TEST_CASE("TradeService::TradeItem_ItemNotTradable_ReturnsItemNotTradable")
 {
     Item item;

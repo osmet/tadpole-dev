@@ -230,6 +230,17 @@
       "Rarity": "Common",
       "Weight": 6.0,
       "Value": 50
+    },
+    {
+      "Id": "StoryItem",
+      "Name": "Story Item",
+      "IconTextureId": "UI_Item_Weapon_QuestItem",
+      "Description": "",
+      "Type": "Misc",
+      "IsStoryItem": true,
+      "Rarity": "VeryRare",
+      "Weight": 6.0,
+      "Value": 50
     }
   ]
 }
