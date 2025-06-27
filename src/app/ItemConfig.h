@@ -8,7 +8,7 @@ namespace app
     class ItemConfig : public core::IJsonData
     {
     public:
-        static const sf::Color& GetRarityColor(app_domain::ItemRarity rarity);
+        static const sf::Color GetRarityColor(app_domain::ItemRarity rarity);
 
         void FromJson(const rapidjson::Value& json);
 

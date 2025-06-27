@@ -42,9 +42,9 @@ namespace app
             inventory.Id = id;
             inventory.CurrentMoney = value["CurrentMoney"].GetInt();
 
-            size_t itemCount = value["Items"].Size();
+            rapidjson::SizeType itemCount = value["Items"].Size();
 
-            for (size_t itemIndex = 0; itemIndex < itemCount; ++itemIndex)
+            for (rapidjson::SizeType itemIndex = 0; itemIndex < itemCount; ++itemIndex)
             {
                 const auto& item = value["Items"][itemIndex];
 

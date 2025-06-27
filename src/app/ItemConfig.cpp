@@ -6,7 +6,7 @@
 
 namespace app
 {
-    const sf::Color& ItemConfig::GetRarityColor(app_domain::ItemRarity rarity)
+    const sf::Color ItemConfig::GetRarityColor(app_domain::ItemRarity rarity)
     {
         switch (rarity)
         {
