@@ -257,7 +257,7 @@ namespace app
         auto* sortByButton = CreateWidget<core::Button>();
         sortByButton->SetAnchor(.5f, 1.f);
         sortByButton->SetPivot(0.f, 1.f);
-        sortByButton->SetSize(185.f, 30.f);
+        sortByButton->SetSize(190.f, 32.f);
         sortByButton->SetColor(sf::Color::Transparent);
         sortByButton->SetOnClick([this] { ToggleItemSortButtonsPanel(); });
         sortByButton->SetOnHoverIn([this, sortByButton](const sf::Vector2f& mousePosition) 
@@ -290,11 +290,11 @@ namespace app
         auto& sortByButtonFrameTexture = assetManager.GetTexture("UI_Panel_SortByButton_Frame");
 
         auto* sortByButtonFrame = sortByButton->CreateWidget<core::Image>();
-        sortByButtonFrame->SetSize(185.f, 30.f);
+        sortByButtonFrame->SetSize(190.f, 32.f);
         sortByButtonFrame->SetTexture(sortByButtonFrameTexture);
         sortByButtonFrame->SetColor(sortByFrameColor);
 
-        sf::Vector2f itemSortPanelSize(185.f, 165.f);
+        sf::Vector2f itemSortPanelSize(190.f, 165.f);
         sf::Vector2f itemSortPanelPosition(0.f, -40.f);
         auto& itemSortPanelTexture = assetManager.GetTexture("UI_Panel_ItemSort");
         auto& itemSortPanelFrameTexture = assetManager.GetTexture("UI_Panel_ItemSort_Frame");
@@ -331,7 +331,7 @@ namespace app
             auto* sortButton = itemSortButtonsPanel->CreateWidget<core::Button>();
             sortButton->SetAnchor(0.f, 0.f);
             sortButton->SetPivot(0.f, 0.f);
-            sortButton->SetSize(185.f, 35.f);
+            sortButton->SetSize(190.f, 35.f);
             sortButton->SetColor(sf::Color::Transparent);
             sortButton->SetOnClick([this, sortMode, sortModeName, sortByButtonTextLabel]()
             { 
