@@ -15,13 +15,13 @@ namespace app
         const std::string& playerCharacterId,
         const std::string& traderCharacterId)
     {
-        auto contextResult = m_tradeService.MakeContext(playerCharacterId, traderCharacterId);
+        auto contextResult = m_tradeService.MakeContext(traderCharacterId, playerCharacterId);
         if (!contextResult)
             return tl::unexpected(contextResult.error());
 
         const auto& context = contextResult.value();
-        const auto& playerCharacter = context.BuyerCharacter;
-        const auto& traderCharacter = context.SellerCharacter;
+        const auto& playerCharacter = context.ToCharacter;
+        const auto& traderCharacter = context.FromCharacter;
 
         m_playerCharacterId = playerCharacter.Id;
         m_traderCharacterId = traderCharacter.Id;
@@ -48,7 +48,7 @@ namespace app
     tl::expected<void, app_domain::TradeError> 
         TradeUIViewModel::CanBuyItem(std::size_t itemIndex, std::uint32_t count) const
     {
-        auto result = m_tradeService.CanTradeItem(m_playerCharacterId, m_traderCharacterId, itemIndex, count);
+        auto result = m_tradeService.CanTradeItem(m_traderCharacterId, m_playerCharacterId, itemIndex, count);
         if (!result)
             return tl::unexpected(result.error());
 
@@ -58,7 +58,7 @@ namespace app
     tl::expected<void, app_domain::TradeError> 
         TradeUIViewModel::CanSellItem(std::size_t itemIndex, std::uint32_t count) const
     {
-        auto result = m_tradeService.CanTradeItem(m_traderCharacterId, m_playerCharacterId, itemIndex, count);
+        auto result = m_tradeService.CanTradeItem(m_playerCharacterId, m_traderCharacterId, itemIndex, count);
         if (!result)
             return tl::unexpected(result.error());
 
@@ -68,7 +68,7 @@ namespace app
     tl::expected<void, app_domain::TradeError> 
         TradeUIViewModel::BuyItem(std::size_t itemIndex, std::uint32_t count)
     {
-        auto result = m_tradeService.TradeItem(m_playerCharacterId, m_traderCharacterId, itemIndex, count);
+        auto result = m_tradeService.TradeItem(m_traderCharacterId, m_playerCharacterId, itemIndex, count);
         if (result)
             UpdateItems();
 
@@ -78,7 +78,7 @@ namespace app
     tl::expected<void, app_domain::TradeError> 
         TradeUIViewModel::SellItem(std::size_t itemIndex, std::uint32_t count)
     {
-        auto result = m_tradeService.TradeItem(m_traderCharacterId, m_playerCharacterId, itemIndex, count);
+        auto result = m_tradeService.TradeItem(m_playerCharacterId, m_traderCharacterId, itemIndex, count);
         if (result)
             UpdateItems();
 

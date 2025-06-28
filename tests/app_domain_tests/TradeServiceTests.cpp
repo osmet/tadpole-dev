@@ -7,7 +7,7 @@ TEST_CASE("TradeService::TradeItem_FewValidTradesAll_Succeeds")
     TestContext context;
 
     {
-        auto result = context.TradeService.TradeItem("character_1", "character_2", 0);
+        auto result = context.TradeService.TradeItem("character_2", "character_1", 0);
 
         REQUIRE(result.has_value());
         REQUIRE(context.Inventories["inventory_1"].CurrentMoney == 800);
@@ -18,7 +18,7 @@ TEST_CASE("TradeService::TradeItem_FewValidTradesAll_Succeeds")
     }
 
     {
-        auto result = context.TradeService.TradeItem("character_1", "character_2", 0);
+        auto result = context.TradeService.TradeItem("character_2", "character_1", 0);
 
         REQUIRE(result.has_value());
         REQUIRE(context.Inventories["inventory_1"].CurrentMoney == 200);
@@ -29,7 +29,7 @@ TEST_CASE("TradeService::TradeItem_FewValidTradesAll_Succeeds")
     }
 
     {
-        auto result = context.TradeService.TradeItem("character_1", "character_3", 0);
+        auto result = context.TradeService.TradeItem("character_3", "character_1", 0);
 
         REQUIRE(result.has_value());
         REQUIRE(context.Inventories["inventory_1"].CurrentMoney == 100);
@@ -55,7 +55,7 @@ TEST_CASE("TradeService::TradeItem_FewValidTradesWithCount_Succeeds")
     TestContext context;
 
     {
-        auto result = context.TradeService.TradeItem("character_1", "character_2", 0, 1);
+        auto result = context.TradeService.TradeItem("character_2", "character_1", 0, 1);
 
         REQUIRE(result.has_value());
         REQUIRE(context.Inventories["inventory_1"].CurrentMoney == 900);
@@ -70,7 +70,7 @@ TEST_CASE("TradeService::TradeItem_FewValidTradesWithCount_Succeeds")
     }
 
     {
-        auto result = context.TradeService.TradeItem("character_1", "character_2", 0, 1);
+        auto result = context.TradeService.TradeItem("character_2", "character_1", 0, 1);
 
         REQUIRE(result.has_value());
         REQUIRE(context.Inventories["inventory_1"].CurrentMoney == 800);
@@ -85,7 +85,7 @@ TEST_CASE("TradeService::TradeItem_FewValidTradesWithCount_Succeeds")
     }
 
     {
-        auto result = context.TradeService.TradeItem("character_1", "character_2", 0, 3);
+        auto result = context.TradeService.TradeItem("character_2", "character_1", 0, 3);
 
         REQUIRE(result.has_value());
         REQUIRE(context.Inventories["inventory_1"].CurrentMoney == 200);
@@ -102,11 +102,10 @@ TEST_CASE("TradeService::TradeItem_FewValidTradesWithCount_Succeeds")
     }
 
     {
-        auto result = context.TradeService.TradeItem("character_2", "character_1", 0, 1);
+        auto result = context.TradeService.TradeItem("character_1", "character_2", 0, 1);
 
         REQUIRE(result.has_value());
 
-        REQUIRE(result.has_value());
         REQUIRE(context.Inventories["inventory_1"].CurrentMoney == 300);
         REQUIRE(context.Inventories["inventory_1"].Items.size() == 2);
         REQUIRE(context.Inventories["inventory_1"].Items[0].ItemId == "sword");
@@ -125,7 +124,7 @@ TEST_CASE("TradeService::TradeItem_CountMoreThanAvailable_ReturnsInvalidAmount")
 {
     TestContext context;
 
-    auto result = context.TradeService.TradeItem("character_1", "character_2", 0, 100);
+    auto result = context.TradeService.TradeItem("character_2", "character_1", 0, 100);
 
     REQUIRE(!result.has_value());
     REQUIRE(result.error() == TradeError::InvalidAmount);
@@ -137,7 +136,7 @@ TEST_CASE("TradeService::TradeItem_BuyerNotFound_ReturnsCharacterNotFound")
 
     context.Characters.clear();
 
-    auto result = context.TradeService.TradeItem("character_1", "character_2", 0);
+    auto result = context.TradeService.TradeItem("character_2", "character_1", 0);
 
     REQUIRE(!result.has_value());
     REQUIRE(result.error() == TradeError::CharacterNotFound);
@@ -149,7 +148,7 @@ TEST_CASE("TradeService::TradeItem_InventoryNotFound_ReturnsInventoryNotFound")
 
     context.Inventories.clear();
 
-    auto result = context.TradeService.TradeItem("character_1", "character_2", 0);
+    auto result = context.TradeService.TradeItem("character_2", "character_1", 0);
 
     REQUIRE(!result.has_value());
     REQUIRE(result.error() == TradeError::InventoryNotFound);
@@ -161,20 +160,17 @@ TEST_CASE("TradeService::TradeItem_ItemIndexInvalid_ReturnsInventoryItemNotFound
 
     context.Inventories["inventory_2"].Items.clear();
 
-    auto result = context.TradeService.TradeItem("character_1", "character_2", 0);
+    auto result = context.TradeService.TradeItem("character_2", "character_1", 0);
 
     REQUIRE(!result.has_value());
     REQUIRE(result.error() == TradeError::InventoryItemNotFound);
 }
 
-TEST_CASE("TradeService::TradeItem_MissingItem_ReturnsItemNotFound")
+TEST_CASE("TradeService::TradeItem_ItemNotFound_ReturnsItemNotFound")
 {
     TestContext context;
 
-    context.Inventories["inventory_2"].Items.clear();
-    context.Inventories["inventory_2"].Items.push_back({ "missing_item", 2 });
-
-    auto result = context.TradeService.TradeItem("character_1", "character_2", 0);
+    auto result = context.TradeService.TradeItem("character_6", "character_1", 1);
 
     REQUIRE(!result.has_value());
     REQUIRE(result.error() == TradeError::ItemNotFound);
@@ -186,23 +182,10 @@ TEST_CASE("TradeService::TradeItem_NotEnoughMoney_ReturnsNotEnoughMoney")
 
     context.Inventories["inventory_1"].CurrentMoney = 50;
 
-    auto result = context.TradeService.TradeItem("character_1", "character_2", 0);
+    auto result = context.TradeService.TradeItem("character_2", "character_1", 0);
 
     REQUIRE(!result.has_value());
     REQUIRE(result.error() == TradeError::NotEnoughMoney);
-}
-
-TEST_CASE("TradeService::TradeItem_EmptyItemId_ReturnsItemNotFound")
-{
-    TestContext context;
-
-    context.Inventories["inventory_2"].Items.clear();
-    context.Inventories["inventory_2"].Items.push_back({ "", 2 });
-
-    auto result = context.TradeService.TradeItem("character_1", "character_2", 0);
-
-    REQUIRE(!result.has_value());
-    REQUIRE(result.error() == TradeError::ItemNotFound);
 }
 
 TEST_CASE("TradeService::IsItemTradable_ReturnsCorrectValue")
@@ -222,7 +205,7 @@ TEST_CASE("TradeService::TradeItem_ItemNotTradable_ReturnsItemNotTradable")
 
     context.Items["sword"].IsStoryItem = true;
 
-    auto result = context.TradeService.TradeItem("character_1", "character_2", 0);
+    auto result = context.TradeService.TradeItem("character_2", "character_1", 0);
 
     REQUIRE(!result.has_value());
     REQUIRE(result.error() == TradeError::ItemNotTradable);
@@ -232,7 +215,7 @@ TEST_CASE("TradeService::TradeItem_SameCharacter_ReturnsTradeWithSelfNotAllowed"
 {
     TestContext context;
 
-    auto result = context.TradeService.TradeItem("character_1", "character_1", 0);
+    auto result = context.TradeService.TradeItem("character_2", "character_2", 0);
 
     REQUIRE(!result.has_value());
     REQUIRE(result.error() == TradeError::TradeWithSelfNotAllowed);
@@ -242,7 +225,7 @@ TEST_CASE("TradeService::CanTradeItem_InvalidIndex_ReturnsInventoryItemNotFound"
 {
     TestContext context;
 
-    auto result = context.TradeService.CanTradeItem("character_1", "character_2", 5);
+    auto result = context.TradeService.CanTradeItem("character_2", "character_1", 5);
 
     REQUIRE(!result.has_value());
     REQUIRE(result.error() == TradeError::InventoryItemNotFound);
@@ -252,7 +235,7 @@ TEST_CASE("TradeService::CanTradeItem_CountMoreThanAvailable_ReturnsInvalidAmoun
 {
     TestContext context;
 
-    auto result = context.TradeService.CanTradeItem("character_1", "character_2", 0, 100);
+    auto result = context.TradeService.CanTradeItem("character_2", "character_1", 0, 100);
 
     REQUIRE(!result.has_value());
     REQUIRE(result.error() == TradeError::InvalidAmount);
@@ -293,7 +276,6 @@ namespace
         }
     };
 }
-
 TEST_CASE("TradeService::TradeItem_TransferFails_ReturnsTransferFailed")
 {
     TestContext context;
@@ -306,7 +288,7 @@ TEST_CASE("TradeService::TradeItem_TransferFails_ReturnsTransferFailed")
         mockInventoryService.FailTransferMoney = true;
         mockInventoryService.FailTransferItem = false;
 
-        auto result = tradeService.TradeItem("character_1", "character_2", 0);
+        auto result = tradeService.TradeItem("character_2", "character_1", 0);
 
         REQUIRE(!result.has_value());
         REQUIRE(result.error() == TradeError::TransferFailed);
@@ -317,7 +299,7 @@ TEST_CASE("TradeService::TradeItem_TransferFails_ReturnsTransferFailed")
         mockInventoryService.FailTransferMoney = false;
         mockInventoryService.FailTransferItem = true;
 
-        auto result = tradeService.TradeItem("character_1", "character_2", 0);
+        auto result = tradeService.TradeItem("character_2", "character_1", 0);
 
         REQUIRE(!result.has_value());
         REQUIRE(result.error() == TradeError::TransferFailed);
@@ -328,7 +310,7 @@ TEST_CASE("TradeService::TradeItem_TransferFails_ReturnsTransferFailed")
         mockInventoryService.FailTransferMoney = false;
         mockInventoryService.FailTransferItem = false;
 
-        auto result = tradeService.TradeItem("character_1", "character_2", 0);
+        auto result = tradeService.TradeItem("character_2", "character_1", 0);
 
         REQUIRE(result.has_value());
     }

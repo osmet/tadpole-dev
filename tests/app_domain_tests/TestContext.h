@@ -138,7 +138,15 @@ struct TestContext
             .PortraitTextureId = "",
             .MaxWeight = 100.f,
             .InventoryId = "inventory_3"
+        }},
+        { "character_6", app_domain::Character{
+            .Id = "character_6",
+            .Name = "Character 6",
+            .PortraitTextureId = "",
+            .MaxWeight = 100.f,
+            .InventoryId = "inventory_6"
         }}
+
     };
 
     app_domain::InventoryMap Inventories{

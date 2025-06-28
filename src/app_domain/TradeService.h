@@ -21,10 +21,10 @@ namespace app_domain
 
     struct TradeContext
     {
-        const app_domain::Character& BuyerCharacter;
-        const app_domain::Character& SellerCharacter;
-        const app_domain::Inventory& BuyerInventory;
-        const app_domain::Inventory& SellerInventory;
+        const app_domain::Character& FromCharacter;
+        const app_domain::Character& ToCharacter;
+        const app_domain::Inventory& FromInventory;
+        const app_domain::Inventory& ToInventory;
     };
 
     class TradeService
@@ -35,18 +35,18 @@ namespace app_domain
         TradeService(ItemService& itemService, CharacterService& characterService,
             InventoryService& inventoryService);
 
-        tl::expected<TradeContext, TradeError> MakeContext(const std::string& buyerCharacterId,
-            const std::string& sellerCharacterId) const;
+        tl::expected<TradeContext, TradeError> MakeContext(const std::string& fromCharacterId,
+            const std::string& toCharacterId) const;
 
         bool IsItemTradable(const Item& item) const;
 
-        tl::expected<InventoryItemDetails, TradeError> CanTradeItem(const std::string& buyerCharacterId,
-            const std::string& sellerCharacterId,
+        tl::expected<InventoryItemDetails, TradeError> CanTradeItem(const std::string& fromCharacterId,
+            const std::string& toCharacterId,
             std::size_t itemIndex,
             std::uint32_t count = TradeService::TradeAll) const;
 
-        tl::expected<void, TradeError> TradeItem(const std::string& buyerCharacterId,
-            const std::string& sellerCharacterId,
+        tl::expected<void, TradeError> TradeItem(const std::string& fromCharacterId,
+            const std::string& toCharacterId,
             std::size_t itemIndex,
             std::uint32_t count = TradeService::TradeAll) const;
 
@@ -54,8 +54,8 @@ namespace app_domain
         tl::expected<InventoryItemDetails, TradeError> CanTradeItemInternal(const TradeContext& context,
             std::size_t itemIndex,
             std::uint32_t count) const;
-        
-        tl::expected<void, TradeError> TradeItemInternal(const TradeContext& context, 
+
+        tl::expected<void, TradeError> TradeItemInternal(const TradeContext& context,
             std::size_t itemIndex,
             std::uint32_t count) const;
 
