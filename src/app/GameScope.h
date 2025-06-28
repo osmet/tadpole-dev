@@ -2,6 +2,7 @@
 
 #include "BackgroundPanel.h"
 #include "TradeScope.h"
+#include "../core/TextLabel.h"
 
 namespace app
 {
@@ -22,6 +23,7 @@ namespace app
         AppContext& m_appContext;
 
         std::unique_ptr<BackgroundPanel> m_backgroundPanel;
+        std::unique_ptr<core::TextLabel> m_lastSavedAtTextLabel;
 
         TradeScope m_tradeScope;
 
