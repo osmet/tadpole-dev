@@ -45,28 +45,40 @@ namespace app
         return {};
     }
 
-    tl::expected<void, app_domain::TradeError> TradeUIViewModel::CanBuyItem(std::size_t itemIndex) const
+    tl::expected<void, app_domain::TradeError> 
+        TradeUIViewModel::CanBuyItem(std::size_t itemIndex, std::uint32_t count) const
     {
-        return m_tradeService.CanTradeItem(m_playerCharacterId, m_traderCharacterId, itemIndex);
+        auto result = m_tradeService.CanTradeItem(m_playerCharacterId, m_traderCharacterId, itemIndex, count);
+        if (!result)
+            return tl::unexpected(result.error());
+
+        return {};
     }
 
-    tl::expected<void, app_domain::TradeError> TradeUIViewModel::CanSellItem(std::size_t itemIndex) const
+    tl::expected<void, app_domain::TradeError> 
+        TradeUIViewModel::CanSellItem(std::size_t itemIndex, std::uint32_t count) const
     {
-        return m_tradeService.CanTradeItem(m_traderCharacterId, m_playerCharacterId, itemIndex);
+        auto result = m_tradeService.CanTradeItem(m_traderCharacterId, m_playerCharacterId, itemIndex, count);
+        if (!result)
+            return tl::unexpected(result.error());
+
+        return {};
     }
 
-    tl::expected<void, app_domain::TradeError> TradeUIViewModel::BuyItem(std::size_t itemIndex)
+    tl::expected<void, app_domain::TradeError> 
+        TradeUIViewModel::BuyItem(std::size_t itemIndex, std::uint32_t count)
     {
-        auto result = m_tradeService.TradeItem(m_playerCharacterId, m_traderCharacterId, itemIndex);
+        auto result = m_tradeService.TradeItem(m_playerCharacterId, m_traderCharacterId, itemIndex, count);
         if (result)
             UpdateItems();
 
         return result;
     }
 
-    tl::expected<void, app_domain::TradeError> TradeUIViewModel::SellItem(std::size_t itemIndex)
+    tl::expected<void, app_domain::TradeError> 
+        TradeUIViewModel::SellItem(std::size_t itemIndex, std::uint32_t count)
     {
-        auto result = m_tradeService.TradeItem(m_traderCharacterId, m_playerCharacterId, itemIndex);
+        auto result = m_tradeService.TradeItem(m_traderCharacterId, m_playerCharacterId, itemIndex, count);
         if (result)
             UpdateItems();
 

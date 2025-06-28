@@ -166,30 +166,30 @@ struct TestContext
             .Id = "inventory_4",
             .CurrentMoney = 1000,
             .Items = {
-                app_domain::InventoryItem{.ItemId = "healing_potion", .Count = 1, .ModifiedAt = 100 },
-                app_domain::InventoryItem{.ItemId = "shield", .Count = 1, .ModifiedAt = 50 },
-                app_domain::InventoryItem{.ItemId = "mana_potion", .Count = 1, .ModifiedAt = 100 },
-                app_domain::InventoryItem{.ItemId = "sword", .Count = 1, .ModifiedAt = 50 },
-                app_domain::InventoryItem{.ItemId = "healing_potion", .Count = 1, .ModifiedAt = 100 }
+                app_domain::InventoryItem{.ItemId = "healing_potion", .Count = 1, .AddedAt = 100 },
+                app_domain::InventoryItem{.ItemId = "shield", .Count = 1, .AddedAt = 50 },
+                app_domain::InventoryItem{.ItemId = "mana_potion", .Count = 1, .AddedAt = 100 },
+                app_domain::InventoryItem{.ItemId = "sword", .Count = 1, .AddedAt = 50 },
+                app_domain::InventoryItem{.ItemId = "healing_potion", .Count = 1, .AddedAt = 100 }
             }
         }},
         { "inventory_5", app_domain::Inventory{
             .Id = "inventory_5",
             .CurrentMoney = 1000,
             .Items = {
-                app_domain::InventoryItem{.ItemId = "sword", .Count = 1, .ModifiedAt = 100 },
-                app_domain::InventoryItem{.ItemId = "scroll", .Count = 1, .ModifiedAt = 50 },
-                app_domain::InventoryItem{.ItemId = "tool", .Count = 1, .ModifiedAt = 100 },
+                app_domain::InventoryItem{.ItemId = "sword", .Count = 1, .AddedAt = 100 },
+                app_domain::InventoryItem{.ItemId = "scroll", .Count = 1, .AddedAt = 50 },
+                app_domain::InventoryItem{.ItemId = "tool", .Count = 1, .AddedAt = 100 },
             }
         }},
         { "inventory_6", app_domain::Inventory{
             .Id = "inventory_6",
             .CurrentMoney = 1000,
             .Items = {
-                app_domain::InventoryItem{.ItemId = "key", .Count = 1, .ModifiedAt = 50 },
-                app_domain::InventoryItem{.ItemId = "nonexistent_item", .Count = 1, .ModifiedAt = 100 },
-                app_domain::InventoryItem{.ItemId = "book", .Count = 2, .ModifiedAt = 100 },
-                app_domain::InventoryItem{.ItemId = "diamond", .Count = 2, .ModifiedAt = 100 },
+                app_domain::InventoryItem{.ItemId = "key", .Count = 1, .AddedAt = 50 },
+                app_domain::InventoryItem{.ItemId = "nonexistent_item", .Count = 1, .AddedAt = 100 },
+                app_domain::InventoryItem{.ItemId = "book", .Count = 2, .AddedAt = 100 },
+                app_domain::InventoryItem{.ItemId = "diamond", .Count = 2, .AddedAt = 100 },
             }
         }},
     };

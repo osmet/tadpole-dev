@@ -56,7 +56,7 @@ namespace app_domain
             itemIndex,
             std::cref(itemResult.value().get()),
             inventoryItem.Count,
-            inventoryItem.ModifiedAt
+            inventoryItem.AddedAt
         };
     }
 
@@ -138,7 +138,7 @@ namespace app_domain
     tl::expected<void, InventoryError>
         InventoryService::TransferMoney(const std::string& fromId, const std::string& toId, std::uint32_t amount)
     {
-        if (amount <= 0)
+        if (amount <= 0u)
             return tl::unexpected(InventoryError::InvalidAmount);
 
         auto fromIt = m_inventories.find(fromId);
@@ -157,7 +157,7 @@ namespace app_domain
     }
 
     tl::expected<void, InventoryError>
-        InventoryService::TransferItem(const std::string& fromId, const std::string& toId, std::size_t itemIndex)
+        InventoryService::TransferItem(const std::string& fromId, const std::string& toId, std::size_t itemIndex, std::uint32_t count)
     {
         auto fromIt = m_inventories.find(fromId);
         auto toIt = m_inventories.find(toId);
@@ -171,10 +171,20 @@ namespace app_domain
         if (itemIndex >= fromInventory.Items.size())
             return tl::unexpected(InventoryError::IndexOutOfRange);
 
-        const auto& inventoryItem = fromInventory.Items[itemIndex];
-        AddItemInternal(toInventory, inventoryItem.ItemId, inventoryItem.Count);
+        auto& fromItem = fromInventory.Items[itemIndex];
 
-        fromInventory.Items.erase(fromInventory.Items.begin() + itemIndex);
+        if (count == InventoryService::TransferAll)
+            count = fromItem.Count;
+        
+        if (fromItem.Count < count)
+            return tl::unexpected(InventoryError::InvalidAmount);
+
+        AddItemInternal(toInventory, fromItem.ItemId, count);
+
+        fromItem.Count -= count;
+
+        if (fromItem.Count == 0u)
+            fromInventory.Items.erase(fromInventory.Items.begin() + itemIndex);
 
         return {};
     }
@@ -207,8 +217,9 @@ namespace app_domain
         InventoryItem inventoryItem;
         inventoryItem.ItemId = itemId;
         inventoryItem.Count = count;
-        inventoryItem.ModifiedAt = app_domain::TimeProvider::GetUnixTimeMilliseconds();
+        inventoryItem.AddedAt = app_domain::TimeProvider::GetUnixTimeMilliseconds();
 
         inventory.Items.emplace_back(std::move(inventoryItem));
     }
+
 }

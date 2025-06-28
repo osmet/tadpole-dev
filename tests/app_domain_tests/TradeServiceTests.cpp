@@ -2,7 +2,7 @@
 
 using namespace app_domain;
 
-TEST_CASE("TradeService::TradeItem_FewValidTrades_Succeeds")
+TEST_CASE("TradeService::TradeItem_FewValidTradesAll_Succeeds")
 {
     TestContext context;
 
@@ -11,9 +11,9 @@ TEST_CASE("TradeService::TradeItem_FewValidTrades_Succeeds")
 
         REQUIRE(result.has_value());
         REQUIRE(context.Inventories["inventory_1"].CurrentMoney == 800);
-        REQUIRE(context.Inventories["inventory_2"].CurrentMoney == 700);
         REQUIRE(context.Inventories["inventory_1"].Items.size() == 1);
         REQUIRE(context.Inventories["inventory_1"].Items[0].ItemId == "sword");
+        REQUIRE(context.Inventories["inventory_2"].CurrentMoney == 700);
         REQUIRE(context.Inventories["inventory_2"].Items.size() == 1);
     }
 
@@ -22,9 +22,9 @@ TEST_CASE("TradeService::TradeItem_FewValidTrades_Succeeds")
 
         REQUIRE(result.has_value());
         REQUIRE(context.Inventories["inventory_1"].CurrentMoney == 200);
-        REQUIRE(context.Inventories["inventory_2"].CurrentMoney == 1300);
         REQUIRE(context.Inventories["inventory_1"].Items.size() == 2);
         REQUIRE(context.Inventories["inventory_1"].Items[1].ItemId == "shield");
+        REQUIRE(context.Inventories["inventory_2"].CurrentMoney == 1300);
         REQUIRE(context.Inventories["inventory_2"].Items.empty());
     }
 
@@ -33,9 +33,9 @@ TEST_CASE("TradeService::TradeItem_FewValidTrades_Succeeds")
 
         REQUIRE(result.has_value());
         REQUIRE(context.Inventories["inventory_1"].CurrentMoney == 100);
-        REQUIRE(context.Inventories["inventory_3"].CurrentMoney == 500);
         REQUIRE(context.Inventories["inventory_1"].Items.size() == 3);
         REQUIRE(context.Inventories["inventory_1"].Items[2].ItemId == "tool");
+        REQUIRE(context.Inventories["inventory_3"].CurrentMoney == 500);
         REQUIRE(context.Inventories["inventory_3"].Items.empty());
     }
 
@@ -48,6 +48,87 @@ TEST_CASE("TradeService::TradeItem_FewValidTrades_Succeeds")
         REQUIRE(buyerInventory.Items[1].ItemId == "shield");
         REQUIRE(buyerInventory.Items[2].ItemId == "tool");
     }
+}
+
+TEST_CASE("TradeService::TradeItem_FewValidTradesWithCount_Succeeds")
+{
+    TestContext context;
+
+    {
+        auto result = context.TradeService.TradeItem("character_1", "character_2", 0, 1);
+
+        REQUIRE(result.has_value());
+        REQUIRE(context.Inventories["inventory_1"].CurrentMoney == 900);
+        REQUIRE(context.Inventories["inventory_1"].Items.size() == 1);
+        REQUIRE(context.Inventories["inventory_1"].Items[0].ItemId == "sword");
+        REQUIRE(context.Inventories["inventory_1"].Items[0].Count == 1);
+
+        REQUIRE(context.Inventories["inventory_2"].CurrentMoney == 600);
+        REQUIRE(context.Inventories["inventory_2"].Items.size() == 2);
+        REQUIRE(context.Inventories["inventory_2"].Items[0].ItemId == "sword");
+        REQUIRE(context.Inventories["inventory_2"].Items[0].Count == 1);
+    }
+
+    {
+        auto result = context.TradeService.TradeItem("character_1", "character_2", 0, 1);
+
+        REQUIRE(result.has_value());
+        REQUIRE(context.Inventories["inventory_1"].CurrentMoney == 800);
+        REQUIRE(context.Inventories["inventory_1"].Items.size() == 2);
+        REQUIRE(context.Inventories["inventory_1"].Items[0].ItemId == "sword");
+        REQUIRE(context.Inventories["inventory_1"].Items[0].Count == 1);
+        REQUIRE(context.Inventories["inventory_1"].Items[1].ItemId == "sword");
+        REQUIRE(context.Inventories["inventory_1"].Items[1].Count == 1);
+
+        REQUIRE(context.Inventories["inventory_2"].CurrentMoney == 700);
+        REQUIRE(context.Inventories["inventory_2"].Items.size() == 1);
+    }
+
+    {
+        auto result = context.TradeService.TradeItem("character_1", "character_2", 0, 3);
+
+        REQUIRE(result.has_value());
+        REQUIRE(context.Inventories["inventory_1"].CurrentMoney == 200);
+        REQUIRE(context.Inventories["inventory_1"].Items.size() == 3);
+        REQUIRE(context.Inventories["inventory_1"].Items[0].ItemId == "sword");
+        REQUIRE(context.Inventories["inventory_1"].Items[0].Count == 1);
+        REQUIRE(context.Inventories["inventory_1"].Items[1].ItemId == "sword");
+        REQUIRE(context.Inventories["inventory_1"].Items[1].Count == 1);
+        REQUIRE(context.Inventories["inventory_1"].Items[2].ItemId == "shield");
+        REQUIRE(context.Inventories["inventory_1"].Items[2].Count == 3);
+
+        REQUIRE(context.Inventories["inventory_2"].CurrentMoney == 1300);
+        REQUIRE(context.Inventories["inventory_2"].Items.empty());
+    }
+
+    {
+        auto result = context.TradeService.TradeItem("character_2", "character_1", 0, 1);
+
+        REQUIRE(result.has_value());
+
+        REQUIRE(result.has_value());
+        REQUIRE(context.Inventories["inventory_1"].CurrentMoney == 300);
+        REQUIRE(context.Inventories["inventory_1"].Items.size() == 2);
+        REQUIRE(context.Inventories["inventory_1"].Items[0].ItemId == "sword");
+        REQUIRE(context.Inventories["inventory_1"].Items[0].Count == 1);
+        REQUIRE(context.Inventories["inventory_1"].Items[1].ItemId == "shield");
+        REQUIRE(context.Inventories["inventory_1"].Items[1].Count == 3);
+
+        REQUIRE(context.Inventories["inventory_2"].CurrentMoney == 1200);
+        REQUIRE(context.Inventories["inventory_2"].Items.size() == 1);
+        REQUIRE(context.Inventories["inventory_2"].Items[0].ItemId == "sword");
+        REQUIRE(context.Inventories["inventory_2"].Items[0].Count == 1);
+    }
+}
+
+TEST_CASE("TradeService::TradeItem_CountMoreThanAvailable_ReturnsInvalidAmount")
+{
+    TestContext context;
+
+    auto result = context.TradeService.TradeItem("character_1", "character_2", 0, 100);
+
+    REQUIRE(!result.has_value());
+    REQUIRE(result.error() == TradeError::InvalidAmount);
 }
 
 TEST_CASE("TradeService::TradeItem_BuyerNotFound_ReturnsCharacterNotFound")
@@ -167,6 +248,16 @@ TEST_CASE("TradeService::CanTradeItem_InvalidIndex_ReturnsInventoryItemNotFound"
     REQUIRE(result.error() == TradeError::InventoryItemNotFound);
 }
 
+TEST_CASE("TradeService::CanTradeItem_CountMoreThanAvailable_ReturnsInvalidAmount")
+{
+    TestContext context;
+
+    auto result = context.TradeService.CanTradeItem("character_1", "character_2", 0, 100);
+
+    REQUIRE(!result.has_value());
+    REQUIRE(result.error() == TradeError::InvalidAmount);
+}
+
 namespace
 {
     class MockInventoryService : public InventoryService
@@ -192,12 +283,13 @@ namespace
         tl::expected<void, InventoryError> TransferItem(
             const std::string& fromInventoryId,
             const std::string& toInventoryId,
-            std::size_t itemIndex) override
+            std::size_t itemIndex,
+            std::uint32_t count) override
         {
             if (FailTransferItem)
                 return tl::unexpected(InventoryError::NotFound);
 
-            return InventoryService::TransferItem(fromInventoryId, toInventoryId, itemIndex);
+            return InventoryService::TransferItem(fromInventoryId, toInventoryId, itemIndex, count);
         }
     };
 }

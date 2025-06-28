@@ -96,16 +96,88 @@ TEST_CASE("InventoryService::TransferMoney_InventoryNotFound_ReturnsNotFound")
     REQUIRE(result.error() == InventoryError::NotFound);
 }
 
-TEST_CASE("InventoryService::TransferItem_ItemExists_TransfersItem")
+TEST_CASE("InventoryService::TransferItem_FewTransfersAll_Succeeds")
 {
     TestContext context;
 
-    auto result = context.InventoryService.TransferItem("inventory_2", "inventory_1", 0);
+    {
+        auto result = context.InventoryService.TransferItem("inventory_2", "inventory_1", 0);
 
-    REQUIRE(result.has_value());
-    REQUIRE(context.Inventories["inventory_2"].Items.size() == 1);
-    REQUIRE(context.Inventories["inventory_1"].Items.size() == 1);
-    REQUIRE(context.Inventories["inventory_1"].Items[0].ItemId == "sword");
+        REQUIRE(result.has_value());
+        REQUIRE(context.Inventories["inventory_2"].Items.size() == 1);
+        REQUIRE(context.Inventories["inventory_1"].Items.size() == 1);
+        REQUIRE(context.Inventories["inventory_1"].Items[0].ItemId == "sword");
+        REQUIRE(context.Inventories["inventory_1"].Items[0].Count == 2);
+    }
+
+    {
+        auto result = context.InventoryService.TransferItem("inventory_2", "inventory_1", 0);
+
+        REQUIRE(result.has_value());
+        REQUIRE(context.Inventories["inventory_2"].Items.size() == 0);
+        REQUIRE(context.Inventories["inventory_1"].Items.size() == 2);
+        REQUIRE(context.Inventories["inventory_1"].Items[1].ItemId == "shield");
+        REQUIRE(context.Inventories["inventory_1"].Items[1].Count == 3);
+    }
+
+    {
+        auto result = context.InventoryService.TransferItem("inventory_1", "inventory_2", 1);
+
+        REQUIRE(result.has_value());
+        REQUIRE(context.Inventories["inventory_2"].Items.size() == 1);
+        REQUIRE(context.Inventories["inventory_2"].Items[0].ItemId == "shield");
+        REQUIRE(context.Inventories["inventory_2"].Items[0].Count == 3);
+        REQUIRE(context.Inventories["inventory_1"].Items.size() == 1);
+    }
+}
+
+TEST_CASE("InventoryService::TransferItem_FewTransfersWithCount_Succeeds")
+{
+    TestContext context;
+
+    {
+        auto result = context.InventoryService.TransferItem("inventory_2", "inventory_1", 0, 1);
+
+        REQUIRE(result.has_value());
+        REQUIRE(context.Inventories["inventory_2"].Items.size() == 2);
+        REQUIRE(context.Inventories["inventory_2"].Items[0].ItemId == "sword");
+        REQUIRE(context.Inventories["inventory_2"].Items[0].Count == 1);
+        REQUIRE(context.Inventories["inventory_1"].Items.size() == 1);
+        REQUIRE(context.Inventories["inventory_1"].Items[0].ItemId == "sword");
+        REQUIRE(context.Inventories["inventory_1"].Items[0].Count == 1);
+    }
+
+    {
+        auto result = context.InventoryService.TransferItem("inventory_2", "inventory_1", 1, 2);
+
+        REQUIRE(result.has_value());
+        REQUIRE(context.Inventories["inventory_2"].Items.size() == 2);
+        REQUIRE(context.Inventories["inventory_2"].Items[1].ItemId == "shield");
+        REQUIRE(context.Inventories["inventory_2"].Items[1].Count == 1);
+        REQUIRE(context.Inventories["inventory_1"].Items.size() == 2);
+        REQUIRE(context.Inventories["inventory_1"].Items[1].ItemId == "shield");
+        REQUIRE(context.Inventories["inventory_1"].Items[1].Count == 2);
+    }
+
+    {
+        auto result = context.InventoryService.TransferItem("inventory_2", "inventory_1", 1, 1);
+
+        REQUIRE(result.has_value());
+        REQUIRE(context.Inventories["inventory_2"].Items.size() == 1);
+        REQUIRE(context.Inventories["inventory_1"].Items.size() == 3);
+        REQUIRE(context.Inventories["inventory_1"].Items[2].ItemId == "shield");
+        REQUIRE(context.Inventories["inventory_1"].Items[2].Count == 1);
+    }
+}
+
+TEST_CASE("InventoryService::TransferItem_CountMoreThanAvailable_ReturnsInvalidAmount")
+{
+    TestContext context;
+
+    auto result = context.InventoryService.TransferItem("inventory_2", "inventory_1", 0, 100);
+
+    REQUIRE(!result.has_value());
+    REQUIRE(result.error() == InventoryError::InvalidAmount);
 }
 
 TEST_CASE("InventoryService::TransferItem_IndexOutOfRange_ReturnsIndexOutOfRange")

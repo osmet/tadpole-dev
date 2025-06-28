@@ -15,7 +15,8 @@ namespace app_domain
         ItemNotTradable = 4,
         NotEnoughMoney = 5,
         TransferFailed = 6,
-        TradeWithSelfNotAllowed = 7
+        TradeWithSelfNotAllowed = 7,
+        InvalidAmount = 8
     };
 
     struct TradeContext
@@ -29,6 +30,8 @@ namespace app_domain
     class TradeService
     {
     public:
+        static constexpr std::uint32_t TradeAll = 0u;
+
         TradeService(ItemService& itemService, CharacterService& characterService,
             InventoryService& inventoryService);
 
@@ -37,20 +40,24 @@ namespace app_domain
 
         bool IsItemTradable(const Item& item) const;
 
-        tl::expected<void, TradeError> CanTradeItem(const std::string& buyerCharacterId,
+        tl::expected<InventoryItemDetails, TradeError> CanTradeItem(const std::string& buyerCharacterId,
             const std::string& sellerCharacterId,
-            std::size_t itemIndex) const;
+            std::size_t itemIndex,
+            std::uint32_t count = TradeService::TradeAll) const;
 
         tl::expected<void, TradeError> TradeItem(const std::string& buyerCharacterId,
             const std::string& sellerCharacterId,
-            std::size_t itemIndex) const;
+            std::size_t itemIndex,
+            std::uint32_t count = TradeService::TradeAll) const;
 
     private:
-        tl::expected<void, TradeError> CanTradeItemInternal(const TradeContext& context, 
-            std::size_t itemIndex) const;
+        tl::expected<InventoryItemDetails, TradeError> CanTradeItemInternal(const TradeContext& context,
+            std::size_t itemIndex,
+            std::uint32_t count) const;
         
         tl::expected<void, TradeError> TradeItemInternal(const TradeContext& context, 
-            std::size_t itemIndex) const;
+            std::size_t itemIndex,
+            std::uint32_t count) const;
 
         InventoryService& m_inventoryService;
         CharacterService& m_characterService;

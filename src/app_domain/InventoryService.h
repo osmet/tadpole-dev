@@ -27,6 +27,8 @@ namespace app_domain
             std::vector<std::size_t> FailedIndices;
         };
 
+        static constexpr std::uint32_t TransferAll = 0u;
+
         InventoryService(InventoryMap& inventories, IItemService& itemService);
 
         tl::expected<std::reference_wrapper<const Inventory>, InventoryError>
@@ -47,7 +49,7 @@ namespace app_domain
             TransferMoney(const std::string& fromId, const std::string& toId, std::uint32_t amount);
 
         virtual tl::expected<void, InventoryError>
-            TransferItem(const std::string& fromId, const std::string& toId, std::size_t itemIndex);
+            TransferItem(const std::string& fromId, const std::string& toId, std::size_t itemIndex, std::uint32_t count = InventoryService::TransferAll);
 
         tl::expected<float, InventoryError> CalculateCurrentWeight(const std::string& inventoryId) const;
 

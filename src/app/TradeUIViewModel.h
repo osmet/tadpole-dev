@@ -23,11 +23,15 @@ namespace app
             const std::string& playerCharacterId,
             const std::string& traderCharacterId);
 
-        tl::expected<void, app_domain::TradeError> CanBuyItem(std::size_t itemIndex) const;
-        tl::expected<void, app_domain::TradeError> CanSellItem(std::size_t itemIndex) const;
+        tl::expected<void, app_domain::TradeError> 
+            CanBuyItem(std::size_t itemIndex, std::uint32_t count = app_domain::TradeService::TradeAll) const;
+        tl::expected<void, app_domain::TradeError> 
+            CanSellItem(std::size_t itemIndex, std::uint32_t count = app_domain::TradeService::TradeAll) const;
 
-        tl::expected<void, app_domain::TradeError> BuyItem(std::size_t itemIndex);
-        tl::expected<void, app_domain::TradeError> SellItem(std::size_t itemIndex);
+        tl::expected<void, app_domain::TradeError> 
+            BuyItem(std::size_t itemIndex, std::uint32_t count = app_domain::TradeService::TradeAll);
+        tl::expected<void, app_domain::TradeError> 
+            SellItem(std::size_t itemIndex, std::uint32_t count = app_domain::TradeService::TradeAll);
 
         const std::string& GetPlayerName() const;
         const std::string& GetTraderName() const;

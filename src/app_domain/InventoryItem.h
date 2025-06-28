@@ -6,6 +6,6 @@ namespace app_domain
     {
         std::string ItemId;
         std::uint32_t Count = 0u;
-        std::uint64_t ModifiedAt = 0u;
+        std::uint64_t AddedAt = 0u;
     };
 }

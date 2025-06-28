@@ -149,11 +149,19 @@ namespace app
             m_rarityGlowImage->SetColor(ItemConfig::GetRarityColor(item.GetItem().Rarity));
             m_rarityGlowImage->SetActive(true);
         }
+        else
+        {
+            m_rarityGlowImage->SetActive(false);
+        }
 
         if (item.GetCount() > 1u)
         {
             m_countTextLabel->SetText(std::to_string(item.GetCount()));
             m_countTextLabel->SetActive(true);
+        }
+        else
+        {
+            m_countTextLabel->SetActive(false);
         }
     }
 

@@ -55,10 +55,10 @@ namespace app
                 inventoryItem.ItemId = item["ItemId"].GetString();
                 inventoryItem.Count = item["Count"].GetInt();
 
-                if (item.HasMember("ModifiedAt") && item["ModifiedAt"].IsUint64())
-                    inventoryItem.ModifiedAt = item["ModifiedAt"].GetUint64();
+                if (item.HasMember("AddedAt") && item["AddedAt"].IsUint64())
+                    inventoryItem.AddedAt = item["AddedAt"].GetUint64();
                 else
-                    inventoryItem.ModifiedAt = static_cast<uint64_t>(itemCount - itemIndex - 1u); // Fallback: Get ModifiedAt by reverse item index
+                    inventoryItem.AddedAt = static_cast<uint64_t>(itemCount - itemIndex - 1u); // Fallback: Get AddedAt by reverse item index
 
                 inventory.Items.push_back(std::move(inventoryItem));
             }
@@ -91,7 +91,7 @@ namespace app
                 rapidjson::Value itemObj(rapidjson::kObjectType);
                 itemObj.AddMember("ItemId", rapidjson::Value(item.ItemId.c_str(), allocator), allocator);
                 itemObj.AddMember("Count", item.Count, allocator);
-                itemObj.AddMember("ModifiedAt", item.ModifiedAt, allocator);
+                itemObj.AddMember("AddedAt", item.AddedAt, allocator);
 
                 items.PushBack(itemObj, allocator);
             }
