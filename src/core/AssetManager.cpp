@@ -3,61 +3,6 @@
 
 namespace core
 {
-	sf::Texture AssetManager::CreateEmptyTexture()
-	{
-		sf::Texture texture;
-		const sf::Color pinkColor(255, 0, 255);
-
-		sf::Image image;
-		image.create(32, 32, pinkColor);
-
-		texture.loadFromImage(image);
-
-		return texture;
-	}
-
-	sf::Texture AssetManager::s_emptyTexture = CreateEmptyTexture();
-	sf::Font AssetManager::s_emptyFont;
-
-	AssetManager::Asset::~Asset() = default;
-
-	bool AssetManager::TextureAsset::Load(const std::string& filePath)
-	{
-		bool loaded = m_texture.loadFromFile(filePath);
-
-		if (loaded)
-		{
-			m_texture.setSmooth(true);
-
-			return true;
-		}
-
-		return false;
-	}
-
-	void AssetManager::TextureAsset::Unload()
-	{
-	}
-
-	sf::Texture& AssetManager::TextureAsset::GetTexture()
-	{
-		return m_texture;
-	}
-
-	bool AssetManager::FontAsset::Load(const std::string& filePath)
-	{
-		return m_font.loadFromFile(filePath);
-	}
-
-	void AssetManager::FontAsset::Unload()
-	{
-	}
-
-	sf::Font& AssetManager::FontAsset::GetFont()
-	{
-		return m_font;
-	}
-
 	void AssetManager::SetRootPath(const std::string& filePath)
 	{
 		m_rootPath = filePath;
@@ -107,5 +52,60 @@ namespace core
 		}
 
 		return s_emptyFont;
+	}
+
+	sf::Texture AssetManager::CreateEmptyTexture()
+	{
+		sf::Texture texture;
+		const sf::Color pinkColor(255, 0, 255);
+
+		sf::Image image;
+		image.create(32, 32, pinkColor);
+
+		texture.loadFromImage(image);
+
+		return texture;
+	}
+
+	sf::Texture AssetManager::s_emptyTexture = CreateEmptyTexture();
+	sf::Font AssetManager::s_emptyFont;
+
+	AssetManager::Asset::~Asset() = default;
+
+	bool AssetManager::TextureAsset::Load(const std::string & filePath)
+	{
+		bool loaded = m_texture.loadFromFile(filePath);
+
+		if (loaded)
+		{
+			m_texture.setSmooth(true);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	void AssetManager::TextureAsset::Unload()
+	{
+	}
+
+	sf::Texture& AssetManager::TextureAsset::GetTexture()
+	{
+		return m_texture;
+	}
+
+	bool AssetManager::FontAsset::Load(const std::string & filePath)
+	{
+		return m_font.loadFromFile(filePath);
+	}
+
+	void AssetManager::FontAsset::Unload()
+	{
+	}
+
+	sf::Font& AssetManager::FontAsset::GetFont()
+	{
+		return m_font;
 	}
 }
