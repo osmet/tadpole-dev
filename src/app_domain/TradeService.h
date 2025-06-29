@@ -35,29 +35,27 @@ namespace app_domain
         TradeService(ItemService& itemService, CharacterService& characterService,
             InventoryService& inventoryService);
 
-        tl::expected<TradeContext, TradeError> MakeContext(const std::string& fromCharacterId,
-            const std::string& toCharacterId) const;
+        tl::expected<TradeContext, TradeError> 
+            MakeContext(const std::string& fromCharacterId, const std::string& toCharacterId) const;
 
         bool IsItemTradable(const Item& item) const;
 
-        tl::expected<InventoryItemDetails, TradeError> CanTradeItem(const std::string& fromCharacterId,
-            const std::string& toCharacterId,
-            std::size_t itemIndex,
-            std::uint32_t count = TradeService::TradeAll) const;
+        tl::expected<InventoryItemDetails, TradeError> 
+            CanTradeItem(const std::string& fromCharacterId, const std::string& toCharacterId,
+                std::size_t itemIndex, std::uint32_t count = TradeService::TradeAll) const;
 
-        tl::expected<void, TradeError> TradeItem(const std::string& fromCharacterId,
-            const std::string& toCharacterId,
-            std::size_t itemIndex,
-            std::uint32_t count = TradeService::TradeAll) const;
+        tl::expected<void, TradeError> 
+            TradeItem(const std::string& fromCharacterId, const std::string& toCharacterId,
+                std::size_t itemIndex, std::uint32_t count = TradeService::TradeAll) const;
 
     private:
-        tl::expected<InventoryItemDetails, TradeError> CanTradeItemInternal(const TradeContext& context,
-            std::size_t itemIndex,
-            std::uint32_t count) const;
+        tl::expected<InventoryItemDetails, TradeError> 
+            CanTradeItemInternal(const TradeContext& context, std::size_t itemIndex, 
+                std::uint32_t count) const;
 
-        tl::expected<void, TradeError> TradeItemInternal(const TradeContext& context,
-            std::size_t itemIndex,
-            std::uint32_t count) const;
+        tl::expected<void, TradeError> 
+            TradeItemInternal(const TradeContext& context, std::size_t itemIndex,
+                std::uint32_t count) const;
 
         InventoryService& m_inventoryService;
         CharacterService& m_characterService;

@@ -19,9 +19,8 @@ namespace app
 
         TradeUIViewModel(AppContext& appContext);
 
-        tl::expected<void, app_domain::TradeError> BeginTrade(
-            const std::string& playerCharacterId,
-            const std::string& traderCharacterId);
+        tl::expected<void, app_domain::TradeError> 
+            BeginTrade(const std::string& playerCharacterId, const std::string& traderCharacterId);
 
         tl::expected<void, app_domain::TradeError> 
             CanBuyItem(std::size_t itemIndex, std::uint32_t count = app_domain::TradeService::TradeAll) const;
@@ -61,8 +60,10 @@ namespace app
     private:
         void UpdateItems();
         uint32_t GetInventoryMoney(const std::string& inventoryId) const;
-        std::optional<app_domain::InventoryItemDetails> GetInventoryItem(const std::string& inventoryId, size_t itemIndex) const;
-        void LoadInventoryItems(const std::string& inventoryId, std::vector<app_domain::InventoryItemDetails>& out_items) const;
+        std::optional<app_domain::InventoryItemDetails> 
+            GetInventoryItem(const std::string& inventoryId, size_t itemIndex) const;
+        void LoadInventoryItems(const std::string& inventoryId, 
+            std::vector<app_domain::InventoryItemDetails>& out_items) const;
 
     private:
         app_domain::ItemService& m_itemService;

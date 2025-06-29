@@ -136,7 +136,8 @@ namespace app_domain
     }
 
     tl::expected<void, InventoryError>
-        InventoryService::TransferMoney(const std::string& fromId, const std::string& toId, std::uint32_t amount)
+        InventoryService::TransferMoney(const std::string& fromId, const std::string& toId, 
+            std::uint32_t amount)
     {
         if (amount <= 0u)
             return tl::unexpected(InventoryError::InvalidAmount);
@@ -157,7 +158,8 @@ namespace app_domain
     }
 
     tl::expected<void, InventoryError>
-        InventoryService::TransferItem(const std::string& fromId, const std::string& toId, std::size_t itemIndex, std::uint32_t count)
+        InventoryService::TransferItem(const std::string& fromId, const std::string& toId, 
+            std::size_t itemIndex, std::uint32_t count)
     {
         auto fromIt = m_inventories.find(fromId);
         auto toIt = m_inventories.find(toId);
@@ -189,7 +191,8 @@ namespace app_domain
         return {};
     }
 
-    tl::expected<float, InventoryError> InventoryService::CalculateCurrentWeight(const std::string& inventoryId) const
+    tl::expected<float, InventoryError> 
+        InventoryService::CalculateCurrentWeight(const std::string& inventoryId) const
     {
         auto it = m_inventories.find(inventoryId);
         if (it == m_inventories.end())

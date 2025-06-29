@@ -46,12 +46,15 @@ namespace app_domain
                 std::function<bool(const InventoryItemDetails&)> customFilter = nullptr) const;
 
         virtual tl::expected<void, InventoryError>
-            TransferMoney(const std::string& fromId, const std::string& toId, std::uint32_t amount);
+            TransferMoney(const std::string& fromId, const std::string& toId, 
+                std::uint32_t amount);
 
         virtual tl::expected<void, InventoryError>
-            TransferItem(const std::string& fromId, const std::string& toId, std::size_t itemIndex, std::uint32_t count = InventoryService::TransferAll);
+            TransferItem(const std::string& fromId, const std::string& toId, 
+                std::size_t itemIndex, std::uint32_t count = InventoryService::TransferAll);
 
-        tl::expected<float, InventoryError> CalculateCurrentWeight(const std::string& inventoryId) const;
+        tl::expected<float, InventoryError> 
+            CalculateCurrentWeight(const std::string& inventoryId) const;
 
     private:
         void AddItemInternal(Inventory& inventory, const std::string& itemId, std::uint32_t count);

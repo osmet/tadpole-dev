@@ -11,9 +11,8 @@ namespace app
     {
     }
 
-    tl::expected<void, app_domain::TradeError> TradeUIViewModel::BeginTrade(
-        const std::string& playerCharacterId,
-        const std::string& traderCharacterId)
+    tl::expected<void, app_domain::TradeError> 
+        TradeUIViewModel::BeginTrade(const std::string& playerCharacterId, const std::string& traderCharacterId)
     {
         auto contextResult = m_tradeService.MakeContext(traderCharacterId, playerCharacterId);
         if (!contextResult)
@@ -199,7 +198,8 @@ namespace app
         return inventory ? inventory.value().get().CurrentMoney : 0;
     }
 
-    std::optional<app_domain::InventoryItemDetails> TradeUIViewModel::GetInventoryItem(const std::string& inventoryId, size_t itemIndex) const
+    std::optional<app_domain::InventoryItemDetails> 
+        TradeUIViewModel::GetInventoryItem(const std::string& inventoryId, size_t itemIndex) const
     {
         auto result = m_inventoryService.GetItemDetails(inventoryId, itemIndex);
         if (!result)
@@ -215,7 +215,10 @@ namespace app
 
         auto result = m_inventoryService.GetFilterSortItemDetailsList(inventoryId,
             m_itemFilterCategory, m_itemSortMode,
-            [this](const app_domain::InventoryItemDetails& item) { return m_tradeService.IsItemTradable(item.GetItem()); });
+            [this](const app_domain::InventoryItemDetails& item) 
+            { 
+                return m_tradeService.IsItemTradable(item.GetItem()); 
+            });
 
         if (result)
             out_items = std::move(result.value().Items);
