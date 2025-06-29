@@ -33,7 +33,74 @@ namespace app
 
     class TradeUIView : public core::UIView
     {
+    public:
+        TradeUIView(AppContext& appContext, TradeUIViewModel& viewModel);
+
+        void Initialize() override;
+        void HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow) override;
+        
     private:
+        class CharacterInfoPanel;
+        class ItemFilterPanel;
+        class ItemSortPanel;
+
+        void BindViewModel();
+
+        void SetOnTradeButtonClick(std::function<void()> callback);
+
+        void SetPlayerPortraitTexture(const std::string& textureId);
+        void SetPlayerName(const std::string& name);
+        void SetPlayerMoney(uint32_t money);
+        void SetPlayerWeight(float currentWeight, float maxWeight);
+
+        void SetTraderPortraitTexture(const std::string& textureId);
+        void SetTraderName(const std::string& name);
+        void SetTraderMoney(uint32_t money);
+        void SetTraderWeight(float currentWeight, float maxWeight);
+
+        void SetPlayerItems(const std::vector<app_domain::InventoryItemDetails>& items);
+        void SetTraderItems(const std::vector<app_domain::InventoryItemDetails>& items);
+
+        void ShowItemPanel(const app_domain::Item& item, const sf::Vector2f& position);
+        void HideItemPanel();
+        void ShowErrorPanel(app_domain::TradeError error);
+
+        AppContext& m_appContext;
+
+        TradeUIViewModel& m_viewModel;
+
+        CharacterInfoPanel* m_playerCharacterInfoPanel = nullptr;
+        CharacterInfoPanel* m_traderCharacterInfoPanel = nullptr;
+        ItemGridPanel* m_playerItemGrid = nullptr;
+        ItemGridPanel* m_traderItemGrid = nullptr;
+        ItemFilterPanel* m_itemFilterPanel = nullptr;
+        ItemSortPanel* m_itemSortPanel = nullptr;
+        ItemPanel* m_itemPanel = nullptr;
+        ItemTransferPanel* m_itemTransferPanel = nullptr;
+        ErrorPanel* m_errorPanel = nullptr;
+
+        std::function<void()> m_onTradeButtonClick;
+
+    private:
+        class CharacterInfoPanel final : public core::CanvasPanel
+        {
+        public:
+            CharacterInfoPanel(core::AssetManager& assetManager, bool alignRight);
+
+            void SetCharacterName(const std::string& name);
+            void SetPortraitTexture(const std::string& textureId);
+            void SetMoney(uint32_t money);
+            void SetWeight(float currentWeight, float maxWeight);
+
+        private:
+            core::AssetManager& m_assetManager;
+
+            core::TextLabel* m_nameTextLabel = nullptr;
+            core::Image* m_portraitImage = nullptr;
+            core::TextLabel* m_moneyTextLabel = nullptr;
+            core::TextLabel* m_weightTextLabel = nullptr;
+        };
+
         class ItemFilterPanel final : public core::StackPanel
         {
         public:
@@ -85,68 +152,5 @@ namespace app
 
             ItemSortPanel::OnSortButtonClick m_onSortButtonClick;
         };
-
-        class CharacterInfoPanel final : public core::CanvasPanel
-        {
-        public:
-            CharacterInfoPanel(core::AssetManager& assetManager, bool alignRight);
-
-            void SetCharacterName(const std::string& name);
-            void SetPortraitTexture(const std::string& textureId);
-            void SetMoney(uint32_t money);
-            void SetWeight(float currentWeight, float maxWeight);
-
-        private:
-            core::AssetManager& m_assetManager;
-
-            core::TextLabel* m_nameTextLabel = nullptr;
-            core::Image* m_portraitImage = nullptr;
-            core::TextLabel* m_moneyTextLabel = nullptr;
-            core::TextLabel* m_weightTextLabel = nullptr;
-        };
-
-    public:
-        TradeUIView(AppContext& appContext, TradeUIViewModel& viewModel);
-
-        void Initialize() override;
-        void HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow) override;
-        
-    private:
-        void BindViewModel();
-
-        void SetOnTradeButtonClick(std::function<void()> callback);
-
-        void SetPlayerPortraitTexture(const std::string& textureId);
-        void SetPlayerName(const std::string& name);
-        void SetPlayerMoney(uint32_t money);
-        void SetPlayerWeight(float currentWeight, float maxWeight);
-
-        void SetTraderPortraitTexture(const std::string& textureId);
-        void SetTraderName(const std::string& name);
-        void SetTraderMoney(uint32_t money);
-        void SetTraderWeight(float currentWeight, float maxWeight);
-
-        void SetPlayerItems(const std::vector<app_domain::InventoryItemDetails>& items);
-        void SetTraderItems(const std::vector<app_domain::InventoryItemDetails>& items);
-
-        void ShowItemPanel(const app_domain::Item& item, const sf::Vector2f& position);
-        void HideItemPanel();
-        void ShowErrorPanel(app_domain::TradeError error);
-
-        AppContext& m_appContext;
-
-        TradeUIViewModel& m_viewModel;
-
-        CharacterInfoPanel* m_playerCharacterInfoPanel = nullptr;
-        CharacterInfoPanel* m_traderCharacterInfoPanel = nullptr;
-        ItemGridPanel* m_playerItemGrid = nullptr;
-        ItemGridPanel* m_traderItemGrid = nullptr;
-        ItemFilterPanel* m_itemFilterPanel = nullptr;
-        ItemSortPanel* m_itemSortPanel = nullptr;
-        ItemPanel* m_itemPanel = nullptr;
-        ItemTransferPanel* m_itemTransferPanel = nullptr;
-        ErrorPanel* m_errorPanel = nullptr;
-
-        std::function<void()> m_onTradeButtonClick;
     };
 }
