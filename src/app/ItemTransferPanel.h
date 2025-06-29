@@ -17,6 +17,7 @@ namespace app_domain
 
 namespace app
 {
+    class ScreenOverlayPanel;
     class ItemSlot;
 
     class ItemTransferPanel final : public core::CanvasPanel
@@ -25,7 +26,7 @@ namespace app
         using OnConfirm = std::function<void(std::size_t itemIndex, std::uint32_t itemCount)>;
         using OnCancel = std::function<void()>;
 
-        ItemTransferPanel(core::AssetManager& assetManager);
+        ItemTransferPanel(core::AssetManager& assetManager, const sf::Vector2f& renderWindowSize);
 
         void Show(const app_domain::InventoryItemDetails& item);
 

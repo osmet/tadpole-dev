@@ -7,14 +7,17 @@
 #include "../app_domain/Item.h"
 #include "../app_domain/InventoryItemDetails.h"
 #include "ItemSlot.h"
+#include "ScreenOverlayPanel.h"
 
 namespace app
 {
-    ItemTransferPanel::ItemTransferPanel(core::AssetManager& assetManager)
+    ItemTransferPanel::ItemTransferPanel(core::AssetManager& assetManager, const sf::Vector2f& renderWindowSize)
     {
         SetAnchor(0.5f, 0.5f);
         SetPivot(0.5f, 0.5f);
         SetActive(false);
+
+        auto* screenOverlayImage = CreateWidget<ScreenOverlayPanel>(renderWindowSize);
 
         auto& regularFont = assetManager.GetFont("Mignon_Regular");
 
@@ -148,7 +151,6 @@ namespace app
 
         m_itemSlot->SetItem(item);
         m_itemNameTextLabel->SetText(item.GetItem().Name);
-
 
         SetActive(true);
     }

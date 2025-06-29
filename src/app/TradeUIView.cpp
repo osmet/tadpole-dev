@@ -11,135 +11,11 @@
 #include "ItemGridPanel.h"
 #include "ItemPanel.h"
 #include "TradeUIViewModel.h"
+#include "TooltipPanel.h"
+#include "ErrorPanel.h"
 
 namespace app
 {
-    TradeUIView::TooltipPanel::TooltipPanel(core::AssetManager& assetManager)
-    {
-        SetAnchor(0.f, 0.f);
-        SetPivot(0.5f, 0.5f);
-        SetActive(false);
-
-        auto& regularFont = assetManager.GetFont("Mignon_Regular");
-
-        auto* frameImage = CreateWidget<core::Image>();
-        frameImage->SetColor(sf::Color(0u, 0u, 0u, 150u));
-        frameImage->SetOutlineThickness(2.f);
-        frameImage->SetOutlineColor(sf::Color(191u, 163u, 143u, 128u));
-        m_frameImage = frameImage;
-
-        auto* textLabel = frameImage->CreateWidget<core::TextLabel>();
-        textLabel->SetLocalPosition(0.f, -1.f);
-        textLabel->SetFont(regularFont);
-        textLabel->SetFontSize(18u);
-        m_textLabel = textLabel;
-    }
-
-    void TradeUIView::TooltipPanel::Show(const std::string& text, const sf::Vector2f& position, const sf::Vector2f& offset)
-    {
-        if (!m_textLabel || !m_frameImage)
-            return;
-
-        sf::Vector2f padding(20.f, 14.f);
-        sf::Vector2f positionWithOffset(position.x + offset.x, position.y + offset.y);
-
-        bool isAbove = offset.y <= 0.f;
-
-        SetPivot(0.f, isAbove ? 1.f : 0.f);
-        SetLocalPosition(positionWithOffset);
-        SetActive(true);
-
-        m_textLabel->SetText(text);
-
-        sf::Vector2f frameSize(m_textLabel->GetSize());
-        frameSize.x += 2.f * padding.x;
-        frameSize.y += 2.f * padding.y;
-
-        m_frameImage->SetSize(frameSize);
-        m_frameImage->SetAnchor(GetPivot());
-        m_frameImage->SetPivot(GetPivot());
-    }
-
-    void TradeUIView::TooltipPanel::Hide()
-    {
-        SetActive(false);
-    }
-
-    TradeUIView::ErrorPanel::ErrorPanel(core::AssetManager& assetManager, const sf::Vector2f& renderWindowSize)
-    {
-        SetAnchor(0.f, 0.f);
-        SetPivot(0.5f, 0.5f);
-        SetActive(false);
-
-        auto& regularFont = assetManager.GetFont("Mignon_Regular");
-
-        auto* overlayImage = CreateWidget<core::Image>();
-        overlayImage->SetAnchor(.5f, .5f);
-        overlayImage->SetPivot(.5f, .5f);
-        overlayImage->SetSize(renderWindowSize);
-        overlayImage->SetLocalPosition(renderWindowSize.x / 2.f, renderWindowSize.y / 2.f);
-        overlayImage->SetColor(sf::Color(0u, 0u, 0u, 150u));
-        
-        auto* backgroundImage = CreateWidget<core::Image>();
-        backgroundImage->SetColor(sf::Color(0u, 0u, 0u, 150u));
-        backgroundImage->SetOutlineThickness(2.f);
-        backgroundImage->SetOutlineColor(sf::Color(153u, 117u, 92u, 255u));
-        backgroundImage->SetSize(540.f, 140.f);
-        backgroundImage->SetLocalPosition(renderWindowSize.x / 2.f, renderWindowSize.y / 2.f - 16.f);
-
-        auto* titleTextLabel = backgroundImage->CreateWidget<core::TextLabel>();
-        titleTextLabel->SetAnchor(0.5f, 0.f);
-        titleTextLabel->SetPivot(0.5f, 0.f);
-        titleTextLabel->SetLocalPosition(0.f, 36.f);
-        titleTextLabel->SetFont(regularFont);
-        titleTextLabel->SetFontSize(28u);
-        titleTextLabel->SetText("Not enough gold");
-        m_titleTextLabel = titleTextLabel;
-
-        auto* descriptionTextLabel = backgroundImage->CreateWidget<core::TextLabel>();
-        descriptionTextLabel->SetAnchor(0.5f, 0.f);
-        descriptionTextLabel->SetPivot(0.5f, 0.f);
-        descriptionTextLabel->SetLocalPosition(0.f, 76.f);
-        descriptionTextLabel->SetFont(regularFont);
-        descriptionTextLabel->SetFontSize(18u);
-        descriptionTextLabel->SetColor(sf::Color(222u, 214u, 203u, 255u));
-        descriptionTextLabel->SetText("Not enough gold to complete this deal.");
-        m_descriptionTextLabel = descriptionTextLabel;
-
-        auto* confirmButton = backgroundImage->CreateWidget<core::Button>();
-        confirmButton->SetAnchor(0.5f, 1.f);
-        confirmButton->SetPivot(0.5f, 0.5f);
-        confirmButton->SetLocalPosition(0.f, 0.f);
-        confirmButton->SetSize(160.f, 34.f);
-        confirmButton->SetColor(sf::Color(48u, 58u, 64u, 255u));
-        confirmButton->SetOnClick([this]() 
-        { 
-            SetActive(false); 
-
-            if (m_onConfirm)
-                m_onConfirm();
-        });
-        {
-            auto textLabel = confirmButton->CreateWidget<core::TextLabel>();
-            textLabel->SetFont(regularFont);
-            textLabel->SetFontSize(18u);
-            textLabel->SetText("OK");
-        }
-    }
-
-    void TradeUIView::ErrorPanel::Show(const std::string& title, const std::string& description, OnConfirm callback)
-    {
-        if (m_titleTextLabel)
-            m_titleTextLabel->SetText(title);
-
-        if (m_descriptionTextLabel)
-            m_descriptionTextLabel->SetText(description);
-
-        m_onConfirm = std::move(callback);
-
-        SetActive(true);
-    }
-
     TradeUIView::ItemFilterPanel::ItemFilterDescriptor::ItemFilterDescriptor(app_domain::ItemCategory itemCategory, std::string name,
         std::string textureId)
         : ItemCategory(itemCategory), Name(std::move(name)), TextureId(std::move(textureId))
@@ -612,7 +488,7 @@ namespace app
             }
 
             {
-                auto* itemTransferPanel = m_mainWidget->CreateWidget<ItemTransferPanel>(assetManager);
+                auto* itemTransferPanel = m_mainWidget->CreateWidget<ItemTransferPanel>(assetManager, renderWindowSize);
                 m_itemTransferPanel = itemTransferPanel;
             }
 
@@ -863,8 +739,7 @@ namespace app
         case TradeError::NotEnoughMoney:
             m_errorPanel->Show(
                 "Insufficient Gold",
-                "A character has insufficient gold to complete this transaction.",
-                []() {}
+                "A character has insufficient gold to complete this transaction."
             );
             break;
         default:

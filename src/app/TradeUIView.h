@@ -25,41 +25,15 @@ namespace app_domain
 namespace app
 {
     class AppContext; 
+    class TooltipPanel;
     class ItemGridPanel;
     class ItemPanel;
     class ItemTransferPanel;
+    class ErrorPanel;
 
     class TradeUIView : public core::UIView
     {
     private:
-        class TooltipPanel final : public core::CanvasPanel
-        {
-        public:
-            TooltipPanel(core::AssetManager& assetManager);
-
-            void Show(const std::string& text, const sf::Vector2f& position, const sf::Vector2f& offset);
-            void Hide();
-        private:
-            core::Image* m_frameImage = nullptr;
-            core::TextLabel* m_textLabel = nullptr;
-        };
-
-        class ErrorPanel final : public core::CanvasPanel
-        {
-        public:
-            using OnConfirm = std::function<void()>;
-
-            ErrorPanel(core::AssetManager& assetManager, const sf::Vector2f& renderWindowSize);
-
-            void Show(const std::string& title, const std::string& description, OnConfirm callback);
-
-        private:
-            core::TextLabel* m_titleTextLabel = nullptr;
-            core::TextLabel* m_descriptionTextLabel = nullptr;
-
-            OnConfirm m_onConfirm;
-        };
-
         class ItemFilterPanel final : public core::StackPanel
         {
         public:

@@ -64,6 +64,15 @@
     <ClCompile Include="ItemSlot.cpp">
       <Filter>Source Files\items</Filter>
     </ClCompile>
+    <ClCompile Include="TooltipPanel.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="ErrorPanel.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreenOverlayPanel.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Precompiled.h">
@@ -126,6 +135,15 @@
     <ClInclude Include="ItemSlot.h">
       <Filter>Source Files\items</Filter>
     </ClInclude>
+    <ClInclude Include="TooltipPanel.h">
+      <Filter>Source Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrorPanel.h">
+      <Filter>Source Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenOverlayPanel.h">
+      <Filter>Source Files\common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
@@ -148,6 +166,9 @@
     </Filter>
     <Filter Include="Source Files\backgrounds">
       <UniqueIdentifier>{25fd648e-5490-4204-adf7-57c0d0707771}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\common">
+      <UniqueIdentifier>{ae0d7dd4-b705-4524-ae44-00c3592b10f1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
