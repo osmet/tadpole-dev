@@ -8,6 +8,7 @@
 #include "../app_domain/ItemSortMode.h"
 #include "TradeUIViewModel.h"
 #include "ItemGridPanel.h"
+#include "ItemTransferPanel.h"
 
 namespace core 
 { 
@@ -26,6 +27,7 @@ namespace app
     class AppContext; 
     class ItemGridPanel;
     class ItemPanel;
+    class ItemTransferPanel;
 
     class TradeUIView : public core::UIView
     {
@@ -138,8 +140,6 @@ namespace app
     private:
         void BindViewModel();
 
-        void SetOnItemFilterButtonClick(ItemFilterPanel::OnFilterButtonClick callback);
-        void SetOnItemSortButtonClick(ItemSortPanel::OnSortButtonClick callback);
         void SetOnTradeButtonClick(std::function<void()> callback);
 
         void SetPlayerPortraitTexture(const std::string& textureId);
@@ -170,6 +170,7 @@ namespace app
         ItemFilterPanel* m_itemFilterPanel = nullptr;
         ItemSortPanel* m_itemSortPanel = nullptr;
         ItemPanel* m_itemPanel = nullptr;
+        ItemTransferPanel* m_itemTransferPanel = nullptr;
         ErrorPanel* m_errorPanel = nullptr;
 
         std::function<void()> m_onTradeButtonClick;

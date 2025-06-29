@@ -602,6 +602,11 @@ namespace app
             }
 
             {
+                auto* itemTransferPanel = m_mainWidget->CreateWidget<ItemTransferPanel>(assetManager);
+                m_itemTransferPanel = itemTransferPanel;
+            }
+
+            {
                 auto* errorPanel = m_mainWidget->CreateWidget<ErrorPanel>(assetManager, renderWindowSize);
                 m_errorPanel = errorPanel;
             }
@@ -615,6 +620,11 @@ namespace app
         if (m_errorPanel && m_errorPanel->IsActiveSelf())
         {
             m_errorPanel->HandleEvent(event, renderWindow);
+            return;
+        }
+        else if (m_itemTransferPanel && m_itemTransferPanel->IsActiveSelf())
+        {
+            m_itemTransferPanel->HandleEvent(event, renderWindow);
             return;
         }
             
@@ -649,23 +659,37 @@ namespace app
 
         if (m_playerItemGrid)
         {
-            m_playerItemGrid->SetOnItemSlotClick([this](std::size_t index) 
+            m_playerItemGrid->SetOnItemSlotClick([this](std::size_t itemIndex)
             {
-                auto canTradeResult = m_viewModel.CanSellItem(index);
-                if (!canTradeResult.has_value())
-                {
-                    ShowErrorPanel(canTradeResult.error());
+                const auto& item = m_viewModel.GetPlayerItem(itemIndex);
+                if (!item)
                     return;
-                }
 
-                auto tradeResult = m_viewModel.SellItem(index);
-                if (!tradeResult.has_value())
-                    ShowErrorPanel(tradeResult.error());
+                if (item->GetCount() > 1u)
+                {
+                    if (m_itemTransferPanel)
+                    {
+                        m_itemTransferPanel->SetOnConfirm([this](std::size_t itemIndex, std::uint32_t count)
+                        {
+                            auto tradeResult = m_viewModel.SellItem(itemIndex, count);
+                            if (!tradeResult.has_value())
+                                ShowErrorPanel(tradeResult.error());
+                        });
+
+                        m_itemTransferPanel->Show(*item);
+                    }
+                }
+                else 
+                {
+                    auto tradeResult = m_viewModel.SellItem(itemIndex, 1u);
+                    if (!tradeResult.has_value())
+                        ShowErrorPanel(tradeResult.error());
+                }
             });
 
-            m_playerItemGrid->SetOnItemSlotHoverIn([this](std::size_t index, const sf::Vector2f& position) 
+            m_playerItemGrid->SetOnItemSlotHoverIn([this](std::size_t itemIndex, const sf::Vector2f& position)
             {
-                auto item = m_viewModel.GetPlayerItem(index);
+                auto item = m_viewModel.GetPlayerItem(itemIndex);
                 if (item)
                     ShowItemPanel(item->GetItem(), position);
             });
@@ -678,23 +702,37 @@ namespace app
 
         if (m_traderItemGrid)
         {
-            m_traderItemGrid->SetOnItemSlotClick([this](std::size_t index) 
+            m_traderItemGrid->SetOnItemSlotClick([this](std::size_t itemIndex)
             {
-                auto canTradeResult = m_viewModel.CanBuyItem(index);
-                if (!canTradeResult.has_value())
-                {
-                    ShowErrorPanel(canTradeResult.error());
+                const auto& item = m_viewModel.GetTraderItem(itemIndex);
+                if (!item)
                     return;
-                }
 
-                auto tradeResult = m_viewModel.BuyItem(index);
-                if (!tradeResult.has_value())
-                    ShowErrorPanel(tradeResult.error());
+                if (item->GetCount() > 1u)
+                {
+                    if (m_itemTransferPanel)
+                    {
+                        m_itemTransferPanel->SetOnConfirm([this](std::size_t itemIndex, std::uint32_t count)
+                        {
+                            auto tradeResult = m_viewModel.BuyItem(itemIndex, count);
+                            if (!tradeResult.has_value())
+                                ShowErrorPanel(tradeResult.error());
+                        });
+
+                        m_itemTransferPanel->Show(*item);
+                    }
+                }
+                else
+                {
+                    auto tradeResult = m_viewModel.BuyItem(itemIndex, 1u);
+                    if (!tradeResult.has_value())
+                        ShowErrorPanel(tradeResult.error());
+                }
             });
 
-            m_traderItemGrid->SetOnItemSlotHoverIn([this](std::size_t index, const sf::Vector2f& position) 
+            m_traderItemGrid->SetOnItemSlotHoverIn([this](std::size_t itemIndex, const sf::Vector2f& position)
             {
-                auto item = m_viewModel.GetTraderItem(index);
+                auto item = m_viewModel.GetTraderItem(itemIndex);
                 if (item)
                     ShowItemPanel(item->GetItem(), position);
             });

@@ -183,6 +183,8 @@
     <ClCompile Include="GameData.cpp" />
     <ClCompile Include="GameScope.cpp" />
     <ClCompile Include="ItemConfig.cpp" />
+    <ClCompile Include="ItemSlot.cpp" />
+    <ClCompile Include="ItemTransferPanel.cpp" />
     <ClCompile Include="ItemGridPanel.cpp" />
     <ClCompile Include="ItemPanel.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -209,6 +211,8 @@
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GameScope.h" />
     <ClInclude Include="ItemConfig.h" />
+    <ClInclude Include="ItemSlot.h" />
+    <ClInclude Include="ItemTransferPanel.h" />
     <ClInclude Include="ItemGridPanel.h" />
     <ClInclude Include="ItemPanel.h" />
     <ClInclude Include="Precompiled.h" />

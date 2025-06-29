@@ -58,6 +58,12 @@
     <ClCompile Include="TradeUIViewModel.cpp">
       <Filter>Source Files\trade</Filter>
     </ClCompile>
+    <ClCompile Include="ItemTransferPanel.cpp">
+      <Filter>Source Files\items</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemSlot.cpp">
+      <Filter>Source Files\items</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Precompiled.h">
@@ -113,6 +119,12 @@
     </ClInclude>
     <ClInclude Include="TradeUIViewModel.h">
       <Filter>Source Files\trade</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemTransferPanel.h">
+      <Filter>Source Files\items</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemSlot.h">
+      <Filter>Source Files\items</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
