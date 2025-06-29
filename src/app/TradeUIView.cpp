@@ -119,11 +119,12 @@ namespace app
             if (m_onConfirm)
                 m_onConfirm();
         });
-
-        auto confirmText = confirmButton->CreateWidget<core::TextLabel>();
-        confirmText->SetFont(regularFont);
-        confirmText->SetFontSize(18u);
-        confirmText->SetText("OK");
+        {
+            auto textLabel = confirmButton->CreateWidget<core::TextLabel>();
+            textLabel->SetFont(regularFont);
+            textLabel->SetFontSize(18u);
+            textLabel->SetText("OK");
+        }
     }
 
     void TradeUIView::ErrorPanel::Show(const std::string& title, const std::string& description, OnConfirm callback)
@@ -170,7 +171,6 @@ namespace app
         sf::Color filterButtonFrameColor(128u, 107u, 95u, 255u);
         auto& filterButtonFrameTexture = assetManager.GetTexture("UI_Panel_Circle_Frame");
 
-
         for (const auto& itemFilterDescriptor : itemFilterDescriptors)
         {
             auto itemCategory = itemFilterDescriptor.ItemCategory;
@@ -213,16 +213,17 @@ namespace app
                 if (m_tooltipPanel)
                     m_tooltipPanel->Hide();
             });
+            {
+                auto* itemCategoryImage = filterButton->CreateWidget<core::Image>();
+                itemCategoryImage->SetSize(25.f);
+                itemCategoryImage->SetTexture(texture);
+
+                auto* frameImage = filterButton->CreateWidget<core::Image>();
+                frameImage->SetSize(buttonSize);
+                frameImage->SetTexture(filterButtonFrameTexture);
+                frameImage->SetColor(filterButtonFrameColor);
+            }
             m_filterButtons.push_back(filterButton);
-
-            auto* itemCategoryImage = filterButton->CreateWidget<core::Image>();
-            itemCategoryImage->SetSize(25.f);
-            itemCategoryImage->SetTexture(texture);
-
-            auto* filterButtonFrameImage = filterButton->CreateWidget<core::Image>();
-            filterButtonFrameImage->SetSize(buttonSize);
-            filterButtonFrameImage->SetTexture(filterButtonFrameTexture);
-            filterButtonFrameImage->SetColor(filterButtonFrameColor);
         }
 
         if (m_filterButtons[0])
@@ -254,6 +255,10 @@ namespace app
         auto& regularFont = assetManager.GetFont("Mignon_Regular");
         auto& sortIconTexture = assetManager.GetTexture("UI_Icon_Sort");
 
+        sf::Color frameColor(sf::Color(191u, 163u, 143u, 128u));
+
+        core::TextLabel* sortByButtonTextLabel = nullptr;
+
         auto* sortByButton = CreateWidget<core::Button>();
         sortByButton->SetAnchor(.5f, 1.f);
         sortByButton->SetPivot(0.f, 1.f);
@@ -270,29 +275,30 @@ namespace app
             if (m_tooltipPanel)
                 m_tooltipPanel->Hide();
         });
+        {
+            auto* iconImage = sortByButton->CreateWidget<core::Image>();
+            iconImage->SetAnchor(0.f, .5f);
+            iconImage->SetPivot(0.f, .5f);
+            iconImage->SetLocalPosition(10.f, 0.f);
+            iconImage->SetSize(16.f);
+            iconImage->SetTexture(sortIconTexture);
 
-        auto* sortByButtonIconImage = sortByButton->CreateWidget<core::Image>();
-        sortByButtonIconImage->SetAnchor(0.f, .5f);
-        sortByButtonIconImage->SetPivot(0.f, .5f);
-        sortByButtonIconImage->SetLocalPosition(10.f, 0.f);
-        sortByButtonIconImage->SetSize(16.f);
-        sortByButtonIconImage->SetTexture(sortIconTexture);
+            auto* textLabel = sortByButton->CreateWidget<core::TextLabel>();
+            textLabel->SetAnchor(0.f, .5f);
+            textLabel->SetPivot(0.f, .5f);
+            textLabel->SetLocalPosition(33.f, -1.f);
+            textLabel->SetFont(regularFont);
+            textLabel->SetFontSize(18u);
+            textLabel->SetText(itemSortDescriptors[0].second);
+            sortByButtonTextLabel = textLabel;
 
-        auto* sortByButtonTextLabel = sortByButton->CreateWidget<core::TextLabel>();
-        sortByButtonTextLabel->SetAnchor(0.f, .5f);
-        sortByButtonTextLabel->SetPivot(0.f, .5f);
-        sortByButtonTextLabel->SetLocalPosition(33.f, -1.f);
-        sortByButtonTextLabel->SetFont(regularFont);
-        sortByButtonTextLabel->SetFontSize(18u);
-        sortByButtonTextLabel->SetText(itemSortDescriptors[0].second);
+            auto& frameTexture = assetManager.GetTexture("UI_Panel_SortByButton_Frame");
 
-        sf::Color sortByFrameColor(sf::Color(191u, 163u, 143u, 128u));
-        auto& sortByButtonFrameTexture = assetManager.GetTexture("UI_Panel_SortByButton_Frame");
-
-        auto* sortByButtonFrame = sortByButton->CreateWidget<core::Image>();
-        sortByButtonFrame->SetSize(190.f, 32.f);
-        sortByButtonFrame->SetTexture(sortByButtonFrameTexture);
-        sortByButtonFrame->SetColor(sortByFrameColor);
+            auto* frameImage = sortByButton->CreateWidget<core::Image>();
+            frameImage->SetSize(190.f, 32.f);
+            frameImage->SetTexture(frameTexture);
+            frameImage->SetColor(frameColor);
+        }
 
         sf::Vector2f itemSortPanelSize(190.f, 165.f);
         sf::Vector2f itemSortPanelPosition(0.f, -40.f);
@@ -307,51 +313,53 @@ namespace app
         itemSortPanelImage->SetTexture(itemSortPanelTexture);
         itemSortPanelImage->SetColor(sf::Color(0u, 0u, 0u, 150u));
         itemSortPanelImage->SetActive(false);
-        m_itemSortButtonsPanel = itemSortPanelImage;
-
-        auto* itemSortPanelFrameImage = itemSortPanelImage->CreateWidget<core::Image>();
-        itemSortPanelFrameImage->SetSize(itemSortPanelSize);
-        itemSortPanelFrameImage->SetTexture(itemSortPanelFrameTexture);
-        itemSortPanelFrameImage->SetColor(sortByFrameColor);
-
-        auto* itemSortButtonsPanel = itemSortPanelImage->CreateWidget<core::StackPanel>();
-        itemSortButtonsPanel->SetAnchor(0.f, 0.f);
-        itemSortButtonsPanel->SetPivot(0.f, 0.f);
-        itemSortButtonsPanel->SetLocalPosition(0.f, 10.f);
-        itemSortButtonsPanel->Reserve(itemSortDescriptors.size());
-        itemSortButtonsPanel->SetOrientation(core::StackPanel::Orientation::Vertical);
-        itemSortButtonsPanel->SetSpacing(0.f);
-        itemSortButtonsPanel->SetSizeToContent(false);
-
-        for (const auto& itemSortDescriptor : itemSortDescriptors)
         {
-            auto sortMode = itemSortDescriptor.first;
-            const auto& sortModeName = itemSortDescriptor.second;
+            auto* frameImage = itemSortPanelImage->CreateWidget<core::Image>();
+            frameImage->SetSize(itemSortPanelSize);
+            frameImage->SetTexture(itemSortPanelFrameTexture);
+            frameImage->SetColor(frameColor);
 
-            auto* sortButton = itemSortButtonsPanel->CreateWidget<core::Button>();
-            sortButton->SetAnchor(0.f, 0.f);
-            sortButton->SetPivot(0.f, 0.f);
-            sortButton->SetSize(190.f, 35.f);
-            sortButton->SetColor(sf::Color::Transparent);
-            sortButton->SetOnClick([this, sortMode, sortModeName, sortByButtonTextLabel]()
-            { 
-                if (sortByButtonTextLabel)
-                    sortByButtonTextLabel->SetText(sortModeName);
+            auto* itemSortButtonsPanel = itemSortPanelImage->CreateWidget<core::StackPanel>();
+            itemSortButtonsPanel->SetAnchor(0.f, 0.f);
+            itemSortButtonsPanel->SetPivot(0.f, 0.f);
+            itemSortButtonsPanel->SetLocalPosition(0.f, 10.f);
+            itemSortButtonsPanel->Reserve(itemSortDescriptors.size());
+            itemSortButtonsPanel->SetOrientation(core::StackPanel::Orientation::Vertical);
+            itemSortButtonsPanel->SetSpacing(0.f);
+            itemSortButtonsPanel->SetSizeToContent(false);
 
-                ToggleItemSortButtonsPanel();
+            for (const auto& itemSortDescriptor : itemSortDescriptors)
+            {
+                auto sortMode = itemSortDescriptor.first;
+                const auto& sortModeName = itemSortDescriptor.second;
 
-                if (m_onSortButtonClick) 
-                    m_onSortButtonClick(sortMode); 
-            });
+                auto* sortButton = itemSortButtonsPanel->CreateWidget<core::Button>();
+                sortButton->SetAnchor(0.f, 0.f);
+                sortButton->SetPivot(0.f, 0.f);
+                sortButton->SetSize(190.f, 35.f);
+                sortButton->SetColor(sf::Color::Transparent);
+                sortButton->SetOnClick([this, sortMode, sortModeName, sortByButtonTextLabel]()
+                {
+                    if (sortByButtonTextLabel)
+                        sortByButtonTextLabel->SetText(sortModeName);
 
-            auto* sortButtonTextLabel = sortButton->CreateWidget<core::TextLabel>();
-            sortButtonTextLabel->SetAnchor(0.f, .5f);
-            sortButtonTextLabel->SetPivot(0.f, .5f);
-            sortButtonTextLabel->SetLocalPosition(20.f, 0.f);
-            sortButtonTextLabel->SetFont(regularFont);
-            sortButtonTextLabel->SetFontSize(18u);
-            sortButtonTextLabel->SetText(sortModeName);
+                    ToggleItemSortButtonsPanel();
+
+                    if (m_onSortButtonClick)
+                        m_onSortButtonClick(sortMode);
+                });
+                {
+                    auto* textLabel = sortButton->CreateWidget<core::TextLabel>();
+                    textLabel->SetAnchor(0.f, .5f);
+                    textLabel->SetPivot(0.f, .5f);
+                    textLabel->SetLocalPosition(20.f, 0.f);
+                    textLabel->SetFont(regularFont);
+                    textLabel->SetFontSize(18u);
+                    textLabel->SetText(sortModeName);
+                }
+            }
         }
+        m_itemSortButtonsPanel = itemSortPanelImage;
     }
 
     void TradeUIView::ItemSortPanel::SetTooltipPanel(TooltipPanel* tooltipPanel)
@@ -395,12 +403,13 @@ namespace app
         portraitImage->SetPivot(alignRight ? 0.f : 1.f, 0.f);
         portraitImage->SetLocalPosition(portraitPositionX, 75.f);
         portraitImage->SetSize(portraitSize);
+        {
+            auto* frameImage = portraitImage->CreateWidget<core::Image>();
+            frameImage->SetSize(portraitSize);
+            frameImage->SetTexture(portraitFrameTexture);
+            frameImage->SetColor(portraitFrameColor);
+        }
         m_portraitImage = portraitImage;
-
-        auto* portraitFrameImage = portraitImage->CreateWidget<core::Image>();
-        portraitFrameImage->SetSize(portraitSize);
-        portraitFrameImage->SetTexture(portraitFrameTexture);
-        portraitFrameImage->SetColor(portraitFrameColor);
 
         auto* nameTextLabel = CreateWidget<core::TextLabel>();
         nameTextLabel->SetAnchor(.5f, 0.f);
@@ -577,13 +586,14 @@ namespace app
                 tradeButton->SetTexture(tradeButtonTexture);
                 tradeButton->SetColor(sf::Color(48, 58, 64));
                 tradeButton->SetOnClick([onTradeButtonClick = m_onTradeButtonClick]() { if (onTradeButtonClick) onTradeButtonClick(); });
-
-                auto* tradeButtonText = tradeButton->CreateWidget<core::TextLabel>();
-                tradeButtonText->SetLocalPosition(0.f, 0.f);
-                tradeButtonText->SetFont(regularFont);
-                tradeButtonText->SetFontSize(18);
-                tradeButtonText->SetText("TRADE");
-                tradeButtonText->SetColor(sf::Color::White);
+                {
+                    auto* textLabel = tradeButton->CreateWidget<core::TextLabel>();
+                    textLabel->SetLocalPosition(0.f, 0.f);
+                    textLabel->SetFont(regularFont);
+                    textLabel->SetFontSize(18);
+                    textLabel->SetText("TRADE");
+                    textLabel->SetColor(sf::Color::White);
+                }
             }
 
             {
