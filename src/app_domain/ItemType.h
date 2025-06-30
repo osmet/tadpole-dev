@@ -31,6 +31,7 @@ namespace app_domain
         Food = 41,
         Potion = 42,
         Elixir = 43,
+        Arrow = 44,
 
         // Scrolls and Tools (51-60)
         Scroll = 51,

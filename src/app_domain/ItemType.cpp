@@ -30,7 +30,7 @@ namespace app_domain
         if (type >= ItemType::Armor && type <= ItemType::Shield)
             return ItemCategory::Equipment;
 
-        if (type >= ItemType::Food && type <= ItemType::Elixir)
+        if (type >= ItemType::Food && type <= ItemType::Arrow)
             return ItemCategory::Consumables;
 
         if (type >= ItemType::Scroll && type <= ItemType::Bomb)

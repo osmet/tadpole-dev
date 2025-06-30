@@ -212,7 +212,10 @@ namespace app
 
         panelSizeY += 6.f;
         m_descriptionTextLabel->SetLocalPosition(padding.x + textIconPaddingX, panelSizeY);
-        m_descriptionTextLabel->SetText(item.Description + ".");
+        std::string description = item.Description;
+        if (!description.empty() && description.back() != '.')
+            description += ".";
+        m_descriptionTextLabel->SetText(description);
         panelSizeY += m_descriptionTextLabel->GetSize().y;
 
         panelSizeY += 26.f;
