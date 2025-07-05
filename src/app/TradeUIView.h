@@ -45,6 +45,7 @@ namespace app
         class ItemSortPanel;
 
         void BindViewModel();
+        void BindItemGridPanel(ItemGridPanel* gridPanel, bool isBuying) const;
 
         void SetOnTradeButtonClick(std::function<void()> callback);
 
@@ -61,9 +62,9 @@ namespace app
         void SetPlayerItems(const std::vector<app_domain::InventoryItemDetails>& items);
         void SetTraderItems(const std::vector<app_domain::InventoryItemDetails>& items);
 
-        void ShowItemPanel(const app_domain::Item& item, const sf::Vector2f& position);
-        void HideItemPanel();
-        void ShowErrorPanel(app_domain::TradeError error);
+        void ShowItemPanel(const app_domain::Item& item, const sf::Vector2f& position) const;
+        void HideItemPanel() const;
+        void ShowErrorPanel(app_domain::TradeError error) const;
 
         AppContext& m_appContext;
 

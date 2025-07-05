@@ -195,91 +195,8 @@ namespace app
             SetTraderMoney(m_viewModel.GetTraderMoney());
         });
 
-        if (m_playerItemGrid)
-        {
-            m_playerItemGrid->SetOnItemSlotClick([this](std::size_t itemIndex)
-            {
-                const auto& item = m_viewModel.GetPlayerItem(itemIndex);
-                if (!item)
-                    return;
-
-                if (item->GetCount() > 1u)
-                {
-                    if (m_itemTransferPanel)
-                    {
-                        m_itemTransferPanel->SetOnConfirm([this](std::size_t itemIndex, std::uint32_t count)
-                        {
-                            auto tradeResult = m_viewModel.SellItem(itemIndex, count);
-                            if (!tradeResult.has_value())
-                                ShowErrorPanel(tradeResult.error());
-                        });
-
-                        m_itemTransferPanel->Show(*item);
-                    }
-                }
-                else 
-                {
-                    auto tradeResult = m_viewModel.SellItem(itemIndex, 1u);
-                    if (!tradeResult.has_value())
-                        ShowErrorPanel(tradeResult.error());
-                }
-            });
-
-            m_playerItemGrid->SetOnItemSlotHoverIn([this](std::size_t itemIndex, const sf::Vector2f& position)
-            {
-                auto item = m_viewModel.GetPlayerItem(itemIndex);
-                if (item)
-                    ShowItemPanel(item->GetItem(), position);
-            });
-
-            m_playerItemGrid->SetOnItemSlotHoverOut([this]() 
-            {
-                HideItemPanel();
-            });
-        }
-
-        if (m_traderItemGrid)
-        {
-            m_traderItemGrid->SetOnItemSlotClick([this](std::size_t itemIndex)
-            {
-                const auto& item = m_viewModel.GetTraderItem(itemIndex);
-                if (!item)
-                    return;
-
-                if (item->GetCount() > 1u)
-                {
-                    if (m_itemTransferPanel)
-                    {
-                        m_itemTransferPanel->SetOnConfirm([this](std::size_t itemIndex, std::uint32_t count)
-                        {
-                            auto tradeResult = m_viewModel.BuyItem(itemIndex, count);
-                            if (!tradeResult.has_value())
-                                ShowErrorPanel(tradeResult.error());
-                        });
-
-                        m_itemTransferPanel->Show(*item);
-                    }
-                }
-                else
-                {
-                    auto tradeResult = m_viewModel.BuyItem(itemIndex, 1u);
-                    if (!tradeResult.has_value())
-                        ShowErrorPanel(tradeResult.error());
-                }
-            });
-
-            m_traderItemGrid->SetOnItemSlotHoverIn([this](std::size_t itemIndex, const sf::Vector2f& position)
-            {
-                auto item = m_viewModel.GetTraderItem(itemIndex);
-                if (item)
-                    ShowItemPanel(item->GetItem(), position);
-            });
-
-            m_traderItemGrid->SetOnItemSlotHoverOut([this]() 
-            {
-                HideItemPanel();
-            });
-        }
+        BindItemGridPanel(m_playerItemGrid, false);
+        BindItemGridPanel(m_traderItemGrid, true);
 
         if (m_itemFilterPanel)
         {
@@ -296,6 +213,77 @@ namespace app
                 m_viewModel.SetItemSortMode(itemSortMode);
             });
         }
+    }
+
+    void TradeUIView::BindItemGridPanel(ItemGridPanel* gridPanel, bool isBuying) const
+    {
+        if (!gridPanel)
+            return;
+
+        gridPanel->SetOnItemSlotClick([this, isBuying](std::size_t itemIndex)
+        {
+            HideItemPanel();
+
+            auto canTradeResult = isBuying
+                ? m_viewModel.CanBuyItem(itemIndex, 1u)
+                : m_viewModel.CanSellItem(itemIndex, 1u);
+
+            if (!canTradeResult)
+            {
+                ShowErrorPanel(canTradeResult.error());
+                return;
+            }
+
+            auto itemOpt = isBuying
+                ? m_viewModel.GetTraderItem(itemIndex)
+                : m_viewModel.GetPlayerItem(itemIndex);
+
+            if (!itemOpt)
+                return;
+
+            const auto& item = itemOpt.value();
+
+            if (item.GetCount() > 1u && m_itemTransferPanel)
+            {
+                m_itemTransferPanel->SetOnConfirm([this, isBuying](std::size_t itemIndex, std::uint32_t count)
+                {
+                    auto tradeResult = isBuying
+                        ? m_viewModel.BuyItem(itemIndex, count)
+                        : m_viewModel.SellItem(itemIndex, count);
+
+                    if (!tradeResult)
+                        ShowErrorPanel(tradeResult.error());
+                });
+
+                m_itemTransferPanel->Show(item);
+            }
+            else
+            {
+                auto tradeResult = isBuying
+                    ? m_viewModel.BuyItem(itemIndex, 1u)
+                    : m_viewModel.SellItem(itemIndex, 1u);
+
+                if (!tradeResult)
+                    ShowErrorPanel(tradeResult.error());
+            }
+        });
+
+        gridPanel->SetOnItemSlotHoverIn([this, isBuying](std::size_t itemIndex, const sf::Vector2f& position)
+        {
+            auto itemOpt = isBuying
+                ? m_viewModel.GetTraderItem(itemIndex)
+                : m_viewModel.GetPlayerItem(itemIndex);
+
+            if (!itemOpt)
+                return;
+
+            ShowItemPanel(itemOpt.value().GetItem(), position);
+        });
+
+        gridPanel->SetOnItemSlotHoverOut([this]()
+        {
+            HideItemPanel();
+        });
     }
 
     void TradeUIView::SetOnTradeButtonClick(std::function<void()> callback)
@@ -363,7 +351,7 @@ namespace app
             m_traderItemGrid->SetItems(items);
     }
 
-    void TradeUIView::ShowItemPanel(const app_domain::Item& item, const sf::Vector2f& position)
+    void TradeUIView::ShowItemPanel(const app_domain::Item& item, const sf::Vector2f& position) const
     {
         if (!m_itemPanel)
             return;
@@ -371,7 +359,7 @@ namespace app
         m_itemPanel->Show(item, position, sf::Vector2f(60.f, 60.f), m_appContext.GetRenderWindowSize().y);
     }
 
-    void TradeUIView::HideItemPanel()
+    void TradeUIView::HideItemPanel() const
     {
         if (!m_itemPanel)
             return;
@@ -379,7 +367,7 @@ namespace app
         m_itemPanel->Hide();
     }
 
-    void TradeUIView::ShowErrorPanel(app_domain::TradeError error)
+    void TradeUIView::ShowErrorPanel(app_domain::TradeError error) const
     {
         if (!m_errorPanel)
             return;
