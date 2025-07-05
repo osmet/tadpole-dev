@@ -10,12 +10,17 @@ namespace core
 		GridPanel();
 
 		void SetColumnCount(size_t columnCount);
+		size_t GetColumnCount() const;
+
 		void SetCellSize(const sf::Vector2f& cellSize);
 		void SetCellSize(float x, float y);
 		void SetCellSize(float cellSize);
+		sf::Vector2f GetCellSize() const;
+
 		void SetSpacing(const sf::Vector2f& spacing);
 		void SetSpacing(float x, float y);
 		void SetSpacing(float spacing);
+		sf::Vector2f GetSpacing() const;
 
 	protected:
 		void UpdateLayout(sf::Vector2f& out_сontentSize) override;

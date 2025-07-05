@@ -15,6 +15,11 @@ namespace core
 		SetLayoutDirty();
 	}
 
+	size_t GridPanel::GetColumnCount() const
+	{
+		return m_columnCount;
+	}
+
 	void GridPanel::SetCellSize(const sf::Vector2f& cellSize)
 	{
 		m_cellSize = cellSize;
@@ -38,6 +43,11 @@ namespace core
 		SetLayoutDirty();
 	}
 
+	sf::Vector2f GridPanel::GetCellSize() const
+	{
+		return m_cellSize;
+	}
+
 	void GridPanel::SetSpacing(const sf::Vector2f& spacing)
 	{
 		m_spacing = spacing;
@@ -59,6 +69,11 @@ namespace core
 		m_spacing.y = spacing;
 
 		SetLayoutDirty();
+	}
+
+	sf::Vector2f GridPanel::GetSpacing() const
+	{
+		return m_spacing;
 	}
 
 	void GridPanel::UpdateLayout(sf::Vector2f& out_сontentSize)

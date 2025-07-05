@@ -21,7 +21,8 @@ namespace app
 
         SetAnchor(0.f, 0.f);
         SetPivot(0.f, 0.f);
-        SetColor(sf::Color::Transparent);
+
+
 
         auto* backgroundImage = CreateWidget<core::Image>();
         backgroundImage->SetSize(iconSize);
@@ -135,5 +136,30 @@ namespace app
 
         if (m_countTextLabel)
             m_countTextLabel->SetActive(active);
+    }
+
+    void ItemSlot::SetSelectMode(SelectMode selectMode)
+    {
+        m_selectMode = selectMode;
+
+        if (!m_selectImage)
+            return;
+
+        switch (m_selectMode)
+        {
+        case SelectMode::None:
+            m_selectImage->SetActive(false);
+            break;
+
+        case SelectMode::Hovered:
+            m_selectImage->SetOutlineColor(sf::Color::White);
+            m_selectImage->SetActive(true);
+            break;
+
+        case SelectMode::Selected:
+            m_selectImage->SetOutlineColor(sf::Color(255u, 255u, 255u, 150u));
+            m_selectImage->SetActive(true);
+            break;
+        }
     }
 }

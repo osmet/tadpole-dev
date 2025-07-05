@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../core/Button.h"
+#include "../core/CanvasPanel.h"
 
 namespace core
 {
@@ -16,12 +16,19 @@ namespace app_domain
 
 namespace app
 {
-    class ItemSlot final : public core::Button
+    class ItemSlot final : public core::CanvasPanel
     {
     public:
         using OnItemSlotClick = std::function<void(std::size_t itemIndex)>;
         using OnItemSlotHoverIn = std::function<void(std::size_t itemIndex, const sf::Vector2f& position)>;
         using OnItemSlotHoverOut = std::function<void()>;
+
+        enum class SelectMode
+        {
+            None,
+            Hovered,
+            Selected,
+        };
 
         ItemSlot(core::AssetManager& assetManager, float cellSize);
 
@@ -33,6 +40,8 @@ namespace app
 
         void SetBackgroundImageActive(bool active);
         void SetCountTextActive(bool active);
+
+        void SetSelectMode(SelectMode selectMode);
 
     private:
         core::AssetManager& m_assetManager;
@@ -48,5 +57,7 @@ namespace app
         size_t m_itemIndex = 0u;
 
         bool m_countTextActive = true;
+
+        SelectMode m_selectMode = SelectMode::None;
     };
 }
