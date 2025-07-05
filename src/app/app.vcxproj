@@ -184,6 +184,7 @@
     <ClCompile Include="GameData.cpp" />
     <ClCompile Include="GameScope.cpp" />
     <ClCompile Include="ItemConfig.cpp" />
+    <ClCompile Include="ItemDragSystem.cpp" />
     <ClCompile Include="ItemSlot.cpp" />
     <ClCompile Include="ItemTransferPanel.cpp" />
     <ClCompile Include="ItemGridPanel.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GameScope.h" />
     <ClInclude Include="ItemConfig.h" />
+    <ClInclude Include="ItemDragSystem.h" />
     <ClInclude Include="ItemSlot.h" />
     <ClInclude Include="ItemTransferPanel.h" />
     <ClInclude Include="ItemGridPanel.h" />

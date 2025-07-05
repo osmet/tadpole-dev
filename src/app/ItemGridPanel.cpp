@@ -16,7 +16,7 @@ namespace app
         SetSpacing(spacing);
         
         for (size_t index = 0; index < cellCount; ++index)
-            auto* itemSlot = CreateWidget<ItemSlot>(assetManager, cellSize);
+            CreateWidget<ItemSlot>(assetManager, cellSize);
     }
 
     void ItemGridPanel::SetItems(const std::vector<app_domain::InventoryItemDetails>& items)
@@ -37,35 +37,62 @@ namespace app
         }
     }
 
-    void ItemGridPanel::SetOnItemSlotClick(ItemSlot::OnItemSlotClick callback)
+    void ItemGridPanel::SetOnItemClick(OnItemClick callback)
     {
-        m_onItemSlotClick = std::move(callback);
+        m_onItemClick = std::move(callback);
     }
 
-    void ItemGridPanel::SetOnItemSlotHoverIn(ItemSlot::OnItemSlotHoverIn callback)
+    void ItemGridPanel::SetOnItemHoverIn(OnItemHoverIn callback)
     {
-        m_onItemSlotHoverIn = std::move(callback);
+        m_onItemHoverIn = std::move(callback);
     }
 
-    void ItemGridPanel::SetOnItemSlotHoverOut(ItemSlot::OnItemSlotHoverOut callback)
+    void ItemGridPanel::SetOnItemHoverOut(OnItemHoverOut callback)
     {
-        m_onItemSlotHoverOut = std::move(callback);
+        m_onItemHoverOut = std::move(callback);
+    }
+
+    void ItemGridPanel::SetOnItemDragBegin(OnItemDragBegin callback)
+    {
+        m_onItemDragBegin = std::move(callback);
+    }
+
+    bool ItemGridPanel::CanItemDragEnd(sf::Vector2f dragEndPosition) const
+    {
+        sf::Vector2f panelPosition = GetPosition();
+        size_t columnCount = GetColumnCount();
+        float cellSize = GetCellSize().x;
+        float spacing = GetSpacing().x;
+        size_t slotCount = GetWidgetCount();
+        size_t rowCount = (columnCount == 0) ? 0 : (slotCount + columnCount - 1) / columnCount;
+
+        sf::FloatRect panelBounds(
+            panelPosition.x,
+            panelPosition.y,
+            columnCount * (cellSize + spacing) - spacing,
+            rowCount * (cellSize + spacing) - spacing
+        );
+
+        return panelBounds.contains(dragEndPosition);
     }
 
     bool ItemGridPanel::OnHandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow)
     {
         sf::Vector2f mousePosition = static_cast<sf::Vector2f>(sf::Mouse::getPosition(renderWindow));
 
+        sf::Vector2f panelPosition = GetPosition();
         size_t columnCount = GetColumnCount();
         float cellSize = GetCellSize().x;
         float spacing = GetSpacing().x;
         size_t slotCount = GetWidgetCount();
         size_t rowCount = (columnCount == 0u) ? 0u : (slotCount + columnCount - 1u) / columnCount;
 
-        sf::Vector2f panelPosition = GetPosition();
-        sf::FloatRect panelBounds(panelPosition.x, panelPosition.y,
+        sf::FloatRect panelBounds(
+            panelPosition.x,
+            panelPosition.y,
             columnCount * (cellSize + spacing) - spacing,
-            rowCount * (cellSize + spacing) - spacing);
+            rowCount * (cellSize + spacing) - spacing
+        );
 
         if (!panelBounds.contains(mousePosition))
         {
@@ -91,11 +118,39 @@ namespace app
 
         HandleHoverIn(itemSlot, slotIndex);
 
-        if (itemSlot->HasItem() && event.type == sf::Event::MouseButtonReleased &&
+        if (event.type == sf::Event::MouseButtonPressed &&
             event.mouseButton.button == sf::Mouse::Left)
         {
-            HandleClick(itemSlot);
-            return true;
+            m_mouseDown = true;
+            m_dragItemIndex = static_cast<std::int32_t>(itemSlot->GetItemIndex());
+            m_mouseDownPosition = mousePosition;
+        }
+        else if (event.type == sf::Event::MouseButtonReleased)
+        {
+            m_mouseDown = false;
+            m_dragItemIndex = -1;
+
+            if (itemSlot->HasItem())
+            {
+                HandleClick(itemSlot);
+                return true;
+            }
+        }
+        else if (event.type == sf::Event::MouseMoved && m_mouseDown && m_dragItemIndex >= 0)
+        {
+            float distance = std::hypot(
+                mousePosition.x - m_mouseDownPosition.x,
+                mousePosition.y - m_mouseDownPosition.y);
+
+            if (distance >= DragThreshold)
+            {
+                HandleDragBegin();
+
+                m_mouseDown = false;
+                m_dragItemIndex = -1;
+
+                return true;
+            }
         }
 
         return false;
@@ -106,8 +161,8 @@ namespace app
         if (!itemSlot)
             return;
 
-        if (m_onItemSlotClick)
-            m_onItemSlotClick(itemSlot->GetItemIndex());
+        if (m_onItemClick)
+            m_onItemClick(itemSlot->GetItemIndex());
     }
 
     void ItemGridPanel::HandleHoverIn(ItemSlot* itemSlot, size_t slotIndex)
@@ -117,7 +172,7 @@ namespace app
 
         std::int32_t signedSlotIndex = static_cast<std::int32_t>(slotIndex);
 
-        if (signedSlotIndex == m_lastHoveredSlotIndex)
+        if (signedSlotIndex == m_lastHoverSlotIndex)
             return;
 
         if (!itemSlot->HasItem())
@@ -130,30 +185,38 @@ namespace app
 
         itemSlot->SetSelectMode(ItemSlot::SelectMode::Hovered);
 
-        if (m_onItemSlotHoverIn)
-            m_onItemSlotHoverIn(itemSlot->GetItemIndex(), itemSlot->GetPosition());
+        if (m_onItemHoverIn)
+            m_onItemHoverIn(itemSlot->GetItemIndex(), itemSlot->GetPosition());
 
-        m_lastHoveredSlotIndex = signedSlotIndex;
+        m_lastHoverSlotIndex = signedSlotIndex;
     }
 
     void ItemGridPanel::HandleHoverOut()
     {
-        if (m_lastHoveredSlotIndex != -1)
+        if (m_lastHoverSlotIndex != -1)
         {
-            if (m_onItemSlotHoverOut)
-                m_onItemSlotHoverOut();
+            if (m_onItemHoverOut)
+                m_onItemHoverOut();
 
             ClearLastHoveredSlotSelect();
 
-            m_lastHoveredSlotIndex = -1;
+            m_lastHoverSlotIndex = -1;
         }
+    }
+
+    void ItemGridPanel::HandleDragBegin()
+    {
+        if (m_onItemDragBegin)
+            m_onItemDragBegin(static_cast<size_t>(m_dragItemIndex));
+
+        ClearLastHoveredSlotSelect();
     }
 
     void ItemGridPanel::ClearLastHoveredSlotSelect()
     {
-        size_t lastHoveredSlotIndex = static_cast<size_t>(m_lastHoveredSlotIndex);
+        size_t slotIndex = static_cast<size_t>(m_lastHoverSlotIndex);
 
-        auto* widget = GetWidget(lastHoveredSlotIndex);
+        auto* widget = GetWidget(slotIndex);
         if (!widget)
             return;
 

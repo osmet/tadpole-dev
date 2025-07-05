@@ -73,6 +73,9 @@
     <ClCompile Include="ScreenOverlayPanel.cpp">
       <Filter>Source Files\common</Filter>
     </ClCompile>
+    <ClCompile Include="ItemDragSystem.cpp">
+      <Filter>Source Files\items</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Precompiled.h">
@@ -143,6 +146,9 @@
     </ClInclude>
     <ClInclude Include="ScreenOverlayPanel.h">
       <Filter>Source Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemDragSystem.h">
+      <Filter>Source Files\items</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -19,10 +19,6 @@ namespace app
     class ItemSlot final : public core::CanvasPanel
     {
     public:
-        using OnItemSlotClick = std::function<void(std::size_t itemIndex)>;
-        using OnItemSlotHoverIn = std::function<void(std::size_t itemIndex, const sf::Vector2f& position)>;
-        using OnItemSlotHoverOut = std::function<void()>;
-
         enum class SelectMode
         {
             None,

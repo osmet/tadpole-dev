@@ -9,6 +9,7 @@
 #include "TradeUIViewModel.h"
 #include "ItemGridPanel.h"
 #include "ItemTransferPanel.h"
+#include "ItemDragSystem.h"
 
 namespace core 
 { 
@@ -38,6 +39,7 @@ namespace app
 
         void Initialize() override;
         void HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow) override;
+        void Render(sf::RenderWindow& renderWindow) override;
         
     private:
         class CharacterInfoPanel;
@@ -45,7 +47,8 @@ namespace app
         class ItemSortPanel;
 
         void BindViewModel();
-        void BindItemGridPanel(ItemGridPanel* gridPanel, bool isBuying) const;
+        void BindItemGridPanel(ItemGridPanel* gridPanel, bool isBuying);
+        void TradeItem(bool isBuying, std::size_t itemIndex);
 
         void SetOnTradeButtonClick(std::function<void()> callback);
 
@@ -69,6 +72,8 @@ namespace app
         AppContext& m_appContext;
 
         TradeUIViewModel& m_viewModel;
+
+        ItemDragSystem m_itemDragSystem;
 
         CharacterInfoPanel* m_playerCharacterInfoPanel = nullptr;
         CharacterInfoPanel* m_traderCharacterInfoPanel = nullptr;
