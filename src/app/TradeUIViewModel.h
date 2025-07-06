@@ -16,6 +16,7 @@ namespace app
         using OnItemsUpdate = std::function<void()>;
         using OnFilterCategoryChange = std::function<void(app_domain::ItemCategory)>;
         using OnSortModeChange = std::function<void(app_domain::ItemSortMode)>;
+        using OnTradeError = std::function<void(app_domain::TradeError)>;
 
         TradeUIViewModel(AppContext& appContext);
 
@@ -61,9 +62,11 @@ namespace app
         void SetOnTradeBegin(OnTradeBegin callback);
         void SetOnPlayerItemsUpdate(OnItemsUpdate callback);
         void SetOnTraderItemsUpdate(OnItemsUpdate callback);
+        void SetOnTradeError(OnTradeError callback);
 
     private:
         void UpdateItems();
+        void EmitOnTradeError(const app_domain::TradeError& error) const;
         uint32_t GetInventoryMoney(const std::string& inventoryId) const;
         std::optional<app_domain::InventoryItemDetails> 
             GetInventoryItem(const std::string& inventoryId, size_t itemIndex) const;
@@ -96,5 +99,6 @@ namespace app
         OnTradeBegin m_onTradeBegin;
         OnItemsUpdate m_onPlayerItemsUpdate;
         OnItemsUpdate m_onTraderItemsUpdate;
+        OnTradeError m_onTradeError;
     };
 }

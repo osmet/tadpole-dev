@@ -123,6 +123,7 @@ namespace app
                     textLabel->SetText("TRADE");
                     textLabel->SetColor(sf::Color::White);
                 }
+                tradeButton->SetActive(false);
             }
 
             {
@@ -196,17 +197,19 @@ namespace app
         m_viewModel.SetOnPlayerItemsUpdate([this]() 
         {
             SetPlayerItems(m_viewModel.GetPlayerItems());
-
             SetPlayerMoney(m_viewModel.GetPlayerMoney());
-
             SetPlayerWeight(m_viewModel.GetPlayerCurrentWeight(), m_viewModel.GetPlayerMaxWeight());
         });
 
         m_viewModel.SetOnTraderItemsUpdate([this]() 
         {
             SetTraderItems(m_viewModel.GetTraderItems());
-
             SetTraderMoney(m_viewModel.GetTraderMoney());
+        });
+
+        m_viewModel.SetOnTradeError([this](const app_domain::TradeError& error)
+        {
+            ShowErrorPanel(error);
         });
 
         m_itemDragSystem.AddDragTarget(m_playerItemGrid);
@@ -326,24 +329,20 @@ namespace app
         {
             m_itemTransferPanel->SetOnConfirm([this, isBuying](std::size_t itemIndex, std::uint32_t count)
             {
-                auto tradeResult = isBuying
-                    ? m_viewModel.BuyItem(itemIndex, count)
-                    : m_viewModel.SellItem(itemIndex, count);
-
-                if (!tradeResult)
-                    ShowErrorPanel(tradeResult.error());
+                if (isBuying)
+                    m_viewModel.BuyItem(itemIndex, count);
+                else
+                    m_viewModel.SellItem(itemIndex, count);
             });
 
             m_itemTransferPanel->Show(item);
         }
         else
         {
-            auto tradeResult = isBuying
-                ? m_viewModel.BuyItem(itemIndex, 1u)
-                : m_viewModel.SellItem(itemIndex, 1u);
-
-            if (!tradeResult)
-                ShowErrorPanel(tradeResult.error());
+            if (isBuying)
+                m_viewModel.BuyItem(itemIndex, 1u);
+            else 
+                m_viewModel.SellItem(itemIndex, 1u);
         }
     }
 
@@ -368,9 +367,7 @@ namespace app
         {
             m_itemTransferPanel->SetOnConfirm([this, fromItemIndex, toItemIndex](std::size_t, std::uint32_t count)
             {
-                auto result = m_viewModel.StackItem(fromItemIndex, toItemIndex, count);
-                if (!result)
-                    ShowErrorPanel(result.error());
+                m_viewModel.StackItem(fromItemIndex, toItemIndex, count);
             });
 
             m_itemTransferPanel->Show(fromItem);

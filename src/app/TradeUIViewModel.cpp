@@ -68,8 +68,13 @@ namespace app
         TradeUIViewModel::BuyItem(std::size_t itemIndex, std::uint32_t count)
     {
         auto result = m_tradeService.TradeItem(m_traderCharacterId, m_playerCharacterId, itemIndex, count);
-        if (result)
-            UpdateItems();
+        if (!result)
+        {
+            EmitOnTradeError(result.error());
+            return result;
+        }
+
+        UpdateItems();
 
         return result;
     }
@@ -78,8 +83,13 @@ namespace app
         TradeUIViewModel::SellItem(std::size_t itemIndex, std::uint32_t count)
     {
         auto result = m_tradeService.TradeItem(m_playerCharacterId, m_traderCharacterId, itemIndex, count);
-        if (result)
-            UpdateItems();
+        if (!result)
+        {
+            EmitOnTradeError(result.error());
+            return result;
+        }
+
+        UpdateItems();
 
         return result;
     }
@@ -99,7 +109,10 @@ namespace app
     {
         auto result = m_inventoryService.StackItem(m_playerInventoryId, fromItemIndex, toItemIndex, count);
         if (!result)
+        {
+            EmitOnTradeError(app_domain::TradeService::ToTradeError(result.error()));
             return tl::unexpected(app_domain::TradeService::ToTradeError(result.error()));
+        }
 
         UpdateItems();
 
@@ -202,6 +215,12 @@ namespace app
         m_onTraderItemsUpdate = std::move(callback);
     }
 
+    void TradeUIViewModel::SetOnTradeError(OnTradeError callback)
+    {
+        m_onTradeError = std::move(callback);
+    }
+
+
     void TradeUIViewModel::UpdateItems()
     {
         LoadInventoryItems(m_playerInventoryId, m_playerItemsCache);
@@ -212,6 +231,12 @@ namespace app
 
         if (m_onTraderItemsUpdate)
             m_onTraderItemsUpdate();
+    }
+
+    void TradeUIViewModel::EmitOnTradeError(const app_domain::TradeError& error) const
+    {
+        if (m_onTradeError)
+            m_onTradeError(error);
     }
 
     uint32_t TradeUIViewModel::GetInventoryMoney(const std::string& inventoryId) const
