@@ -22,8 +22,8 @@ namespace app
     private:
         AppContext& m_appContext;
 
-        std::unique_ptr<BackgroundPanel> m_backgroundPanel;
-        std::unique_ptr<core::TextLabel> m_lastSavedAtTextLabel;
+        BackgroundPanel m_backgroundPanel;
+        core::TextLabel m_lastSavedAtTextLabel;
 
         TradeScope m_tradeScope;
 

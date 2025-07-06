@@ -3,10 +3,15 @@
 
 namespace app
 {
-    BackgroundPanel::BackgroundPanel(const sf::Vector2f& size)
+    BackgroundPanel::BackgroundPanel()
     {
         m_backgroundImage = CreateWidget<core::Image>();
-        m_backgroundImage->SetSize(size);
+    }
+
+    void BackgroundPanel::SetBackgroundSize(const sf::Vector2f size)
+    {
+        if (m_backgroundImage)
+            m_backgroundImage->SetSize(size);
     }
 
     void BackgroundPanel::SetBackgroundColor(const sf::Color& color)

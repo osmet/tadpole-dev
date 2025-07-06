@@ -15,25 +15,23 @@ namespace app
     void GameScope::Initialize()
     {
         auto renderWindowSize = m_appContext.GetRenderWindowSize();
-        m_backgroundPanel = std::make_unique<BackgroundPanel>(renderWindowSize);
-        m_backgroundPanel->SetLocalPosition(renderWindowSize.x / 2.f, renderWindowSize.y / 2.f);
-        m_backgroundPanel->SetBackgroundTexture(m_appContext.GetAssetManager().GetTexture("Background_Dialogue_Gale"));
-        sf::Uint8 backgroundTint(static_cast<sf::Uint8>(0.2f * 255u));
-        m_backgroundPanel->SetBackgroundColor(sf::Color(backgroundTint, backgroundTint, backgroundTint, 255u));
-
         auto& regularFont = m_appContext.GetAssetManager().GetFont("Mignon_Regular");
+        
+        sf::Uint8 backgroundTint(static_cast<sf::Uint8>(0.2f * 255u));
+        m_backgroundPanel.SetLocalPosition(renderWindowSize.x / 2.f, renderWindowSize.y / 2.f);
+        m_backgroundPanel.SetBackgroundSize(renderWindowSize);
+        m_backgroundPanel.SetBackgroundTexture(m_appContext.GetAssetManager().GetTexture("Background_Dialogue_Gale"));
+        m_backgroundPanel.SetBackgroundColor(sf::Color(backgroundTint, backgroundTint, backgroundTint, 255u));
 
         auto& lastSavedAt = m_appContext.GetAppDataSource().GetData().GetLastSavedAt();
-
         if (!lastSavedAt.empty())
         {
-            m_lastSavedAtTextLabel = std::make_unique<core::TextLabel>();
-            m_lastSavedAtTextLabel->SetPivot(1.f, 1.f);
-            m_lastSavedAtTextLabel->SetColor(sf::Color(255u, 255u, 255u, 25u));
-            m_lastSavedAtTextLabel->SetLocalPosition(renderWindowSize.x - 20.f, renderWindowSize.y - 15.f);
-            m_lastSavedAtTextLabel->SetFont(regularFont);
-            m_lastSavedAtTextLabel->SetFontSize(20u);
-            m_lastSavedAtTextLabel->SetText("Last saved at: " + lastSavedAt);
+            m_lastSavedAtTextLabel.SetPivot(1.f, 1.f);
+            m_lastSavedAtTextLabel.SetColor(sf::Color(255u, 255u, 255u, 25u));
+            m_lastSavedAtTextLabel.SetLocalPosition(renderWindowSize.x - 20.f, renderWindowSize.y - 15.f);
+            m_lastSavedAtTextLabel.SetFont(regularFont);
+            m_lastSavedAtTextLabel.SetFontSize(20u);
+            m_lastSavedAtTextLabel.SetText("Last saved at: " + lastSavedAt);
         }
 
         m_tradeScope.Initialize();
@@ -59,13 +57,11 @@ namespace app
 
     void GameScope::Render(sf::RenderWindow& renderWindow)
     {
-        if (m_backgroundPanel)
-            m_backgroundPanel->Render(renderWindow);
+        m_backgroundPanel.Render(renderWindow);
 
         if (m_activeScope)
             m_activeScope->get().Render(renderWindow);
 
-        if (m_lastSavedAtTextLabel)
-            m_lastSavedAtTextLabel->Render(renderWindow);
+        m_lastSavedAtTextLabel.Render(renderWindow);
     }
 }
