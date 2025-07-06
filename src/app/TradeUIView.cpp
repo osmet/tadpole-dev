@@ -207,6 +207,15 @@ namespace app
             SetTraderMoney(m_viewModel.GetTraderMoney());
         });
 
+        m_viewModel.SetOnShowTransferPanel([this](const app_domain::InventoryItemDetails& item, TradeUIViewModel::OnTransferPanelConfirm onConfirm)
+        {
+            if (!m_itemTransferPanel)
+                return;
+
+            m_itemTransferPanel->SetOnConfirm(std::move(onConfirm));
+            m_itemTransferPanel->Show(item);
+        });
+
         m_viewModel.SetOnTradeError([this](const app_domain::TradeError& error)
         {
             ShowErrorPanel(error);
@@ -244,7 +253,7 @@ namespace app
         {
             HideItemPanel();
 
-            TradeItem(isBuying, itemIndex);
+            m_viewModel.TradeItem(isBuying, itemIndex);
         });
 
         gridPanel->SetOnItemHoverIn([this, isBuying](std::size_t itemIndex, const sf::Vector2f& position)
@@ -285,97 +294,17 @@ namespace app
                 if (target == m_playerItemGrid)
                 {
                     if (isBuying)
-                    {
-                        TradeItem(isBuying, fromItemIndex);
-                    }
+                        m_viewModel.TradeItem(isBuying, fromItemIndex);
                     else
-                    {
-                        StackItem(fromItemIndex, signedToItemIndex);
-                    }
+                        m_viewModel.StackItem(fromItemIndex, signedToItemIndex);
                 }
                 else if (target == m_traderItemGrid)
                 {
                     if (!isBuying)
-                    {
-                        TradeItem(isBuying, fromItemIndex);
-                    }
+                        m_viewModel.TradeItem(isBuying, fromItemIndex);
                 }
             });
         });
-    }
-
-    void TradeUIView::TradeItem(bool isBuying, std::size_t itemIndex)
-    {
-        auto canTradeResult = isBuying
-            ? m_viewModel.CanBuyItem(itemIndex, 1u)
-            : m_viewModel.CanSellItem(itemIndex, 1u);
-
-        if (!canTradeResult)
-        {
-            ShowErrorPanel(canTradeResult.error());
-            return;
-        }
-
-        auto itemOpt = isBuying
-            ? m_viewModel.GetTraderItem(itemIndex)
-            : m_viewModel.GetPlayerItem(itemIndex);
-
-        if (!itemOpt)
-            return;
-
-        const auto& item = itemOpt.value();
-
-        if (item.GetCount() > 1u && m_itemTransferPanel)
-        {
-            m_itemTransferPanel->SetOnConfirm([this, isBuying](std::size_t itemIndex, std::uint32_t count)
-            {
-                if (isBuying)
-                    m_viewModel.BuyItem(itemIndex, count);
-                else
-                    m_viewModel.SellItem(itemIndex, count);
-            });
-
-            m_itemTransferPanel->Show(item);
-        }
-        else
-        {
-            if (isBuying)
-                m_viewModel.BuyItem(itemIndex, 1u);
-            else 
-                m_viewModel.SellItem(itemIndex, 1u);
-        }
-    }
-
-    void TradeUIView::StackItem(std::size_t fromItemIndex, std::int32_t signedToItemIndex)
-    {
-        if (signedToItemIndex < 0)
-            return;
-
-        std::size_t toItemIndex = static_cast<std::size_t>(signedToItemIndex);
-
-        auto canStackResult = m_viewModel.CanStackItem(fromItemIndex, toItemIndex, 1u);
-        if (!canStackResult)
-            return;
-
-        auto fromItemOpt = m_viewModel.GetPlayerItem(fromItemIndex);
-        if (!fromItemOpt)
-            return;
-
-        const auto& fromItem = fromItemOpt.value();
-
-        if (fromItem.GetCount() > 1u && m_itemTransferPanel)
-        {
-            m_itemTransferPanel->SetOnConfirm([this, fromItemIndex, toItemIndex](std::size_t, std::uint32_t count)
-            {
-                m_viewModel.StackItem(fromItemIndex, toItemIndex, count);
-            });
-
-            m_itemTransferPanel->Show(fromItem);
-        }
-        else
-        {
-            m_viewModel.StackItem(fromItemIndex, toItemIndex, 1u);
-        }
     }
 
     void TradeUIView::SetOnTradeButtonClick(std::function<void()> callback)

@@ -44,79 +44,66 @@ namespace app
         return {};
     }
 
-    tl::expected<void, app_domain::TradeError> 
-        TradeUIViewModel::CanBuyItem(std::size_t itemIndex, std::uint32_t count) const
+    void TradeUIViewModel::TradeItem(bool isBuying, std::size_t itemIndex)
     {
-        auto result = m_tradeService.CanTradeItem(m_traderCharacterId, m_playerCharacterId, itemIndex, count);
-        if (!result)
-            return tl::unexpected(result.error());
+        auto canTradeResult = CanTradeItem(isBuying, itemIndex, 1u);
 
-        return {};
-    }
-
-    tl::expected<void, app_domain::TradeError> 
-        TradeUIViewModel::CanSellItem(std::size_t itemIndex, std::uint32_t count) const
-    {
-        auto result = m_tradeService.CanTradeItem(m_playerCharacterId, m_traderCharacterId, itemIndex, count);
-        if (!result)
-            return tl::unexpected(result.error());
-
-        return {};
-    }
-
-    tl::expected<void, app_domain::TradeError> 
-        TradeUIViewModel::BuyItem(std::size_t itemIndex, std::uint32_t count)
-    {
-        auto result = m_tradeService.TradeItem(m_traderCharacterId, m_playerCharacterId, itemIndex, count);
-        if (!result)
+        if (!canTradeResult)
         {
-            EmitOnTradeError(result.error());
-            return result;
+            EmitOnTradeError(canTradeResult.error());
+            return;
         }
 
-        UpdateItems();
+        auto itemOpt = isBuying
+            ? GetTraderItem(itemIndex)
+            : GetPlayerItem(itemIndex);
 
-        return result;
-    }
+        if (!itemOpt)
+            return;
 
-    tl::expected<void, app_domain::TradeError> 
-        TradeUIViewModel::SellItem(std::size_t itemIndex, std::uint32_t count)
-    {
-        auto result = m_tradeService.TradeItem(m_playerCharacterId, m_traderCharacterId, itemIndex, count);
-        if (!result)
+        const auto& item = itemOpt.value();
+
+        if (item.GetCount() > 1u && m_onShowTransferPanel)
         {
-            EmitOnTradeError(result.error());
-            return result;
+            m_onShowTransferPanel(item, [this, isBuying, itemIndex](std::uint32_t count)
+            {
+                TryTradeItem(isBuying, itemIndex, count);
+            });
         }
-
-        UpdateItems();
-
-        return result;
-    }
-
-    tl::expected<void, app_domain::TradeError>
-        TradeUIViewModel::CanStackItem(std::size_t fromItemIndex, std::size_t toItemIndex, std::uint32_t count)
-    {
-        auto result = m_inventoryService.CanStackItem(m_playerInventoryId, fromItemIndex, toItemIndex, count);
-        if (!result)
-            return tl::unexpected(app_domain::TradeService::ToTradeError(result.error()));
-
-        return {};
-    }
-
-    tl::expected<void, app_domain::TradeError>
-        TradeUIViewModel::StackItem(std::size_t fromItemIndex, std::size_t toItemIndex, std::uint32_t count)
-    {
-        auto result = m_inventoryService.StackItem(m_playerInventoryId, fromItemIndex, toItemIndex, count);
-        if (!result)
+        else
         {
-            EmitOnTradeError(app_domain::TradeService::ToTradeError(result.error()));
-            return tl::unexpected(app_domain::TradeService::ToTradeError(result.error()));
+            TryTradeItem(isBuying, itemIndex, 1u);
         }
+    }
 
-        UpdateItems();
+    void TradeUIViewModel::StackItem(std::size_t fromItemIndex, std::int32_t signedToItemIndex)
+    {
+        if (signedToItemIndex < 0)
+            return;
 
-        return {};
+        std::size_t toItemIndex = static_cast<std::size_t>(signedToItemIndex);
+
+        auto canStackResult = CanStackItem(fromItemIndex, toItemIndex, 1u);
+        if (!canStackResult)
+            return;
+
+        auto fromItemOpt = GetPlayerItem(fromItemIndex);
+        if (!fromItemOpt)
+            return;
+
+        const auto& fromItem = fromItemOpt.value();
+
+        if (fromItem.GetCount() > 1u && m_onShowTransferPanel)
+        {
+            m_onShowTransferPanel(fromItem, [this, fromItemIndex, toItemIndex](std::uint32_t count)
+            {
+                TryStackItem(fromItemIndex, toItemIndex, count);
+            });
+        }
+        else
+        {
+            TryStackItem(fromItemIndex, toItemIndex, 1u);
+        }
     }
 
     const std::string& TradeUIViewModel::GetPlayerName() const
@@ -215,6 +202,11 @@ namespace app
         m_onTraderItemsUpdate = std::move(callback);
     }
 
+    void TradeUIViewModel::SetOnShowTransferPanel(OnShowTransferPanel callback)
+    {
+        m_onShowTransferPanel = std::move(callback);
+    }
+
     void TradeUIViewModel::SetOnTradeError(OnTradeError callback)
     {
         m_onTradeError = std::move(callback);
@@ -269,5 +261,55 @@ namespace app
 
         if (result)
             out_items = std::move(result.value().Items);
+    }
+
+    tl::expected<void, app_domain::TradeError>
+        TradeUIViewModel::CanTradeItem(bool isBuying, std::size_t itemIndex, std::uint32_t count) const
+    {
+        auto& fromCharacterId = isBuying ? m_traderCharacterId : m_playerCharacterId;
+        auto& toCharacterId = isBuying ? m_playerCharacterId : m_traderCharacterId;
+
+        auto result = m_tradeService.CanTradeItem(fromCharacterId, toCharacterId, itemIndex, count);
+        if (!result)
+            return tl::unexpected(result.error());
+
+        return {};
+    }
+
+    void TradeUIViewModel::TryTradeItem(bool isBuying, std::size_t itemIndex, std::uint32_t count)
+    {
+        auto& fromCharacterId = isBuying ? m_traderCharacterId : m_playerCharacterId;
+        auto& toCharacterId = isBuying ? m_playerCharacterId : m_traderCharacterId;
+
+        auto result = m_tradeService.TradeItem(fromCharacterId, toCharacterId, itemIndex, count);
+        if (!result)
+        {
+            EmitOnTradeError(result.error());
+            return;
+        }
+
+        UpdateItems();
+    }
+
+    tl::expected<void, app_domain::TradeError>
+        TradeUIViewModel::CanStackItem(std::size_t fromItemIndex, std::size_t toItemIndex, std::uint32_t count)
+    {
+        auto result = m_inventoryService.CanStackItem(m_playerInventoryId, fromItemIndex, toItemIndex, count);
+        if (!result)
+            return tl::unexpected(app_domain::TradeService::ToTradeError(result.error()));
+
+        return {};
+    }
+
+    void TradeUIViewModel::TryStackItem(std::size_t fromItemIndex, std::size_t toItemIndex, std::uint32_t count)
+    {
+        auto result = m_inventoryService.StackItem(m_playerInventoryId, fromItemIndex, toItemIndex, count);
+        if (!result)
+        {
+            EmitOnTradeError(app_domain::TradeService::ToTradeError(result.error()));
+            return;
+        }
+
+        UpdateItems();
     }
 }

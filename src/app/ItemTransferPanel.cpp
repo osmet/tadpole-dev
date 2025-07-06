@@ -109,7 +109,7 @@ namespace app
             SetActive(false);
 
             if (m_onConfirm)
-                m_onConfirm(m_itemIndex, m_currentItemCount);
+                m_onConfirm(m_currentItemCount);
         });
 
         auto confirmText = confirmButton->CreateWidget<core::TextLabel>();

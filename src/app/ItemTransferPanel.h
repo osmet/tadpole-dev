@@ -23,7 +23,7 @@ namespace app
     class ItemTransferPanel final : public core::CanvasPanel
     {
     public:
-        using OnConfirm = std::function<void(std::size_t itemIndex, std::uint32_t itemCount)>;
+        using OnConfirm = std::function<void(std::uint32_t itemCount)>;
         using OnCancel = std::function<void()>;
 
         ItemTransferPanel(core::AssetManager& assetManager, const sf::Vector2f& renderWindowSize);
