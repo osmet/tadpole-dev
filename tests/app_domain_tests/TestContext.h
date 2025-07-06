@@ -200,6 +200,17 @@ struct TestContext
                 app_domain::InventoryItem{.ItemId = "diamond", .Count = 2, .AddedAt = 100 },
             }
         }},
+        { "inventory_stack", app_domain::Inventory{
+            .Id = "inventory_stack",
+            .CurrentMoney = 1000,
+            .Items = {
+                app_domain::InventoryItem{.ItemId = "healing_potion", .Count = 1, .AddedAt = 100 },
+                app_domain::InventoryItem{.ItemId = "shield", .Count = 1, .AddedAt = 50 },
+                app_domain::InventoryItem{.ItemId = "healing_potion", .Count = 3, .AddedAt = 100 },
+                app_domain::InventoryItem{.ItemId = "sword", .Count = 1, .AddedAt = 50 },
+                app_domain::InventoryItem{.ItemId = "healing_potion", .Count = 5, .AddedAt = 100 },
+            }
+        }},
     };
 
     app_domain::ItemService ItemService{ Items };

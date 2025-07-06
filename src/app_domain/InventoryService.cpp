@@ -215,6 +215,39 @@ namespace app_domain
         return currentWeight;
     }
 
+    tl::expected<void, InventoryError>
+        InventoryService::CanStackItem(const std::string& inventoryId, std::size_t fromItemIndex,
+            std::size_t toItemIndex, std::uint32_t count)
+    {
+        auto result = CanStackItemInternal(inventoryId, fromItemIndex, toItemIndex, count);
+        if (!result)
+            return tl::unexpected(result.error());
+
+        return {};
+    }
+
+    tl::expected<void, InventoryError>
+        InventoryService::StackItem(const std::string& inventoryId, std::size_t fromItemIndex,
+            std::size_t toItemIndex, std::uint32_t count)
+    {
+        auto canStackResult = CanStackItemInternal(inventoryId, fromItemIndex, toItemIndex, count);
+        if (!canStackResult)
+            return tl::unexpected(canStackResult.error());
+
+        auto& inventory = canStackResult->Inventory;
+        auto& fromItem = canStackResult->FromItem;
+        auto& toItem = canStackResult->ToItem;
+        auto countToStack = canStackResult->CountToStack;
+
+        toItem.Count += countToStack;
+        fromItem.Count -= countToStack;
+
+        if (fromItem.Count == 0)
+            inventory.Items.erase(inventory.Items.begin() + fromItemIndex);
+
+        return {};
+    }
+
     void InventoryService::AddItemInternal(Inventory& inventory, const std::string& itemId, std::uint32_t count)
     {
         InventoryItem inventoryItem;
@@ -225,4 +258,39 @@ namespace app_domain
         inventory.Items.emplace_back(std::move(inventoryItem));
     }
 
+    tl::expected<InventoryService::CanStackItemResult, InventoryError>
+        InventoryService::CanStackItemInternal(const std::string& inventoryId, std::size_t fromItemIndex,
+            std::size_t toItemIndex, std::uint32_t count)
+    {
+        if (fromItemIndex == toItemIndex)
+            return tl::unexpected(InventoryError::InvalidAmount);
+
+        auto it = m_inventories.find(inventoryId);
+        if (it == m_inventories.end())
+            return tl::unexpected(InventoryError::NotFound);
+
+        auto& inventory = it->second;
+
+        if (fromItemIndex >= inventory.Items.size() || toItemIndex >= inventory.Items.size())
+            return tl::unexpected(InventoryError::IndexOutOfRange);
+
+        auto& fromItem = inventory.Items[fromItemIndex];
+        auto& toItem = inventory.Items[toItemIndex];
+
+        if (fromItem.ItemId != toItem.ItemId)
+            return tl::unexpected(InventoryError::ItemNotFound);
+
+        if (count == InventoryService::TransferAll)
+            count = fromItem.Count;
+
+        if (fromItem.Count < count)
+            return tl::unexpected(InventoryError::InvalidAmount);
+
+        return CanStackItemResult{ 
+            .Inventory = inventory, 
+            .FromItem = fromItem, 
+            .ToItem = toItem, 
+            .CountToStack = count 
+        };
+    }
 }

@@ -84,6 +84,28 @@ namespace app
         return result;
     }
 
+    tl::expected<void, app_domain::TradeError>
+        TradeUIViewModel::CanStackItem(std::size_t fromItemIndex, std::size_t toItemIndex, std::uint32_t count)
+    {
+        auto result = m_inventoryService.CanStackItem(m_playerInventoryId, fromItemIndex, toItemIndex, count);
+        if (!result)
+            return tl::unexpected(app_domain::TradeService::ToTradeError(result.error()));
+
+        return {};
+    }
+
+    tl::expected<void, app_domain::TradeError>
+        TradeUIViewModel::StackItem(std::size_t fromItemIndex, std::size_t toItemIndex, std::uint32_t count)
+    {
+        auto result = m_inventoryService.StackItem(m_playerInventoryId, fromItemIndex, toItemIndex, count);
+        if (!result)
+            return tl::unexpected(app_domain::TradeService::ToTradeError(result.error()));
+
+        UpdateItems();
+
+        return {};
+    }
+
     const std::string& TradeUIViewModel::GetPlayerName() const
     {
         return m_playerCharacterName;

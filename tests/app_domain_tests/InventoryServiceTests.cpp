@@ -454,3 +454,100 @@ TEST_CASE("InventoryService::GetFilterSortItemDetailsList_SortByWeight_ReturnsSo
     REQUIRE(result->Items[3].GetItem().Id == "healing_potion");
     REQUIRE(result->Items[4].GetItem().Id == "mana_potion");
 }
+
+TEST_CASE("InventoryService::CanStackItem_FromAndToIndicesEqual_ReturnsInvalidAmount")
+{
+    TestContext context;
+
+    auto result = context.InventoryService.CanStackItem("inventory_stack", 0, 0, 1);
+
+    REQUIRE(!result.has_value());
+    REQUIRE(result.error() == InventoryError::InvalidAmount);
+}
+
+TEST_CASE("InventoryService::CanStackItem_InventoryNotFound_ReturnsNotFound")
+{
+    TestContext context;
+
+    auto result = context.InventoryService.CanStackItem("nonexistent_inventory", 0, 1, 1);
+
+    REQUIRE(!result.has_value());
+    REQUIRE(result.error() == InventoryError::NotFound);
+}
+
+TEST_CASE("InventoryService::CanStackItem_FromIndexOutOfRange_ReturnsIndexOutOfRange")
+{
+    TestContext context;
+
+    auto result = context.InventoryService.CanStackItem("inventory_stack", 100, 0, 1);
+
+    REQUIRE(!result.has_value());
+    REQUIRE(result.error() == InventoryError::IndexOutOfRange);
+}
+
+TEST_CASE("InventoryService::CanStackItem_ToIndexOutOfRange_ReturnsIndexOutOfRange")
+{
+    TestContext context;
+
+    auto result = context.InventoryService.CanStackItem("inventory_stack", 0, 100, 1);
+
+    REQUIRE(!result.has_value());
+    REQUIRE(result.error() == InventoryError::IndexOutOfRange);
+}
+
+TEST_CASE("InventoryService::CanStackItem_ItemIdsDoNotMatch_ReturnsItemNotFound")
+{
+    TestContext context;
+
+    auto result = context.InventoryService.CanStackItem("inventory_stack", 0, 1, 1);
+
+    REQUIRE(!result.has_value());
+    REQUIRE(result.error() == InventoryError::ItemNotFound);
+}
+
+TEST_CASE("InventoryService::CanStackItem_CountGreaterThanAvailable_ReturnsInvalidAmount")
+{
+    TestContext context;
+
+    auto result = context.InventoryService.CanStackItem("inventory_stack", 0, 0, 1000);
+
+    REQUIRE(!result.has_value());
+    REQUIRE(result.error() == InventoryError::InvalidAmount);
+}
+
+TEST_CASE("InventoryService::CanStackItem_ValidInput_Succeeds")
+{
+    TestContext context;
+
+    auto result = context.InventoryService.CanStackItem("inventory_stack", 0, 4, 1);
+
+    REQUIRE(result.has_value());
+}
+
+TEST_CASE("InventoryService::StackItem_CanStackItemInternalFails_ReturnsSameError")
+{
+    TestContext context;
+
+    auto result = context.InventoryService.StackItem("inventory_stack", 0, 0, 1);
+
+    REQUIRE(!result.has_value());
+    REQUIRE(result.error() == InventoryError::InvalidAmount);
+}
+
+TEST_CASE("InventoryService::StackItem_FewValidStacks_Succeeds")
+{
+    TestContext context;
+
+    auto result = context.InventoryService.StackItem("inventory_stack", 4, 0, 3);
+
+    REQUIRE(result.has_value());
+    REQUIRE(context.Inventories["inventory_stack"].Items.size() == 5);
+    REQUIRE(context.Inventories["inventory_stack"].Items[0].Count == 4);
+    REQUIRE(context.Inventories["inventory_stack"].Items[4].Count == 2);
+
+    result = context.InventoryService.StackItem("inventory_stack", 2, 0, InventoryService::TransferAll);
+
+    REQUIRE(result.has_value());
+    REQUIRE(context.Inventories["inventory_stack"].Items.size() == 4);
+    REQUIRE(context.Inventories["inventory_stack"].Items[0].Count == 7);
+}

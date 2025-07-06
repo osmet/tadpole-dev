@@ -29,7 +29,7 @@ namespace app
         void SetOnItemHoverOut(OnItemHoverOut callback);
         void SetOnItemDragBegin(OnItemDragBegin callback);
 
-        bool CanItemDragEnd(sf::Vector2f dragEndPosition) const override;
+        bool CanItemDragEnd(sf::Vector2f dragEndPosition, std::int32_t& out_signedToItemIndex) const override;
 
     protected:
         bool OnHandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow) override;

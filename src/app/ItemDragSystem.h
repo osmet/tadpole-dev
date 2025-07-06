@@ -11,13 +11,13 @@ namespace app
     public:
         virtual ~IItemDragTarget() = 0;
 
-        virtual bool CanItemDragEnd(sf::Vector2f dragEndPosition) const = 0;
+        virtual bool CanItemDragEnd(sf::Vector2f dragEndPosition, std::int32_t& out_signedToItemIndex) const = 0;
     };
 
     class ItemDragSystem
     {
     public:
-        using OnItemDragEnd = std::function<void(IItemDragTarget* target, std::size_t itemIndex)>;
+        using OnItemDragEnd = std::function<void(IItemDragTarget* target, std::size_t fromItemIndex, std::int32_t signedToItemIndex)>;
 
         ItemDragSystem(core::AssetManager& assetManager, sf::RenderWindow& renderWindow, float iconSize);
 

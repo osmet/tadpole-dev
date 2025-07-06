@@ -32,6 +32,8 @@ namespace app_domain
     public:
         static constexpr std::uint32_t TradeAll = 0u;
 
+        static TradeError ToTradeError(InventoryError inventoryError);
+
         TradeService(ItemService& itemService, CharacterService& characterService,
             InventoryService& inventoryService);
 
@@ -40,7 +42,7 @@ namespace app_domain
 
         bool IsItemTradable(const Item& item) const;
 
-        tl::expected<InventoryItemDetails, TradeError> 
+        tl::expected<void, TradeError> 
             CanTradeItem(const std::string& fromCharacterId, const std::string& toCharacterId,
                 std::size_t itemIndex, std::uint32_t count = TradeService::TradeAll) const;
 

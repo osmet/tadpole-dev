@@ -182,8 +182,9 @@ namespace app
         m_itemDragSystem.Render(renderWindow);
     }
     
-    void TradeUIView::BindViewModel() {
-        m_viewModel.SetOnTradeBegin([this]() 
+    void TradeUIView::BindViewModel()
+    {
+        m_viewModel.SetOnTradeBegin([this]()
         {
             SetPlayerName(m_viewModel.GetPlayerName());
             SetPlayerPortraitTexture(m_viewModel.GetPlayerPortraitTextureId());
@@ -273,7 +274,7 @@ namespace app
 
             const auto& item = itemOpt.value();
 
-            m_itemDragSystem.BeginDrag(item.GetIndex(), item.GetItem().IconTextureId, [this, isBuying](IItemDragTarget* target, std::size_t itemIndex)
+            m_itemDragSystem.BeginDrag(item.GetIndex(), item.GetItem().IconTextureId, [this, isBuying](IItemDragTarget* target, std::size_t fromItemIndex, std::int32_t signedToItemIndex)
             {
                 if (!target)
                     return;
@@ -282,14 +283,18 @@ namespace app
                 {
                     if (isBuying)
                     {
-                        TradeItem(isBuying, itemIndex);
+                        TradeItem(isBuying, fromItemIndex);
+                    }
+                    else
+                    {
+                        StackItem(fromItemIndex, signedToItemIndex);
                     }
                 }
                 else if (target == m_traderItemGrid)
                 {
                     if (!isBuying)
                     {
-                        TradeItem(isBuying, itemIndex);
+                        TradeItem(isBuying, fromItemIndex);
                     }
                 }
             });
@@ -339,6 +344,40 @@ namespace app
 
             if (!tradeResult)
                 ShowErrorPanel(tradeResult.error());
+        }
+    }
+
+    void TradeUIView::StackItem(std::size_t fromItemIndex, std::int32_t signedToItemIndex)
+    {
+        if (signedToItemIndex < 0)
+            return;
+
+        std::size_t toItemIndex = static_cast<std::size_t>(signedToItemIndex);
+
+        auto canStackResult = m_viewModel.CanStackItem(fromItemIndex, toItemIndex, 1u);
+        if (!canStackResult)
+            return;
+
+        auto fromItemOpt = m_viewModel.GetPlayerItem(fromItemIndex);
+        if (!fromItemOpt)
+            return;
+
+        const auto& fromItem = fromItemOpt.value();
+
+        if (fromItem.GetCount() > 1u && m_itemTransferPanel)
+        {
+            m_itemTransferPanel->SetOnConfirm([this, fromItemIndex, toItemIndex](std::size_t, std::uint32_t count)
+            {
+                auto result = m_viewModel.StackItem(fromItemIndex, toItemIndex, count);
+                if (!result)
+                    ShowErrorPanel(result.error());
+            });
+
+            m_itemTransferPanel->Show(fromItem);
+        }
+        else
+        {
+            m_viewModel.StackItem(fromItemIndex, toItemIndex, 1u);
         }
     }
 

@@ -56,8 +56,28 @@ namespace app_domain
         tl::expected<float, InventoryError> 
             CalculateCurrentWeight(const std::string& inventoryId) const;
 
+        tl::expected<void, InventoryError>
+            CanStackItem(const std::string& inventoryId, std::size_t fromItemIndex,
+                std::size_t toItemIndex, std::uint32_t count = InventoryService::TransferAll);
+
+        tl::expected<void, InventoryError>
+            StackItem(const std::string& inventoryId, std::size_t fromItemIndex, 
+                std::size_t toItemIndex, std::uint32_t count = InventoryService::TransferAll);
+
     private:
+        struct CanStackItemResult
+        {
+            Inventory& Inventory;
+            InventoryItem& FromItem;
+            InventoryItem& ToItem;
+            std::uint32_t CountToStack;
+        };
+
         void AddItemInternal(Inventory& inventory, const std::string& itemId, std::uint32_t count);
+
+        tl::expected<CanStackItemResult, InventoryError>
+            CanStackItemInternal(const std::string& inventoryId, std::size_t fromItemIndex,
+                std::size_t toItemIndex, std::uint32_t count = InventoryService::TransferAll);
 
         InventoryMap& m_inventories;
 

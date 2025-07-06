@@ -40,10 +40,12 @@ namespace app
             if (!target)
                 continue;
 
-            if (target->CanItemDragEnd(dragEndPosition))
+            std::int32_t signedToItemIndex;
+
+            if (target->CanItemDragEnd(dragEndPosition, signedToItemIndex))
             {
                 if (m_onItemDragEnd)
-                    m_onItemDragEnd(target, m_dragItemIndex);
+                    m_onItemDragEnd(target, m_dragItemIndex, signedToItemIndex);
 
                 break;
             }

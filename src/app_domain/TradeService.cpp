@@ -3,6 +3,25 @@
 
 namespace app_domain
 {
+    TradeError TradeService::ToTradeError(InventoryError inventoryError)
+    {
+        switch (inventoryError)
+        {
+        case InventoryError::NotFound:
+            return TradeError::InventoryNotFound;
+        case InventoryError::NotEnoughMoney:
+            return TradeError::NotEnoughMoney;
+        case InventoryError::InvalidAmount:
+            return TradeError::InvalidAmount;
+        case InventoryError::IndexOutOfRange:
+            return TradeError::InventoryItemNotFound;
+        case InventoryError::ItemNotFound:
+            return TradeError::ItemNotFound;
+        default:
+            return TradeError::TransferFailed;
+        }
+    }
+
     TradeService::TradeService(ItemService& itemService, CharacterService& characterService,
         InventoryService& inventoryService)
         : m_itemService(itemService), m_characterService(characterService), m_inventoryService(inventoryService)
@@ -29,10 +48,10 @@ namespace app_domain
             return tl::unexpected(TradeError::InventoryNotFound);
 
         return TradeContext{
-            fromCharacter,
-            toCharacter,
-            fromInventoryResult.value().get(),
-            toInventoryResult.value().get()
+            .FromCharacter = fromCharacter,
+            .ToCharacter = toCharacter,
+            .FromInventory = fromInventoryResult.value().get(),
+            .ToInventory = toInventoryResult.value().get()
         };
     }
 
@@ -41,7 +60,7 @@ namespace app_domain
         return !item.IsStoryItem;
     }
 
-    tl::expected<InventoryItemDetails, TradeError> 
+    tl::expected<void, TradeError> 
         TradeService::CanTradeItem(const std::string& fromCharacterId, const std::string& toCharacterId,
             std::size_t itemIndex, std::uint32_t count) const
     {
@@ -49,7 +68,11 @@ namespace app_domain
         if (!contextResult)
             return tl::unexpected(contextResult.error());
 
-        return CanTradeItemInternal(contextResult.value(), itemIndex, count);
+        auto result = CanTradeItemInternal(contextResult.value(), itemIndex, count);
+        if (!result)
+            return tl::unexpected(result.error());
+
+        return {};
     }
 
     tl::expected<void, TradeError> 
@@ -69,17 +92,7 @@ namespace app_domain
     {
         const auto& fromInventoryItemResult = m_inventoryService.GetItemDetails(context.FromInventory.Id, itemIndex);
         if (!fromInventoryItemResult)
-        {
-            switch (fromInventoryItemResult.error())
-            {
-            case InventoryError::NotFound:
-                return tl::unexpected(TradeError::InventoryNotFound);
-            case InventoryError::IndexOutOfRange:
-                return tl::unexpected(TradeError::InventoryItemNotFound);
-            case InventoryError::ItemNotFound:
-                return tl::unexpected(TradeError::ItemNotFound);
-            }
-        }
+            return tl::unexpected(app_domain::TradeService::ToTradeError(fromInventoryItemResult.error()));
 
         const auto& fromInventoryItem = fromInventoryItemResult.value();
         const auto& item = fromInventoryItem.GetItem();

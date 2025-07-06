@@ -57,7 +57,7 @@ namespace app
         m_onItemDragBegin = std::move(callback);
     }
 
-    bool ItemGridPanel::CanItemDragEnd(sf::Vector2f dragEndPosition) const
+    bool ItemGridPanel::CanItemDragEnd(sf::Vector2f dragEndPosition, std::int32_t& out_signedToItemIndex) const
     {
         sf::Vector2f panelPosition = GetPosition();
         size_t columnCount = GetColumnCount();
@@ -73,7 +73,33 @@ namespace app
             rowCount * (cellSize + spacing) - spacing
         );
 
-        return panelBounds.contains(dragEndPosition);
+        out_signedToItemIndex = -1;
+
+        if (!panelBounds.contains(dragEndPosition))
+            return false;
+
+        sf::Vector2f relativePosition = dragEndPosition - panelPosition;
+        size_t columnIndex = static_cast<size_t>(relativePosition.x / (cellSize + spacing));
+        size_t rowIndex = static_cast<size_t>(relativePosition.y / (cellSize + spacing));
+        size_t slotIndex = rowIndex * columnCount + columnIndex;
+
+        if (slotIndex >= slotCount)
+            return true;
+
+        auto* widget = GetWidget(slotIndex);
+        if (!widget)
+            return true;
+
+        auto* itemSlot = static_cast<ItemSlot*>(widget);
+        if (!itemSlot)
+            return true;
+
+        if (!itemSlot->HasItem())
+            return true;
+
+        out_signedToItemIndex = static_cast<std::int32_t>(itemSlot->GetItemIndex());
+
+        return true;
     }
 
     bool ItemGridPanel::OnHandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow)

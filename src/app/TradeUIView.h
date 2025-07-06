@@ -49,6 +49,7 @@ namespace app
         void BindViewModel();
         void BindItemGridPanel(ItemGridPanel* gridPanel, bool isBuying);
         void TradeItem(bool isBuying, std::size_t itemIndex);
+        void StackItem(std::size_t fromItemIndex, std::int32_t signedToItemIndex);
 
         void SetOnTradeButtonClick(std::function<void()> callback);
 

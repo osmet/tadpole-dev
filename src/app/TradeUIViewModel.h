@@ -32,6 +32,11 @@ namespace app
         tl::expected<void, app_domain::TradeError> 
             SellItem(std::size_t itemIndex, std::uint32_t count = app_domain::TradeService::TradeAll);
 
+        tl::expected<void, app_domain::TradeError>
+            CanStackItem(std::size_t fromItemIndex, std::size_t toItemIndex, std::uint32_t count = app_domain::InventoryService::TransferAll);
+        tl::expected<void, app_domain::TradeError>
+            StackItem(std::size_t fromItemIndex, std::size_t toItemIndex, std::uint32_t count = app_domain::InventoryService::TransferAll);
+
         const std::string& GetPlayerName() const;
         const std::string& GetTraderName() const;
 
