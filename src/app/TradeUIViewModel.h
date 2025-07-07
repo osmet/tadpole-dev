@@ -14,23 +14,23 @@ namespace app
     public:
         struct Context
         {
-            core::ReactiveProperty<std::string> PlayerCharacterName;
-            core::ReactiveProperty<std::string> TraderCharacterName;
+            lang::ReactiveProperty<std::string> PlayerCharacterName;
+            lang::ReactiveProperty<std::string> TraderCharacterName;
 
-            core::ReactiveProperty<std::string> PlayerPortraitTextureId;
-            core::ReactiveProperty<std::string> TraderPortraitTextureId;
+            lang::ReactiveProperty<std::string> PlayerPortraitTextureId;
+            lang::ReactiveProperty<std::string> TraderPortraitTextureId;
 
-            core::ReactiveProperty<std::uint32_t> PlayerCurrentMoney = 0u;
-            core::ReactiveProperty<std::uint32_t> TraderCurrentMoney = 0u;
+            lang::ReactiveProperty<std::uint32_t> PlayerCurrentMoney = 0u;
+            lang::ReactiveProperty<std::uint32_t> TraderCurrentMoney = 0u;
 
-            core::ReactiveProperty<float> PlayerCurrentWeight = 0.f;
-            core::ReactiveProperty<float> PlayerMaxWeight = 0.f;
+            lang::ReactiveProperty<float> PlayerCurrentWeight = 0.f;
+            lang::ReactiveProperty<float> PlayerMaxWeight = 0.f;
 
-            core::ReactiveProperty<std::vector<app_domain::InventoryItemDetails>> PlayerItems = {};
-            core::ReactiveProperty<std::vector<app_domain::InventoryItemDetails>> TraderItems = {};
+            lang::ReactiveProperty<std::vector<app_domain::InventoryItemDetails>> PlayerItems = {};
+            lang::ReactiveProperty<std::vector<app_domain::InventoryItemDetails>> TraderItems = {};
 
-            core::ReactiveProperty<app_domain::ItemCategory> ItemFilterCategory = app_domain::ItemCategory::All;
-            core::ReactiveProperty<app_domain::ItemSortMode> ItemSortMode = app_domain::ItemSortMode::Latest;
+            lang::ReactiveProperty<app_domain::ItemCategory> ItemFilterCategory = app_domain::ItemCategory::All;
+            lang::ReactiveProperty<app_domain::ItemSortMode> ItemSortMode = app_domain::ItemSortMode::Latest;
         };
 
         using OnTradeError = std::function<void(app_domain::TradeError)>;

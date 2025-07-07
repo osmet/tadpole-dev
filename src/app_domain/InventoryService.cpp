@@ -1,6 +1,6 @@
 ﻿#include "Precompiled.h"
 #include "InventoryService.h"
-#include "TimeProvider.h"
+#include "../lang/Time.h"
 
 namespace app_domain
 {
@@ -253,7 +253,7 @@ namespace app_domain
         InventoryItem inventoryItem;
         inventoryItem.ItemId = itemId;
         inventoryItem.Count = count;
-        inventoryItem.AddedAt = app_domain::TimeProvider::GetUnixTimeMilliseconds();
+        inventoryItem.AddedAt = lang::Time::GetUnixTimeMilliseconds();
 
         inventory.Items.emplace_back(std::move(inventoryItem));
     }

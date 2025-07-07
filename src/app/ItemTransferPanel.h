@@ -46,6 +46,6 @@ namespace app
         std::size_t m_itemIndex = 0;
         std::uint32_t m_minItemCount = 1;
         std::uint32_t m_maxItemCount = 1;
-        core::ReactiveProperty<std::uint32_t> m_currentItemCount = 1;
+        lang::ReactiveProperty<std::uint32_t> m_currentItemCount = 1;
     };
 }

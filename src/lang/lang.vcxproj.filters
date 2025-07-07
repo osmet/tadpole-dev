@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\rx">
+      <UniqueIdentifier>{01e9c650-2773-423d-84df-dcb8ddb8a1c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\time">
+      <UniqueIdentifier>{4f75cbb5-7f11-4031-b083-02e91ae5b7e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\types">
+      <UniqueIdentifier>{f7e9fed9-1f7b-496b-acdf-4de41c9e31b5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Precompiled.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>Source Files\time</Filter>
+    </ClCompile>
+    <ClCompile Include="ReactiveProperty.cpp">
+      <Filter>Source Files\rx</Filter>
+    </ClCompile>
+    <ClCompile Include="ResultTypes.cpp">
+      <Filter>Source Files\types</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Precompiled.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Time.h">
+      <Filter>Source Files\time</Filter>
+    </ClInclude>
+    <ClInclude Include="ReactiveProperty.h">
+      <Filter>Source Files\rx</Filter>
+    </ClInclude>
+    <ClInclude Include="ResultTypes.h">
+      <Filter>Source Files\types</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

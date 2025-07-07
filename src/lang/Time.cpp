@@ -1,10 +1,10 @@
 #include "Precompiled.h"
-#include "TimeProvider.h"
+#include "Time.h"
 #include <chrono>
 
-namespace app_domain
+namespace lang
 {
-    std::uint64_t TimeProvider::GetUnixTimeMilliseconds()
+    std::uint64_t Time::GetUnixTimeMilliseconds()
     {
         using namespace std::chrono;
         return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();

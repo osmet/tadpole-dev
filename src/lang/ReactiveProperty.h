@@ -1,6 +1,6 @@
 #pragma once
 
-namespace core
+namespace lang
 {
     template<typename TValue>
     class ReactiveProperty

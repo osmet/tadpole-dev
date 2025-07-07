@@ -1,8 +1,8 @@
 #pragma once
 
-namespace app_domain
+namespace lang
 {
-    class TimeProvider
+    class Time
     {
     public:
         static std::uint64_t GetUnixTimeMilliseconds();

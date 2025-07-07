@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../lang/Precompiled.h"
+
 #include <vector>
 #include <memory>
 #include <string>
@@ -11,9 +13,6 @@
 #include <streambuf>
 #include <cassert>
 #include <functional>
-#include <optional>
-
-#include <tl/expected.hpp>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
