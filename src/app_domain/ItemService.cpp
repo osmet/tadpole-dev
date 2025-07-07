@@ -10,7 +10,7 @@ namespace app_domain
     {
     }
 
-    tl::expected<std::reference_wrapper<const Item>, ItemError>
+    lang::ExpectedConstRef<Item, ItemError>
         ItemService::GetItemById(const std::string& id) const
     {
         auto it = m_items.find(id);

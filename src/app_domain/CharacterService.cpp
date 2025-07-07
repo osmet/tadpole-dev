@@ -8,7 +8,7 @@ namespace app_domain
     {
     }
 
-    tl::expected<std::reference_wrapper<const Character>, CharacterError>
+    lang::ExpectedConstRef<Character, CharacterError>
         CharacterService::GetCharacterById(const std::string& id) const
     {
         auto it = m_characters.find(id);

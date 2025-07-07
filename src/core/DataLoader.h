@@ -15,12 +15,12 @@ namespace core
     class DataLoader
     {
     public:
-        tl::expected<void, DataLoaderError> Load(IData& data, const std::string& filePath) const;
-        tl::expected<void, DataLoaderError> Load(IData& data, const std::string& filePath, const std::string& fallbackFilePath) const;
-        tl::expected<void, DataLoaderError> Save(const IData& data, const std::string& filePath) const;
+        lang::Expected<void, DataLoaderError> Load(IData& data, const std::string& filePath) const;
+        lang::Expected<void, DataLoaderError> Load(IData& data, const std::string& filePath, const std::string& fallbackFilePath) const;
+        lang::Expected<void, DataLoaderError> Save(const IData& data, const std::string& filePath) const;
 
     protected:
-        virtual tl::expected<void, DataLoaderError> LoadFromStream(std::istream& input, IData& data) const = 0;
-        virtual tl::expected<void, DataLoaderError> SaveToStream(std::ostream& output, const IData& data) const = 0;
+        virtual lang::Expected<void, DataLoaderError> LoadFromStream(std::istream& input, IData& data) const = 0;
+        virtual lang::Expected<void, DataLoaderError> SaveToStream(std::ostream& output, const IData& data) const = 0;
     };
 }

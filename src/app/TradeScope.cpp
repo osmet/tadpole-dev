@@ -34,7 +34,7 @@ namespace app
         m_tradeUIView.Render(renderWindow);
     }
 
-    tl::expected<void, app_domain::TradeError> TradeScope::BeginTrade(const std::string& playerCharacterId, const std::string& traderCharacterId)
+    lang::Expected<void, app_domain::TradeError> TradeScope::BeginTrade(const std::string& playerCharacterId, const std::string& traderCharacterId)
     {
         return m_tradeUIViewModel.BeginTrade(playerCharacterId, traderCharacterId);
     }

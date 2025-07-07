@@ -4,5 +4,7 @@
 #include <memory>
 #include <algorithm>
 #include <optional>
+#include <functional>
 
-#include <tl/expected.hpp>
+#include "ResultTypes.h"
+#include "ReactiveProperty.h"

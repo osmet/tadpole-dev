@@ -25,7 +25,7 @@ namespace app
         return m_context;
     }
 
-    tl::expected<void, app_domain::TradeError> 
+    lang::Expected<void, app_domain::TradeError> 
         TradeUIViewModel::BeginTrade(const std::string& playerCharacterId, const std::string& traderCharacterId)
     {
         auto tradeContextResult = m_tradeService.MakeContext(traderCharacterId, playerCharacterId);
@@ -117,12 +117,12 @@ namespace app
         }
     }
 
-    const std::optional<app_domain::InventoryItemDetails> TradeUIViewModel::GetPlayerItem(size_t itemIndex) const
+    const lang::Optional<app_domain::InventoryItemDetails> TradeUIViewModel::GetPlayerItem(size_t itemIndex) const
     {
         return GetInventoryItem(m_playerInventoryId, itemIndex);
     }
 
-    const std::optional<app_domain::InventoryItemDetails> TradeUIViewModel::GetTraderItem(size_t itemIndex) const
+    const lang::Optional<app_domain::InventoryItemDetails> TradeUIViewModel::GetTraderItem(size_t itemIndex) const
     {
         return GetInventoryItem(m_traderInventoryId, itemIndex);
     }
@@ -166,7 +166,7 @@ namespace app
         return weightResult.value_or(0.0f);
     }
 
-    std::optional<app_domain::InventoryItemDetails> 
+    lang::Optional<app_domain::InventoryItemDetails> 
         TradeUIViewModel::GetInventoryItem(const std::string& inventoryId, size_t itemIndex) const
     {
         auto result = m_inventoryService.GetItemDetails(inventoryId, itemIndex);
@@ -192,7 +192,7 @@ namespace app
         return {};
     }
 
-    tl::expected<void, app_domain::TradeError>
+    lang::Expected<void, app_domain::TradeError>
         TradeUIViewModel::CanTradeItem(bool isBuying, std::size_t itemIndex, std::uint32_t count) const
     {
         auto& fromCharacterId = isBuying ? m_traderCharacterId : m_playerCharacterId;
@@ -220,7 +220,7 @@ namespace app
         UpdateItems();
     }
 
-    tl::expected<void, app_domain::TradeError>
+    lang::Expected<void, app_domain::TradeError>
         TradeUIViewModel::CanStackItem(std::size_t fromItemIndex, std::size_t toItemIndex, std::uint32_t count)
     {
         auto result = m_inventoryService.CanStackItem(m_playerInventoryId, fromItemIndex, toItemIndex, count);

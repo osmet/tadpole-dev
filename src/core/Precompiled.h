@@ -12,7 +12,6 @@
 #include <filesystem>
 #include <streambuf>
 #include <cassert>
-#include <functional>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>

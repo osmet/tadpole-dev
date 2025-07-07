@@ -3,7 +3,7 @@
 
 namespace core
 {
-    tl::expected<void, DataLoaderError> DataLoader::Load(IData& data, const std::string& filePath) const
+    lang::Expected<void, DataLoaderError> DataLoader::Load(IData& data, const std::string& filePath) const
     {
         if (filePath.empty() || !std::filesystem::exists(filePath))
             return tl::unexpected(DataLoaderError::FilePathNotFound);
@@ -15,7 +15,7 @@ namespace core
         return LoadFromStream(file, data);
     }
 
-    tl::expected<void, DataLoaderError> DataLoader::Load(
+    lang::Expected<void, DataLoaderError> DataLoader::Load(
         IData& data,
         const std::string& filePath,
         const std::string& fallbackFilePath) const
@@ -29,7 +29,7 @@ namespace core
         return tl::unexpected(DataLoaderError::FilePathNotFound);
     }
 
-    tl::expected<void, DataLoaderError> DataLoader::Save(const IData& data, const std::string& filePath) const
+    lang::Expected<void, DataLoaderError> DataLoader::Save(const IData& data, const std::string& filePath) const
     {
         if (filePath.empty())
             return tl::unexpected(DataLoaderError::FilePathNotFound);

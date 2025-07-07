@@ -11,7 +11,7 @@ namespace app_domain
     {
     }
 
-    tl::expected<std::reference_wrapper<const Inventory>, InventoryError>
+    lang::ExpectedConstRef<Inventory, InventoryError>
         InventoryService::GetInventoryById(const std::string& id) const
     {
         auto it = m_inventories.find(id);
@@ -21,7 +21,7 @@ namespace app_domain
         return std::cref(it->second);
     }
 
-    tl::expected<std::reference_wrapper<const InventoryItem>, InventoryError>
+    lang::ExpectedConstRef<InventoryItem, InventoryError>
         InventoryService::GetItem(const std::string& inventoryId, std::size_t itemIndex) const
     {
         auto it = m_inventories.find(inventoryId);
@@ -35,7 +35,7 @@ namespace app_domain
         return std::cref(inventory.Items[itemIndex]);
     }
 
-    tl::expected<InventoryItemDetails, InventoryError>
+    lang::Expected<InventoryItemDetails, InventoryError>
         InventoryService::GetItemDetails(const std::string& inventoryId, std::size_t itemIndex) const
     {
         auto it = m_inventories.find(inventoryId);
@@ -60,7 +60,7 @@ namespace app_domain
         };
     }
 
-    tl::expected<InventoryService::ItemDetailsListResult, InventoryError>
+    lang::Expected<InventoryService::ItemDetailsListResult, InventoryError>
         InventoryService::GetFilterSortItemDetailsList(const std::string& inventoryId,
             ItemCategory itemFilterCategory, ItemSortMode itemSortMode,
             std::function<bool(const InventoryItemDetails&)> customFilter) const
@@ -135,7 +135,7 @@ namespace app_domain
         return result;
     }
 
-    tl::expected<void, InventoryError>
+    lang::Expected<void, InventoryError>
         InventoryService::TransferMoney(const std::string& fromId, const std::string& toId, 
             std::uint32_t amount)
     {
@@ -157,7 +157,7 @@ namespace app_domain
         return {};
     }
 
-    tl::expected<void, InventoryError>
+    lang::Expected<void, InventoryError>
         InventoryService::TransferItem(const std::string& fromId, const std::string& toId, 
             std::size_t itemIndex, std::uint32_t count)
     {
@@ -191,7 +191,7 @@ namespace app_domain
         return {};
     }
 
-    tl::expected<float, InventoryError> 
+    lang::Expected<float, InventoryError> 
         InventoryService::CalculateCurrentWeight(const std::string& inventoryId) const
     {
         auto it = m_inventories.find(inventoryId);
@@ -215,7 +215,7 @@ namespace app_domain
         return currentWeight;
     }
 
-    tl::expected<void, InventoryError>
+    lang::Expected<void, InventoryError>
         InventoryService::CanStackItem(const std::string& inventoryId, std::size_t fromItemIndex,
             std::size_t toItemIndex, std::uint32_t count)
     {
@@ -226,7 +226,7 @@ namespace app_domain
         return {};
     }
 
-    tl::expected<void, InventoryError>
+    lang::Expected<void, InventoryError>
         InventoryService::StackItem(const std::string& inventoryId, std::size_t fromItemIndex,
             std::size_t toItemIndex, std::uint32_t count)
     {
@@ -258,7 +258,7 @@ namespace app_domain
         inventory.Items.emplace_back(std::move(inventoryItem));
     }
 
-    tl::expected<InventoryService::CanStackItemResult, InventoryError>
+    lang::Expected<InventoryService::CanStackItemResult, InventoryError>
         InventoryService::CanStackItemInternal(const std::string& inventoryId, std::size_t fromItemIndex,
             std::size_t toItemIndex, std::uint32_t count)
     {

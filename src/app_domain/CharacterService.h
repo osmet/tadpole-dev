@@ -14,7 +14,7 @@ namespace app_domain
     public:
         CharacterService(CharacterMap& characters);
 
-        tl::expected<std::reference_wrapper<const Character>, CharacterError>
+        lang::ExpectedConstRef<Character, CharacterError>
             GetCharacterById(const std::string& id) const;
 
     private:

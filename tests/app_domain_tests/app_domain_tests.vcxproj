@@ -30,6 +30,9 @@
     <ProjectReference Include="..\..\src\app_domain\app_domain.vcxproj">
       <Project>{6b036087-9460-46f6-b120-70b4625cec04}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\src\lang\lang.vcxproj">
+      <Project>{018404e1-c511-48ff-a586-66fcde117d67}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestContext.h" />

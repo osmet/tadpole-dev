@@ -41,14 +41,14 @@ namespace app
 
         Context& GetContext();
 
-        tl::expected<void, app_domain::TradeError> 
+        lang::Expected<void, app_domain::TradeError> 
             BeginTrade(const std::string& playerCharacterId, const std::string& traderCharacterId);
 
         void TradeItem(bool isBuying, std::size_t itemIndex);
         void StackItem(std::size_t fromItemIndex, std::int32_t signedToItemIndex);
 
-        const std::optional<app_domain::InventoryItemDetails> GetPlayerItem(size_t itemIndex) const;
-        const std::optional<app_domain::InventoryItemDetails> GetTraderItem(size_t itemIndex) const;
+        const lang::Optional<app_domain::InventoryItemDetails> GetPlayerItem(size_t itemIndex) const;
+        const lang::Optional<app_domain::InventoryItemDetails> GetTraderItem(size_t itemIndex) const;
         
         void SetOnShowTransferPanel(OnShowTransferPanel callback);
         void SetOnTradeError(OnTradeError callback);
@@ -58,15 +58,15 @@ namespace app
         void EmitOnTradeError(const app_domain::TradeError& error) const;
         uint32_t GetInventoryCurrentMoney(const std::string& inventoryId) const;
         float GetInventoryCurrentWeight(const std::string& inventoryId) const;
-        std::optional<app_domain::InventoryItemDetails>
+        lang::Optional<app_domain::InventoryItemDetails>
             GetInventoryItem(const std::string& inventoryId, size_t itemIndex) const;
         std::vector<app_domain::InventoryItemDetails> 
             LoadInventoryItems(const std::string& inventoryId) const;
 
-        tl::expected<void, app_domain::TradeError>
+        lang::Expected<void, app_domain::TradeError>
             CanTradeItem(bool isBuying, std::size_t itemIndex, std::uint32_t count = app_domain::TradeService::TradeAll) const;
         void TryTradeItem(bool isBuying, std::size_t itemIndex, std::uint32_t count = app_domain::TradeService::TradeAll);
-        tl::expected<void, app_domain::TradeError>
+        lang::Expected<void, app_domain::TradeError>
             CanStackItem(std::size_t fromItemIndex, std::size_t toItemIndex, std::uint32_t count = app_domain::InventoryService::TransferAll);
         void TryStackItem(std::size_t fromItemIndex, std::size_t toItemIndex, std::uint32_t count = app_domain::InventoryService::TransferAll);
 

@@ -21,7 +21,7 @@ namespace app
         void Update(float deltaTime) override;
         void Render(sf::RenderWindow& renderWindow) override;
 
-        tl::expected<void, app_domain::TradeError> BeginTrade(const std::string& playerCharacterId, const std::string& traderCharacterId);
+        lang::Expected<void, app_domain::TradeError> BeginTrade(const std::string& playerCharacterId, const std::string& traderCharacterId);
 
     private:
         TradeUIView m_tradeUIView;

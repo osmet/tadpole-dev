@@ -14,7 +14,7 @@ namespace app_domain
     public:
         virtual ~IItemService() = 0;
 
-        virtual tl::expected<std::reference_wrapper<const Item>, ItemError>
+        virtual lang::ExpectedConstRef<Item, ItemError>
             GetItemById(const std::string& id) const = 0;
     };
 
@@ -23,7 +23,7 @@ namespace app_domain
     public:
         ItemService(const ItemMap& items);
 
-        tl::expected<std::reference_wrapper<const Item>, ItemError>
+        lang::ExpectedConstRef<Item, ItemError>
             GetItemById(const std::string& id) const override;
 
     private:

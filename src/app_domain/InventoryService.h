@@ -31,36 +31,36 @@ namespace app_domain
 
         InventoryService(InventoryMap& inventories, IItemService& itemService);
 
-        tl::expected<std::reference_wrapper<const Inventory>, InventoryError>
+        lang::ExpectedConstRef<Inventory, InventoryError>
             GetInventoryById(const std::string& id) const;
 
-        tl::expected<std::reference_wrapper<const InventoryItem>, InventoryError>
+        lang::ExpectedConstRef<InventoryItem, InventoryError>
             GetItem(const std::string& inventoryId, std::size_t itemIndex) const;
 
-        tl::expected<InventoryItemDetails, InventoryError>
+        lang::Expected<InventoryItemDetails, InventoryError>
             GetItemDetails(const std::string& inventoryId, std::size_t itemIndex) const;
 
-        tl::expected<ItemDetailsListResult, InventoryError>
+        lang::Expected<ItemDetailsListResult, InventoryError>
             GetFilterSortItemDetailsList(const std::string& inventoryId,
                 ItemCategory itemFilterCategory, ItemSortMode itemSortMode,
                 std::function<bool(const InventoryItemDetails&)> customFilter = nullptr) const;
 
-        virtual tl::expected<void, InventoryError>
+        virtual lang::Expected<void, InventoryError>
             TransferMoney(const std::string& fromId, const std::string& toId, 
                 std::uint32_t amount);
 
-        virtual tl::expected<void, InventoryError>
+        virtual lang::Expected<void, InventoryError>
             TransferItem(const std::string& fromId, const std::string& toId, 
                 std::size_t itemIndex, std::uint32_t count = InventoryService::TransferAll);
 
-        tl::expected<float, InventoryError> 
+        lang::Expected<float, InventoryError> 
             CalculateCurrentWeight(const std::string& inventoryId) const;
 
-        tl::expected<void, InventoryError>
+        lang::Expected<void, InventoryError>
             CanStackItem(const std::string& inventoryId, std::size_t fromItemIndex,
                 std::size_t toItemIndex, std::uint32_t count = InventoryService::TransferAll);
 
-        tl::expected<void, InventoryError>
+        lang::Expected<void, InventoryError>
             StackItem(const std::string& inventoryId, std::size_t fromItemIndex, 
                 std::size_t toItemIndex, std::uint32_t count = InventoryService::TransferAll);
 
@@ -75,7 +75,7 @@ namespace app_domain
 
         void AddItemInternal(Inventory& inventory, const std::string& itemId, std::uint32_t count);
 
-        tl::expected<CanStackItemResult, InventoryError>
+        lang::Expected<CanStackItemResult, InventoryError>
             CanStackItemInternal(const std::string& inventoryId, std::size_t fromItemIndex,
                 std::size_t toItemIndex, std::uint32_t count = InventoryService::TransferAll);
 

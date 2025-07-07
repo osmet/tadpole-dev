@@ -28,7 +28,7 @@ namespace app_domain
     {
     }
 
-    tl::expected<TradeContext, TradeError> 
+    lang::Expected<TradeContext, TradeError> 
         TradeService::MakeContext(const std::string& fromCharacterId, const std::string& toCharacterId) const
     {
         if (fromCharacterId == toCharacterId)
@@ -60,7 +60,7 @@ namespace app_domain
         return !item.IsStoryItem;
     }
 
-    tl::expected<void, TradeError> 
+    lang::Expected<void, TradeError> 
         TradeService::CanTradeItem(const std::string& fromCharacterId, const std::string& toCharacterId,
             std::size_t itemIndex, std::uint32_t count) const
     {
@@ -75,7 +75,7 @@ namespace app_domain
         return {};
     }
 
-    tl::expected<void, TradeError> 
+    lang::Expected<void, TradeError> 
         TradeService::TradeItem(const std::string& fromCharacterId, const std::string& toCharacterId,
             std::size_t itemIndex, std::uint32_t count) const
     {
@@ -86,7 +86,7 @@ namespace app_domain
         return TradeItemInternal(contextResult.value(), itemIndex, count);
     }
 
-    tl::expected<InventoryItemDetails, TradeError> 
+    lang::Expected<InventoryItemDetails, TradeError> 
         TradeService::CanTradeItemInternal(const TradeContext& context, std::size_t itemIndex,
             std::uint32_t count) const
     {
@@ -114,7 +114,7 @@ namespace app_domain
         return fromInventoryItem;
     }
 
-    tl::expected<void, TradeError> 
+    lang::Expected<void, TradeError> 
         TradeService::TradeItemInternal(const TradeContext& context, std::size_t itemIndex,
             std::uint32_t count) const
     {

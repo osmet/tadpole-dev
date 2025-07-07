@@ -252,7 +252,7 @@ namespace
 
         using InventoryService::InventoryService;
 
-        tl::expected<void, InventoryError> TransferMoney(
+        lang::Expected<void, InventoryError> TransferMoney(
             const std::string& fromInventoryId,
             const std::string& toInventoryId,
             std::uint32_t amount) override
@@ -263,7 +263,7 @@ namespace
             return InventoryService::TransferMoney(fromInventoryId, toInventoryId, amount);
         }
 
-        tl::expected<void, InventoryError> TransferItem(
+        lang::Expected<void, InventoryError> TransferItem(
             const std::string& fromInventoryId,
             const std::string& toInventoryId,
             std::size_t itemIndex,

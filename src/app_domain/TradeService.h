@@ -37,25 +37,25 @@ namespace app_domain
         TradeService(ItemService& itemService, CharacterService& characterService,
             InventoryService& inventoryService);
 
-        tl::expected<TradeContext, TradeError> 
+        lang::Expected<TradeContext, TradeError> 
             MakeContext(const std::string& fromCharacterId, const std::string& toCharacterId) const;
 
         bool IsItemTradable(const Item& item) const;
 
-        tl::expected<void, TradeError> 
+        lang::Expected<void, TradeError> 
             CanTradeItem(const std::string& fromCharacterId, const std::string& toCharacterId,
                 std::size_t itemIndex, std::uint32_t count = TradeService::TradeAll) const;
 
-        tl::expected<void, TradeError> 
+        lang::Expected<void, TradeError> 
             TradeItem(const std::string& fromCharacterId, const std::string& toCharacterId,
                 std::size_t itemIndex, std::uint32_t count = TradeService::TradeAll) const;
 
     private:
-        tl::expected<InventoryItemDetails, TradeError> 
+        lang::Expected<InventoryItemDetails, TradeError> 
             CanTradeItemInternal(const TradeContext& context, std::size_t itemIndex, 
                 std::uint32_t count) const;
 
-        tl::expected<void, TradeError> 
+        lang::Expected<void, TradeError> 
             TradeItemInternal(const TradeContext& context, std::size_t itemIndex,
                 std::uint32_t count) const;
 

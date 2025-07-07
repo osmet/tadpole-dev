@@ -4,7 +4,7 @@
 
 namespace core
 {
-    tl::expected<void, DataLoaderError> JsonDataLoader::LoadFromStream(std::istream& input, IData& data) const
+    lang::Expected<void, DataLoaderError> JsonDataLoader::LoadFromStream(std::istream& input, IData& data) const
     {
         auto* jsonData = dynamic_cast<IJsonData*>(&data);
         if (!jsonData)
@@ -22,7 +22,7 @@ namespace core
         return {};
     }
 
-    tl::expected<void, DataLoaderError> JsonDataLoader::SaveToStream(std::ostream& output, const IData& data) const
+    lang::Expected<void, DataLoaderError> JsonDataLoader::SaveToStream(std::ostream& output, const IData& data) const
     {
         const auto* jsonData = dynamic_cast<const IJsonData*>(&data);
         if (!jsonData)

@@ -27,6 +27,6 @@ namespace app
 
         TradeScope m_tradeScope;
 
-        std::optional<std::reference_wrapper<core::Scope>> m_activeScope;
+        lang::OptionalRef<core::Scope> m_activeScope;
     };
 }

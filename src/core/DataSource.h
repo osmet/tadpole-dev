@@ -23,12 +23,12 @@ namespace core
         const std::string& GetFilePath() const { return m_filePath; }
         const std::string& GetFallbackFilePath() const { return m_fallbackFilePath; }
 
-        tl::expected<void, DataLoaderError> Load()
+        lang::Expected<void, DataLoaderError> Load()
         {
             return m_dataLoader.Load(m_data, m_filePath, m_fallbackFilePath);
         }
 
-        tl::expected<void, DataLoaderError> Save() const
+        lang::Expected<void, DataLoaderError> Save() const
         {
             return m_dataLoader.Save(m_data, m_filePath);
         }
