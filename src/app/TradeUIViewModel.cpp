@@ -9,18 +9,32 @@ namespace app
         , m_inventoryService(appContext.GetInventoryService())
         , m_tradeService(appContext.GetTradeService())
     {
+        m_context.ItemFilterCategory.Subscribe([this](const auto& value)
+        {
+            UpdateItems();
+        });
+
+        m_context.ItemSortMode.Subscribe([this](const auto& value)
+        {
+            UpdateItems();
+        });
+    }
+
+    TradeUIViewModel::Context& TradeUIViewModel::GetContext()
+    {
+        return m_context;
     }
 
     tl::expected<void, app_domain::TradeError> 
         TradeUIViewModel::BeginTrade(const std::string& playerCharacterId, const std::string& traderCharacterId)
     {
-        auto contextResult = m_tradeService.MakeContext(traderCharacterId, playerCharacterId);
-        if (!contextResult)
-            return tl::unexpected(contextResult.error());
+        auto tradeContextResult = m_tradeService.MakeContext(traderCharacterId, playerCharacterId);
+        if (!tradeContextResult)
+            return tl::unexpected(tradeContextResult.error());
 
-        const auto& context = contextResult.value();
-        const auto& playerCharacter = context.ToCharacter;
-        const auto& traderCharacter = context.FromCharacter;
+        const auto& tradeContext = tradeContextResult.value();
+        const auto& playerCharacter = tradeContext.ToCharacter;
+        const auto& traderCharacter = tradeContext.FromCharacter;
 
         m_playerCharacterId = playerCharacter.Id;
         m_traderCharacterId = traderCharacter.Id;
@@ -28,16 +42,13 @@ namespace app
         m_playerInventoryId = playerCharacter.InventoryId;
         m_traderInventoryId = traderCharacter.InventoryId;
 
-        m_playerCharacterName = playerCharacter.Name;
-        m_traderCharacterName = traderCharacter.Name;
+        m_context.PlayerCharacterName.SetValue(playerCharacter.Name);
+        m_context.TraderCharacterName.SetValue(traderCharacter.Name);
 
-        m_playerPortrait = playerCharacter.PortraitTextureId;
-        m_traderPortrait = traderCharacter.PortraitTextureId;
+        m_context.PlayerPortraitTextureId.SetValue(playerCharacter.PortraitTextureId);
+        m_context.TraderPortraitTextureId.SetValue(traderCharacter.PortraitTextureId);
 
-        m_playerMaxWeight = playerCharacter.MaxWeight;
-
-        if (m_onTradeBegin)
-            m_onTradeBegin();
+        m_context.PlayerMaxWeight.SetValue(playerCharacter.MaxWeight);
 
         UpdateItems();
 
@@ -106,47 +117,6 @@ namespace app
         }
     }
 
-    const std::string& TradeUIViewModel::GetPlayerName() const
-    {
-        return m_playerCharacterName;
-    }
-
-    const std::string& TradeUIViewModel::GetTraderName() const
-    {
-        return m_traderCharacterName;
-    }
-
-    const std::string& TradeUIViewModel::GetPlayerPortraitTextureId() const
-    {
-        return m_playerPortrait;
-    }
-
-    const std::string& TradeUIViewModel::GetTraderPortraitTextureId() const
-    {
-        return m_traderPortrait;
-    }
-
-    uint32_t TradeUIViewModel::GetPlayerMoney() const
-    {
-        return GetInventoryMoney(m_playerInventoryId);
-    }
-
-    uint32_t TradeUIViewModel::GetTraderMoney() const
-    {
-        return GetInventoryMoney(m_traderInventoryId);
-    }
-
-    float TradeUIViewModel::GetPlayerCurrentWeight() const
-    {
-        auto weight = m_inventoryService.CalculateCurrentWeight(m_playerInventoryId);
-        return weight.value_or(0.0f);
-    }
-
-    float TradeUIViewModel::GetPlayerMaxWeight() const
-    {
-        return m_playerMaxWeight;
-    }
-
     const std::optional<app_domain::InventoryItemDetails> TradeUIViewModel::GetPlayerItem(size_t itemIndex) const
     {
         return GetInventoryItem(m_playerInventoryId, itemIndex);
@@ -155,51 +125,6 @@ namespace app
     const std::optional<app_domain::InventoryItemDetails> TradeUIViewModel::GetTraderItem(size_t itemIndex) const
     {
         return GetInventoryItem(m_traderInventoryId, itemIndex);
-    }
-
-    const std::vector<app_domain::InventoryItemDetails>& TradeUIViewModel::GetPlayerItems() const
-    {
-        return m_playerItemsCache;
-    }
-
-    const std::vector<app_domain::InventoryItemDetails>& TradeUIViewModel::GetTraderItems() const
-    {
-        return m_traderItemsCache;
-    }
-
-    void TradeUIViewModel::SetItemFilterCategory(app_domain::ItemCategory itemFilterCategory)
-    {
-        if (m_itemFilterCategory == itemFilterCategory)
-            return;
-
-        m_itemFilterCategory = itemFilterCategory;
-
-        UpdateItems();
-    }
-
-    void TradeUIViewModel::SetItemSortMode(app_domain::ItemSortMode itemSortMode)
-    {
-        if (m_itemSortMode == itemSortMode)
-            return;
-
-        m_itemSortMode = itemSortMode;
-
-        UpdateItems();
-    }
-
-    void TradeUIViewModel::SetOnTradeBegin(OnTradeBegin callback)
-    {
-        m_onTradeBegin = std::move(callback);
-    }
-
-    void TradeUIViewModel::SetOnPlayerItemsUpdate(OnItemsUpdate callback)
-    {
-        m_onPlayerItemsUpdate = std::move(callback);
-    }
-
-    void TradeUIViewModel::SetOnTraderItemsUpdate(OnItemsUpdate callback)
-    {
-        m_onTraderItemsUpdate = std::move(callback);
     }
 
     void TradeUIViewModel::SetOnShowTransferPanel(OnShowTransferPanel callback)
@@ -212,17 +137,15 @@ namespace app
         m_onTradeError = std::move(callback);
     }
 
-
     void TradeUIViewModel::UpdateItems()
     {
-        LoadInventoryItems(m_playerInventoryId, m_playerItemsCache);
-        LoadInventoryItems(m_traderInventoryId, m_traderItemsCache);
+        m_context.PlayerItems.SetValue(std::move(LoadInventoryItems(m_playerInventoryId)));
+        m_context.TraderItems.SetValue(std::move(LoadInventoryItems(m_traderInventoryId)));
 
-        if (m_onPlayerItemsUpdate)
-            m_onPlayerItemsUpdate();
+        m_context.PlayerCurrentMoney.SetValue(GetInventoryCurrentMoney(m_playerInventoryId));
+        m_context.TraderCurrentMoney.SetValue(GetInventoryCurrentMoney(m_playerInventoryId));
 
-        if (m_onTraderItemsUpdate)
-            m_onTraderItemsUpdate();
+        m_context.PlayerCurrentWeight.SetValue(GetInventoryCurrentWeight(m_playerInventoryId));
     }
 
     void TradeUIViewModel::EmitOnTradeError(const app_domain::TradeError& error) const
@@ -231,10 +154,16 @@ namespace app
             m_onTradeError(error);
     }
 
-    uint32_t TradeUIViewModel::GetInventoryMoney(const std::string& inventoryId) const
+    uint32_t TradeUIViewModel::GetInventoryCurrentMoney(const std::string& inventoryId) const
     {
-        auto inventory = m_inventoryService.GetInventoryById(inventoryId);
-        return inventory ? inventory.value().get().CurrentMoney : 0;
+        auto inventoryResult = m_inventoryService.GetInventoryById(inventoryId);
+        return inventoryResult ? inventoryResult.value().get().CurrentMoney : 0;
+    }
+
+    float TradeUIViewModel::GetInventoryCurrentWeight(const std::string& inventoryId) const
+    {
+        auto weightResult = m_inventoryService.CalculateCurrentWeight(inventoryId);
+        return weightResult.value_or(0.0f);
     }
 
     std::optional<app_domain::InventoryItemDetails> 
@@ -247,20 +176,20 @@ namespace app
         return result.value();
     }
 
-    void TradeUIViewModel::LoadInventoryItems(const std::string& inventoryId, 
-        std::vector<app_domain::InventoryItemDetails>& out_items) const
+    std::vector<app_domain::InventoryItemDetails>  
+        TradeUIViewModel::LoadInventoryItems(const std::string& inventoryId) const
     {
-        out_items.clear();
-
         auto result = m_inventoryService.GetFilterSortItemDetailsList(inventoryId,
-            m_itemFilterCategory, m_itemSortMode,
+            m_context.ItemFilterCategory.GetValue(), m_context.ItemSortMode.GetValue(),
             [this](const app_domain::InventoryItemDetails& item) 
             { 
                 return m_tradeService.IsItemTradable(item.GetItem()); 
             });
 
         if (result)
-            out_items = std::move(result.value().Items);
+            return std::move(result.value().Items);
+
+        return {};
     }
 
     tl::expected<void, app_domain::TradeError>

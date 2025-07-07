@@ -185,26 +185,51 @@ namespace app
     
     void TradeUIView::BindViewModel()
     {
-        m_viewModel.SetOnTradeBegin([this]()
-        {
-            SetPlayerName(m_viewModel.GetPlayerName());
-            SetPlayerPortraitTexture(m_viewModel.GetPlayerPortraitTextureId());
+        auto& viewModelContext = m_viewModel.GetContext();
 
-            SetTraderName(m_viewModel.GetTraderName());
-            SetTraderPortraitTexture(m_viewModel.GetTraderPortraitTextureId());
+        viewModelContext.PlayerCharacterName.Subscribe([this](const auto& value)
+        {
+            SetPlayerName(value);
         });
 
-        m_viewModel.SetOnPlayerItemsUpdate([this]() 
+        viewModelContext.TraderCharacterName.Subscribe([this](const auto& value)
         {
-            SetPlayerItems(m_viewModel.GetPlayerItems());
-            SetPlayerMoney(m_viewModel.GetPlayerMoney());
-            SetPlayerWeight(m_viewModel.GetPlayerCurrentWeight(), m_viewModel.GetPlayerMaxWeight());
+            SetTraderName(value);
         });
 
-        m_viewModel.SetOnTraderItemsUpdate([this]() 
+        viewModelContext.PlayerPortraitTextureId.Subscribe([this](const auto& value)
         {
-            SetTraderItems(m_viewModel.GetTraderItems());
-            SetTraderMoney(m_viewModel.GetTraderMoney());
+            SetPlayerPortraitTexture(value);
+        });
+
+        viewModelContext.TraderPortraitTextureId.Subscribe([this](const auto& value)
+        {
+            SetTraderPortraitTexture(value);
+        });
+
+        viewModelContext.PlayerCurrentMoney.Subscribe([this](const auto& value)
+        {
+            SetPlayerMoney(value);
+        });
+
+        viewModelContext.TraderCurrentMoney.Subscribe([this](const auto& value)
+        {
+            SetTraderMoney(value);
+        });
+
+        viewModelContext.PlayerCurrentWeight.Subscribe([this](const auto& value)
+        {
+            SetPlayerWeight(value, m_viewModel.GetContext().PlayerMaxWeight.GetValue());
+        });
+
+        viewModelContext.PlayerItems.Subscribe([this](const auto& value)
+        {
+            SetPlayerItems(value);
+        });
+
+        viewModelContext.TraderItems.Subscribe([this](const auto& value)
+        {
+            SetTraderItems(value);
         });
 
         m_viewModel.SetOnShowTransferPanel([this](const app_domain::InventoryItemDetails& item, TradeUIViewModel::OnTransferPanelConfirm onConfirm)
@@ -231,7 +256,7 @@ namespace app
         {
             m_itemFilterPanel->SetOnFilterButtonClick([this](app_domain::ItemCategory itemCategory)
             {
-                m_viewModel.SetItemFilterCategory(itemCategory);
+                m_viewModel.GetContext().ItemFilterCategory.SetValue(itemCategory);
             });
         }
             
@@ -239,7 +264,7 @@ namespace app
         {
             m_itemSortPanel->SetOnSortButtonClick([this](app_domain::ItemSortMode itemSortMode)
             {
-                m_viewModel.SetItemSortMode(itemSortMode);
+                m_viewModel.GetContext().ItemSortMode.SetValue(itemSortMode);
             });
         }
     }

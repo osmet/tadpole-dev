@@ -13,6 +13,18 @@ namespace app
 {
     ItemTransferPanel::ItemTransferPanel(core::AssetManager& assetManager, const sf::Vector2f& renderWindowSize)
     {
+        m_currentItemCount.Subscribe([this](const auto& value)
+        {
+            if (m_itemCountTextLabel)
+                m_itemCountTextLabel->SetText(std::to_string(m_currentItemCount.GetValue()) + " / " + std::to_string(m_maxItemCount));
+
+            if (m_decrementCountButton)
+                m_decrementCountButton->SetInteractable(m_currentItemCount.GetValue() > m_minItemCount);
+
+            if (m_incrementCountButton)
+                m_incrementCountButton->SetInteractable(m_currentItemCount.GetValue() < m_maxItemCount);
+        });
+        
         SetAnchor(0.5f, 0.5f);
         SetPivot(0.5f, 0.5f);
         SetActive(false);
@@ -62,11 +74,8 @@ namespace app
         decrementCountButton->SetColor(sf::Color(64u, 55u, 48u, 255u));
         decrementCountButton->SetOnClick([this]()
         {
-            if (m_currentItemCount > m_minItemCount)
-            {
-                --m_currentItemCount;
-                UpdateItemCountWidgets();
-            }
+            if (m_currentItemCount.GetValue() > m_minItemCount)
+                m_currentItemCount.SetValue(m_currentItemCount.GetValue() - 1);
         });
         {
             auto* textLabel = decrementCountButton->CreateWidget<core::TextLabel>();
@@ -84,11 +93,8 @@ namespace app
         incrementCountButton->SetColor(sf::Color(64u, 55u, 48u, 255u));
         incrementCountButton->SetOnClick([this]()
         {
-            if (m_currentItemCount < m_maxItemCount)
-            {
-                ++m_currentItemCount;
-                UpdateItemCountWidgets();
-            }
+            if (m_currentItemCount.GetValue() < m_maxItemCount)
+                m_currentItemCount.SetValue(m_currentItemCount.GetValue() + 1);
         });
         {
             auto* textLabel = incrementCountButton->CreateWidget<core::TextLabel>();
@@ -109,7 +115,7 @@ namespace app
             SetActive(false);
 
             if (m_onConfirm)
-                m_onConfirm(m_currentItemCount);
+                m_onConfirm(m_currentItemCount.GetValue());
         });
 
         auto confirmText = confirmButton->CreateWidget<core::TextLabel>();
@@ -143,8 +149,7 @@ namespace app
         m_minItemCount = 1;
         m_maxItemCount = item.GetCount();
 
-        m_currentItemCount = m_maxItemCount / 2u;
-        UpdateItemCountWidgets();
+        m_currentItemCount.SetValue(m_maxItemCount / 2u);
 
         if (!m_itemSlot || !m_itemNameTextLabel)
             return;
@@ -163,17 +168,5 @@ namespace app
     void ItemTransferPanel::SetOnCancel(OnCancel callback)
     {
         m_onCancel = std::move(callback);
-    }
-
-    void ItemTransferPanel::UpdateItemCountWidgets()
-    {
-        if (m_itemCountTextLabel)
-            m_itemCountTextLabel->SetText(std::to_string(m_currentItemCount) + " / " + std::to_string(m_maxItemCount));
-
-        if (m_decrementCountButton)
-            m_decrementCountButton->SetInteractable(m_currentItemCount > m_minItemCount);
-
-        if (m_incrementCountButton)
-            m_incrementCountButton->SetInteractable(m_currentItemCount < m_maxItemCount);
     }
 }

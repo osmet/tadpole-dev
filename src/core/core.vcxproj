@@ -28,6 +28,7 @@
     <ClInclude Include="IData.h" />
     <ClInclude Include="IJsonData.h" />
     <ClInclude Include="Image.h" />
+    <ClInclude Include="ReactiveProperty.h" />
     <ClInclude Include="TextLabel.h" />
     <ClInclude Include="PanelWidget.h" />
     <ClInclude Include="Scope.h" />
@@ -47,6 +48,7 @@
     <ClCompile Include="IData.cpp" />
     <ClCompile Include="IJsonData.cpp" />
     <ClCompile Include="Image.cpp" />
+    <ClCompile Include="ReactiveProperty.cpp" />
     <ClCompile Include="TextLabel.cpp" />
     <ClCompile Include="PanelWidget.cpp" />
     <ClCompile Include="Scope.cpp" />
