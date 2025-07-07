@@ -32,12 +32,12 @@ namespace app_domain
         TradeService::MakeContext(const std::string& fromCharacterId, const std::string& toCharacterId) const
     {
         if (fromCharacterId == toCharacterId)
-            return tl::unexpected(TradeError::TradeWithSelfNotAllowed);
+            return lang::Unexpected(TradeError::TradeWithSelfNotAllowed);
 
         auto fromResult = m_characterService.GetCharacterById(fromCharacterId);
         auto toResult = m_characterService.GetCharacterById(toCharacterId);
         if (!fromResult || !toResult)
-            return tl::unexpected(TradeError::CharacterNotFound);
+            return lang::Unexpected(TradeError::CharacterNotFound);
 
         auto& fromCharacter = fromResult.value().get();
         auto& toCharacter = toResult.value().get();
@@ -45,7 +45,7 @@ namespace app_domain
         auto fromInventoryResult = m_inventoryService.GetInventoryById(fromCharacter.InventoryId);
         auto toInventoryResult = m_inventoryService.GetInventoryById(toCharacter.InventoryId);
         if (!fromInventoryResult || !toInventoryResult)
-            return tl::unexpected(TradeError::InventoryNotFound);
+            return lang::Unexpected(TradeError::InventoryNotFound);
 
         return TradeContext{
             .FromCharacter = fromCharacter,
@@ -66,11 +66,11 @@ namespace app_domain
     {
         auto contextResult = MakeContext(fromCharacterId, toCharacterId);
         if (!contextResult)
-            return tl::unexpected(contextResult.error());
+            return lang::Unexpected(contextResult.error());
 
         auto result = CanTradeItemInternal(contextResult.value(), itemIndex, count);
         if (!result)
-            return tl::unexpected(result.error());
+            return lang::Unexpected(result.error());
 
         return {};
     }
@@ -81,7 +81,7 @@ namespace app_domain
     {
         auto contextResult = MakeContext(fromCharacterId, toCharacterId);
         if (!contextResult)
-            return tl::unexpected(contextResult.error());
+            return lang::Unexpected(contextResult.error());
 
         return TradeItemInternal(contextResult.value(), itemIndex, count);
     }
@@ -92,24 +92,24 @@ namespace app_domain
     {
         const auto& fromInventoryItemResult = m_inventoryService.GetItemDetails(context.FromInventory.Id, itemIndex);
         if (!fromInventoryItemResult)
-            return tl::unexpected(app_domain::TradeService::ToTradeError(fromInventoryItemResult.error()));
+            return lang::Unexpected(app_domain::TradeService::ToTradeError(fromInventoryItemResult.error()));
 
         const auto& fromInventoryItem = fromInventoryItemResult.value();
         const auto& item = fromInventoryItem.GetItem();
 
         if (!IsItemTradable(item))
-            return tl::unexpected(TradeError::ItemNotTradable);
+            return lang::Unexpected(TradeError::ItemNotTradable);
 
         if (count == TradeService::TradeAll)
             count = fromInventoryItem.GetCount();
 
         if (fromInventoryItem.GetCount() < count)
-            return tl::unexpected(TradeError::InvalidAmount);
+            return lang::Unexpected(TradeError::InvalidAmount);
 
         const uint32_t totalValue = item.Value * count;
 
         if (context.ToInventory.CurrentMoney < totalValue)
-            return tl::unexpected(TradeError::NotEnoughMoney);
+            return lang::Unexpected(TradeError::NotEnoughMoney);
 
         return fromInventoryItem;
     }
@@ -120,7 +120,7 @@ namespace app_domain
     {
         auto canTradeResult = CanTradeItemInternal(context, itemIndex, count);
         if (!canTradeResult)
-            return tl::unexpected(canTradeResult.error());
+            return lang::Unexpected(canTradeResult.error());
 
         const auto& fromInventoryItem = canTradeResult.value();
         const auto& item = fromInventoryItem.GetItem();
@@ -131,10 +131,10 @@ namespace app_domain
         const uint32_t totalValue = item.Value * count;
 
         if (!m_inventoryService.TransferMoney(context.ToInventory.Id, context.FromInventory.Id, totalValue))
-            return tl::unexpected(TradeError::TransferFailed);
+            return lang::Unexpected(TradeError::TransferFailed);
 
         if (!m_inventoryService.TransferItem(context.FromInventory.Id, context.ToInventory.Id, itemIndex, count))
-            return tl::unexpected(TradeError::TransferFailed);
+            return lang::Unexpected(TradeError::TransferFailed);
 
         return {};
     }

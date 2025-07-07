@@ -16,7 +16,7 @@ namespace app_domain
     {
         auto it = m_inventories.find(id);
         if (it == m_inventories.end())
-            return tl::unexpected(InventoryError::NotFound);
+            return lang::Unexpected(InventoryError::NotFound);
 
         return std::cref(it->second);
     }
@@ -26,11 +26,11 @@ namespace app_domain
     {
         auto it = m_inventories.find(inventoryId);
         if (it == m_inventories.end())
-            return tl::unexpected(InventoryError::NotFound);
+            return lang::Unexpected(InventoryError::NotFound);
 
         const auto& inventory = it->second;
         if (itemIndex >= inventory.Items.size())
-            return tl::unexpected(InventoryError::IndexOutOfRange);
+            return lang::Unexpected(InventoryError::IndexOutOfRange);
 
         return std::cref(inventory.Items[itemIndex]);
     }
@@ -40,17 +40,17 @@ namespace app_domain
     {
         auto it = m_inventories.find(inventoryId);
         if (it == m_inventories.end())
-            return tl::unexpected(InventoryError::NotFound);
+            return lang::Unexpected(InventoryError::NotFound);
 
         const auto& inventory = it->second;
         if (itemIndex >= inventory.Items.size())
-            return tl::unexpected(InventoryError::IndexOutOfRange);
+            return lang::Unexpected(InventoryError::IndexOutOfRange);
 
         const auto& inventoryItem = inventory.Items[itemIndex];
 
         auto itemResult = m_itemService.GetItemById(inventoryItem.ItemId);
         if (!itemResult.has_value())
-            return tl::unexpected(InventoryError::ItemNotFound);
+            return lang::Unexpected(InventoryError::ItemNotFound);
 
         return InventoryItemDetails {
             itemIndex,
@@ -67,7 +67,7 @@ namespace app_domain
     {
         auto inventoryResult = GetInventoryById(inventoryId);
         if (!inventoryResult)
-            return tl::unexpected(inventoryResult.error());
+            return lang::Unexpected(inventoryResult.error());
 
         const auto& inventory = inventoryResult.value().get();
         const auto& inventoryItems = inventoryResult->get().Items;
@@ -140,16 +140,16 @@ namespace app_domain
             std::uint32_t amount)
     {
         if (amount <= 0u)
-            return tl::unexpected(InventoryError::InvalidAmount);
+            return lang::Unexpected(InventoryError::InvalidAmount);
 
         auto fromIt = m_inventories.find(fromId);
         auto toIt = m_inventories.find(toId);
 
         if (fromIt == m_inventories.end() || toIt == m_inventories.end())
-            return tl::unexpected(InventoryError::NotFound);
+            return lang::Unexpected(InventoryError::NotFound);
 
         if (fromIt->second.CurrentMoney < amount)
-            return tl::unexpected(InventoryError::NotEnoughMoney);
+            return lang::Unexpected(InventoryError::NotEnoughMoney);
 
         fromIt->second.CurrentMoney -= amount;
         toIt->second.CurrentMoney += amount;
@@ -165,13 +165,13 @@ namespace app_domain
         auto toIt = m_inventories.find(toId);
 
         if (fromIt == m_inventories.end() || toIt == m_inventories.end())
-            return tl::unexpected(InventoryError::NotFound);
+            return lang::Unexpected(InventoryError::NotFound);
 
         auto& fromInventory = fromIt->second;
         auto& toInventory = toIt->second;
 
         if (itemIndex >= fromInventory.Items.size())
-            return tl::unexpected(InventoryError::IndexOutOfRange);
+            return lang::Unexpected(InventoryError::IndexOutOfRange);
 
         auto& fromItem = fromInventory.Items[itemIndex];
 
@@ -179,7 +179,7 @@ namespace app_domain
             count = fromItem.Count;
         
         if (fromItem.Count < count)
-            return tl::unexpected(InventoryError::InvalidAmount);
+            return lang::Unexpected(InventoryError::InvalidAmount);
 
         AddItemInternal(toInventory, fromItem.ItemId, count);
 
@@ -196,7 +196,7 @@ namespace app_domain
     {
         auto it = m_inventories.find(inventoryId);
         if (it == m_inventories.end())
-            return tl::unexpected(InventoryError::NotFound);
+            return lang::Unexpected(InventoryError::NotFound);
 
         const auto& inventory = it->second;
 
@@ -221,7 +221,7 @@ namespace app_domain
     {
         auto result = CanStackItemInternal(inventoryId, fromItemIndex, toItemIndex, count);
         if (!result)
-            return tl::unexpected(result.error());
+            return lang::Unexpected(result.error());
 
         return {};
     }
@@ -232,7 +232,7 @@ namespace app_domain
     {
         auto canStackResult = CanStackItemInternal(inventoryId, fromItemIndex, toItemIndex, count);
         if (!canStackResult)
-            return tl::unexpected(canStackResult.error());
+            return lang::Unexpected(canStackResult.error());
 
         auto& inventory = canStackResult->Inventory;
         auto& fromItem = canStackResult->FromItem;
@@ -263,28 +263,28 @@ namespace app_domain
             std::size_t toItemIndex, std::uint32_t count)
     {
         if (fromItemIndex == toItemIndex)
-            return tl::unexpected(InventoryError::InvalidAmount);
+            return lang::Unexpected(InventoryError::InvalidAmount);
 
         auto it = m_inventories.find(inventoryId);
         if (it == m_inventories.end())
-            return tl::unexpected(InventoryError::NotFound);
+            return lang::Unexpected(InventoryError::NotFound);
 
         auto& inventory = it->second;
 
         if (fromItemIndex >= inventory.Items.size() || toItemIndex >= inventory.Items.size())
-            return tl::unexpected(InventoryError::IndexOutOfRange);
+            return lang::Unexpected(InventoryError::IndexOutOfRange);
 
         auto& fromItem = inventory.Items[fromItemIndex];
         auto& toItem = inventory.Items[toItemIndex];
 
         if (fromItem.ItemId != toItem.ItemId)
-            return tl::unexpected(InventoryError::ItemNotFound);
+            return lang::Unexpected(InventoryError::ItemNotFound);
 
         if (count == InventoryService::TransferAll)
             count = fromItem.Count;
 
         if (fromItem.Count < count)
-            return tl::unexpected(InventoryError::InvalidAmount);
+            return lang::Unexpected(InventoryError::InvalidAmount);
 
         return CanStackItemResult{ 
             .Inventory = inventory, 

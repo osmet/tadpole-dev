@@ -8,14 +8,14 @@ namespace core
     {
         auto* jsonData = dynamic_cast<IJsonData*>(&data);
         if (!jsonData)
-            return tl::unexpected(DataLoaderError::InvalidDataType);
+            return lang::Unexpected(DataLoaderError::InvalidDataType);
 
         rapidjson::IStreamWrapper streamWrapper(input);
         rapidjson::Document document;
         document.ParseStream(streamWrapper);
 
         if (document.HasParseError() || !document.IsObject())
-            return tl::unexpected(DataLoaderError::DataParseFailed);
+            return lang::Unexpected(DataLoaderError::DataParseFailed);
 
         jsonData->FromJson(document);
 
@@ -26,7 +26,7 @@ namespace core
     {
         const auto* jsonData = dynamic_cast<const IJsonData*>(&data);
         if (!jsonData)
-            return tl::unexpected(DataLoaderError::InvalidDataType);
+            return lang::Unexpected(DataLoaderError::InvalidDataType);
 
         rapidjson::Document document;
         document.SetObject();

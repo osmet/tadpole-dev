@@ -13,6 +13,12 @@ namespace lang
     template<typename TValue, typename TError>
     using ExpectedConstRef = tl::expected<std::reference_wrapper<const TValue>, TError>;
 
+    template <typename TError>
+    tl::unexpected<typename std::decay<TError>::type> Unexpected(TError&& error)
+    {
+        return tl::unexpected<typename std::decay<TError>::type>(std::forward<TError>(error));
+    }
+
     template<typename TValue>
     using Optional = std::optional<TValue>;
 

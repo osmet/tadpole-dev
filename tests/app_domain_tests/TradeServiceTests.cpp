@@ -258,7 +258,7 @@ namespace
             std::uint32_t amount) override
         {
             if (FailTransferMoney)
-                return tl::unexpected(InventoryError::NotFound);
+                return lang::Unexpected(InventoryError::NotFound);
 
             return InventoryService::TransferMoney(fromInventoryId, toInventoryId, amount);
         }
@@ -270,7 +270,7 @@ namespace
             std::uint32_t count) override
         {
             if (FailTransferItem)
-                return tl::unexpected(InventoryError::NotFound);
+                return lang::Unexpected(InventoryError::NotFound);
 
             return InventoryService::TransferItem(fromInventoryId, toInventoryId, itemIndex, count);
         }

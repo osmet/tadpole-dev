@@ -30,7 +30,7 @@ namespace app
     {
         auto tradeContextResult = m_tradeService.MakeContext(traderCharacterId, playerCharacterId);
         if (!tradeContextResult)
-            return tl::unexpected(tradeContextResult.error());
+            return lang::Unexpected(tradeContextResult.error());
 
         const auto& tradeContext = tradeContextResult.value();
         const auto& playerCharacter = tradeContext.ToCharacter;
@@ -200,7 +200,7 @@ namespace app
 
         auto result = m_tradeService.CanTradeItem(fromCharacterId, toCharacterId, itemIndex, count);
         if (!result)
-            return tl::unexpected(result.error());
+            return lang::Unexpected(result.error());
 
         return {};
     }
@@ -225,7 +225,7 @@ namespace app
     {
         auto result = m_inventoryService.CanStackItem(m_playerInventoryId, fromItemIndex, toItemIndex, count);
         if (!result)
-            return tl::unexpected(app_domain::TradeService::ToTradeError(result.error()));
+            return lang::Unexpected(app_domain::TradeService::ToTradeError(result.error()));
 
         return {};
     }

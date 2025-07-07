@@ -13,7 +13,7 @@ namespace app_domain
     {
         auto it = m_characters.find(id);
         if (it == m_characters.end())
-            return tl::unexpected(CharacterError::NotFound);
+            return lang::Unexpected(CharacterError::NotFound);
 
         return std::cref(it->second);
     }
