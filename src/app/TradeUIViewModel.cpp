@@ -58,33 +58,20 @@ namespace app
     void TradeUIViewModel::TradeItem(bool isBuying, std::size_t itemIndex)
     {
         auto canTradeResult = CanTradeItem(isBuying, itemIndex, 1u);
-
         if (!canTradeResult)
         {
             EmitOnTradeError(canTradeResult.error());
             return;
         }
 
-        auto itemOpt = isBuying
-            ? GetTraderItem(itemIndex)
-            : GetPlayerItem(itemIndex);
-
+        auto itemOpt = isBuying ? GetTraderItem(itemIndex) : GetPlayerItem(itemIndex);
         if (!itemOpt)
             return;
 
-        const auto& item = itemOpt.value();
-
-        if (item.GetCount() > 1u && m_onShowTransferPanel)
+        ShowTransferPanelOrApply(itemOpt.value(), [this, isBuying, itemIndex](std::uint32_t count)
         {
-            m_onShowTransferPanel(item, [this, isBuying, itemIndex](std::uint32_t count)
-            {
-                TryTradeItem(isBuying, itemIndex, count);
-            });
-        }
-        else
-        {
-            TryTradeItem(isBuying, itemIndex, 1u);
-        }
+            TryTradeItem(isBuying, itemIndex, count);
+        });
     }
 
     void TradeUIViewModel::StackItem(std::size_t fromItemIndex, std::int32_t signedToItemIndex)
@@ -102,27 +89,18 @@ namespace app
         if (!fromItemOpt)
             return;
 
-        const auto& fromItem = fromItemOpt.value();
-
-        if (fromItem.GetCount() > 1u && m_onShowTransferPanel)
+        ShowTransferPanelOrApply(fromItemOpt.value(), [this, fromItemIndex, toItemIndex](std::uint32_t count)
         {
-            m_onShowTransferPanel(fromItem, [this, fromItemIndex, toItemIndex](std::uint32_t count)
-            {
-                TryStackItem(fromItemIndex, toItemIndex, count);
-            });
-        }
-        else
-        {
-            TryStackItem(fromItemIndex, toItemIndex, 1u);
-        }
+            TryStackItem(fromItemIndex, toItemIndex, count);
+        });
     }
 
-    const lang::Optional<app_domain::InventoryItemDetails> TradeUIViewModel::GetPlayerItem(size_t itemIndex) const
+    lang::Optional<app_domain::InventoryItemDetails> TradeUIViewModel::GetPlayerItem(size_t itemIndex) const
     {
         return GetInventoryItem(m_playerInventoryId, itemIndex);
     }
 
-    const lang::Optional<app_domain::InventoryItemDetails> TradeUIViewModel::GetTraderItem(size_t itemIndex) const
+    lang::Optional<app_domain::InventoryItemDetails> TradeUIViewModel::GetTraderItem(size_t itemIndex) const
     {
         return GetInventoryItem(m_traderInventoryId, itemIndex);
     }
@@ -143,27 +121,27 @@ namespace app
         m_context.TraderItems.SetValue(std::move(LoadInventoryItems(m_traderInventoryId)));
 
         m_context.PlayerCurrentMoney.SetValue(GetInventoryCurrentMoney(m_playerInventoryId));
-        m_context.TraderCurrentMoney.SetValue(GetInventoryCurrentMoney(m_playerInventoryId));
+        m_context.TraderCurrentMoney.SetValue(GetInventoryCurrentMoney(m_traderInventoryId));
 
         m_context.PlayerCurrentWeight.SetValue(GetInventoryCurrentWeight(m_playerInventoryId));
-    }
-
-    void TradeUIViewModel::EmitOnTradeError(const app_domain::TradeError& error) const
-    {
-        if (m_onTradeError)
-            m_onTradeError(error);
     }
 
     uint32_t TradeUIViewModel::GetInventoryCurrentMoney(const std::string& inventoryId) const
     {
         auto inventoryResult = m_inventoryService.GetInventoryById(inventoryId);
-        return inventoryResult ? inventoryResult.value().get().CurrentMoney : 0;
+        if (!inventoryResult)
+            return 0u;
+
+        return inventoryResult.value().get().CurrentMoney;
     }
 
     float TradeUIViewModel::GetInventoryCurrentWeight(const std::string& inventoryId) const
     {
-        auto weightResult = m_inventoryService.CalculateCurrentWeight(inventoryId);
-        return weightResult.value_or(0.0f);
+        auto result = m_inventoryService.CalculateCurrentWeight(inventoryId);
+        if (!result)
+            return 0.f;
+
+        return result.value();
     }
 
     lang::Optional<app_domain::InventoryItemDetails> 
@@ -185,11 +163,25 @@ namespace app
             { 
                 return m_tradeService.IsItemTradable(item.GetItem()); 
             });
+        if (!result)
+            return {};
 
-        if (result)
-            return std::move(result.value().Items);
+        return result.value().Items;
+    }
 
-        return {};
+    void TradeUIViewModel::ShowTransferPanelOrApply(const app_domain::InventoryItemDetails& item,
+        std::function<void(std::uint32_t)> onConfirm)
+    {
+        if (item.GetCount() > 1u && m_onShowTransferPanel)
+            m_onShowTransferPanel(item, std::move(onConfirm));
+        else
+            onConfirm(1u);
+    }
+
+    void TradeUIViewModel::EmitOnTradeError(const app_domain::TradeError& error) const
+    {
+        if (m_onTradeError)
+            m_onTradeError(error);
     }
 
     lang::Expected<void, app_domain::TradeError>

@@ -47,21 +47,25 @@ namespace app
         void TradeItem(bool isBuying, std::size_t itemIndex);
         void StackItem(std::size_t fromItemIndex, std::int32_t signedToItemIndex);
 
-        const lang::Optional<app_domain::InventoryItemDetails> GetPlayerItem(size_t itemIndex) const;
-        const lang::Optional<app_domain::InventoryItemDetails> GetTraderItem(size_t itemIndex) const;
+        lang::Optional<app_domain::InventoryItemDetails> GetPlayerItem(size_t itemIndex) const;
+        lang::Optional<app_domain::InventoryItemDetails> GetTraderItem(size_t itemIndex) const;
         
         void SetOnShowTransferPanel(OnShowTransferPanel callback);
         void SetOnTradeError(OnTradeError callback);
 
     private:
         void UpdateItems();
-        void EmitOnTradeError(const app_domain::TradeError& error) const;
+
         uint32_t GetInventoryCurrentMoney(const std::string& inventoryId) const;
         float GetInventoryCurrentWeight(const std::string& inventoryId) const;
         lang::Optional<app_domain::InventoryItemDetails>
             GetInventoryItem(const std::string& inventoryId, size_t itemIndex) const;
         std::vector<app_domain::InventoryItemDetails> 
             LoadInventoryItems(const std::string& inventoryId) const;
+
+        void ShowTransferPanelOrApply(const app_domain::InventoryItemDetails& item,
+            std::function<void(std::uint32_t)> onConfirm);
+        void EmitOnTradeError(const app_domain::TradeError& error) const;
 
         lang::Expected<void, app_domain::TradeError>
             CanTradeItem(bool isBuying, std::size_t itemIndex, std::uint32_t count = app_domain::TradeService::TradeAll) const;
