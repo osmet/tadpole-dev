@@ -65,7 +65,7 @@ namespace app_domain
                 std::size_t toItemIndex, std::uint32_t count = InventoryService::TransferAll);
 
     private:
-        struct CanStackItemResult
+        struct CanStackItemContext
         {
             Inventory& Inventory;
             InventoryItem& FromItem;
@@ -75,7 +75,7 @@ namespace app_domain
 
         void AddItemInternal(Inventory& inventory, const std::string& itemId, std::uint32_t count);
 
-        lang::Expected<CanStackItemResult, InventoryError>
+        lang::Expected<CanStackItemContext, InventoryError>
             CanStackItemInternal(const std::string& inventoryId, std::size_t fromItemIndex,
                 std::size_t toItemIndex, std::uint32_t count = InventoryService::TransferAll);
 

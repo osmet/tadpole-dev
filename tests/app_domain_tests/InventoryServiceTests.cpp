@@ -237,9 +237,9 @@ TEST_CASE("InventoryService::GetItemDetails_ItemExists_ReturnsDetails")
     auto result = context.InventoryService.GetItemDetails("inventory_2", 0);
 
     REQUIRE(result.has_value());
-    REQUIRE(result->GetIndex() == 0);
-    REQUIRE(result->GetItem().Id == "sword");
-    REQUIRE(result->GetCount() == 2);
+    REQUIRE(result.value().GetIndex() == 0);
+    REQUIRE(result.value().GetItem().Id == "sword");
+    REQUIRE(result.value().GetCount() == 2);
 }
 
 TEST_CASE("InventoryService::GetItemDetails_InventoryNotFound_ReturnsNotFound")
@@ -289,12 +289,12 @@ TEST_CASE("InventoryService::GetFilterSortItemDetailsList_ItemNotFound_ReturnsNo
     auto result = context.InventoryService.GetFilterSortItemDetailsList("inventory_6", ItemCategory::All, ItemSortMode::Name);
 
     REQUIRE(result.has_value());
-    REQUIRE(result->Items.size() == 3);
-    REQUIRE(result->Items[0].GetItem().Id == "book");
-    REQUIRE(result->Items[1].GetItem().Id == "diamond");
-    REQUIRE(result->Items[2].GetItem().Id == "key");
-    REQUIRE(result->FailedIndices.size() == 1);
-    REQUIRE(result->FailedIndices[0] == 1);
+    REQUIRE(result.value().Items.size() == 3);
+    REQUIRE(result.value().Items[0].GetItem().Id == "book");
+    REQUIRE(result.value().Items[1].GetItem().Id == "diamond");
+    REQUIRE(result.value().Items[2].GetItem().Id == "key");
+    REQUIRE(result.value().FailedIndices.size() == 1);
+    REQUIRE(result.value().FailedIndices[0] == 1);
 }
 
 TEST_CASE("InventoryService::GetFilterSortItemDetailsList_FilterByEquipment_ReturnsFilteredList")
@@ -304,9 +304,9 @@ TEST_CASE("InventoryService::GetFilterSortItemDetailsList_FilterByEquipment_Retu
     auto result = context.InventoryService.GetFilterSortItemDetailsList("inventory_4", ItemCategory::Equipment, ItemSortMode::Type);
 
     REQUIRE(result.has_value());
-    REQUIRE(result->Items.size() == 2);
-    REQUIRE(result->Items[0].GetItem().Id == "shield");
-    REQUIRE(result->Items[1].GetItem().Id == "sword");
+    REQUIRE(result.value().Items.size() == 2);
+    REQUIRE(result.value().Items[0].GetItem().Id == "shield");
+    REQUIRE(result.value().Items[1].GetItem().Id == "sword");
 }
 
 TEST_CASE("InventoryService::GetFilterSortItemDetailsList_FilterByConsumables_ReturnsFilteredList")
@@ -316,10 +316,10 @@ TEST_CASE("InventoryService::GetFilterSortItemDetailsList_FilterByConsumables_Re
     auto result = context.InventoryService.GetFilterSortItemDetailsList("inventory_4", ItemCategory::Consumables, ItemSortMode::Type);
 
     REQUIRE(result.has_value());
-    REQUIRE(result->Items.size() == 3);
-    REQUIRE(result->Items[0].GetItem().Id == "healing_potion");
-    REQUIRE(result->Items[1].GetItem().Id == "healing_potion");
-    REQUIRE(result->Items[2].GetItem().Id == "mana_potion");
+    REQUIRE(result.value().Items.size() == 3);
+    REQUIRE(result.value().Items[0].GetItem().Id == "healing_potion");
+    REQUIRE(result.value().Items[1].GetItem().Id == "healing_potion");
+    REQUIRE(result.value().Items[2].GetItem().Id == "mana_potion");
 }
 
 TEST_CASE("InventoryService::GetFilterSortItemDetailsList_FilterByMisc_ReturnsFilteredList")
@@ -329,8 +329,8 @@ TEST_CASE("InventoryService::GetFilterSortItemDetailsList_FilterByMisc_ReturnsFi
     auto result = context.InventoryService.GetFilterSortItemDetailsList("inventory_6", ItemCategory::Misc, ItemSortMode::Type);
 
     REQUIRE(result.has_value());
-    REQUIRE(result->Items.size() == 1);
-    REQUIRE(result->Items[0].GetItem().Id == "diamond");
+    REQUIRE(result.value().Items.size() == 1);
+    REQUIRE(result.value().Items[0].GetItem().Id == "diamond");
 }
 
 TEST_CASE("InventoryService::GetFilterSortItemDetailsList_FilterByBooksAndKeys_ReturnsFilteredList")
@@ -340,9 +340,9 @@ TEST_CASE("InventoryService::GetFilterSortItemDetailsList_FilterByBooksAndKeys_R
     auto result = context.InventoryService.GetFilterSortItemDetailsList("inventory_6", ItemCategory::BooksAndKeys, ItemSortMode::Type);
 
     REQUIRE(result.has_value());
-    REQUIRE(result->Items.size() == 2);
-    REQUIRE(result->Items[0].GetItem().Id == "book");
-    REQUIRE(result->Items[1].GetItem().Id == "key");
+    REQUIRE(result.value().Items.size() == 2);
+    REQUIRE(result.value().Items[0].GetItem().Id == "book");
+    REQUIRE(result.value().Items[1].GetItem().Id == "key");
 }
 
 TEST_CASE("InventoryService::GetFilterSortItemDetailsList_FilterByScrollsAndTools_ReturnsFilteredList")
@@ -352,9 +352,9 @@ TEST_CASE("InventoryService::GetFilterSortItemDetailsList_FilterByScrollsAndTool
     auto result = context.InventoryService.GetFilterSortItemDetailsList("inventory_5", ItemCategory::ScrollsAndTools, ItemSortMode::Type);
 
     REQUIRE(result.has_value());
-    REQUIRE(result->Items.size() == 2);
-    REQUIRE(result->Items[0].GetItem().Id == "scroll");
-    REQUIRE(result->Items[1].GetItem().Id == "tool");
+    REQUIRE(result.value().Items.size() == 2);
+    REQUIRE(result.value().Items[0].GetItem().Id == "scroll");
+    REQUIRE(result.value().Items[1].GetItem().Id == "tool");
 }
 
 TEST_CASE("InventoryService::GetFilterSortItemDetailsList_CustomFilter_ReturnsFilteredList")
@@ -371,10 +371,10 @@ TEST_CASE("InventoryService::GetFilterSortItemDetailsList_CustomFilter_ReturnsFi
         });
 
     REQUIRE(result.has_value());
-    REQUIRE(result->Items.size() == 3u);
-    REQUIRE(result->Items[0].GetItem().Id == "healing_potion");
-    REQUIRE(result->Items[1].GetItem().Id == "healing_potion");
-    REQUIRE(result->Items[2].GetItem().Id == "mana_potion");
+    REQUIRE(result.value().Items.size() == 3u);
+    REQUIRE(result.value().Items[0].GetItem().Id == "healing_potion");
+    REQUIRE(result.value().Items[1].GetItem().Id == "healing_potion");
+    REQUIRE(result.value().Items[2].GetItem().Id == "mana_potion");
 }
 
 TEST_CASE("InventoryService::GetFilterSortItemDetailsList_SortByName_ReturnsSortedList")
@@ -384,12 +384,12 @@ TEST_CASE("InventoryService::GetFilterSortItemDetailsList_SortByName_ReturnsSort
     auto result = context.InventoryService.GetFilterSortItemDetailsList("inventory_4", ItemCategory::All, ItemSortMode::Name);
 
     REQUIRE(result.has_value());
-    REQUIRE(result->Items.size() == 5);
-    REQUIRE(result->Items[0].GetItem().Name == "Healing Potion");
-    REQUIRE(result->Items[1].GetItem().Name == "Healing Potion");
-    REQUIRE(result->Items[2].GetItem().Name == "Mana Potion");
-    REQUIRE(result->Items[3].GetItem().Name == "Shield");
-    REQUIRE(result->Items[4].GetItem().Name == "Sword");
+    REQUIRE(result.value().Items.size() == 5);
+    REQUIRE(result.value().Items[0].GetItem().Name == "Healing Potion");
+    REQUIRE(result.value().Items[1].GetItem().Name == "Healing Potion");
+    REQUIRE(result.value().Items[2].GetItem().Name == "Mana Potion");
+    REQUIRE(result.value().Items[3].GetItem().Name == "Shield");
+    REQUIRE(result.value().Items[4].GetItem().Name == "Sword");
 }
 
 TEST_CASE("InventoryService::GetFilterSortItemDetailsList_SortByLatest_ReturnsSortedList")
@@ -399,12 +399,12 @@ TEST_CASE("InventoryService::GetFilterSortItemDetailsList_SortByLatest_ReturnsSo
     auto result = context.InventoryService.GetFilterSortItemDetailsList("inventory_4", ItemCategory::All, ItemSortMode::Latest);
 
     REQUIRE(result.has_value());
-    REQUIRE(result->Items.size() == 5);
-    REQUIRE(result->Items[0].GetItem().Id == "healing_potion");
-    REQUIRE(result->Items[1].GetItem().Id == "healing_potion");
-    REQUIRE(result->Items[2].GetItem().Id == "mana_potion");
-    REQUIRE(result->Items[3].GetItem().Id == "shield");
-    REQUIRE(result->Items[4].GetItem().Id == "sword");
+    REQUIRE(result.value().Items.size() == 5);
+    REQUIRE(result.value().Items[0].GetItem().Id == "healing_potion");
+    REQUIRE(result.value().Items[1].GetItem().Id == "healing_potion");
+    REQUIRE(result.value().Items[2].GetItem().Id == "mana_potion");
+    REQUIRE(result.value().Items[3].GetItem().Id == "shield");
+    REQUIRE(result.value().Items[4].GetItem().Id == "sword");
 }
 
 TEST_CASE("InventoryService::GetFilterSortItemDetailsList_SortByType_ReturnsSortedList")
@@ -414,15 +414,15 @@ TEST_CASE("InventoryService::GetFilterSortItemDetailsList_SortByType_ReturnsSort
     auto result = context.InventoryService.GetFilterSortItemDetailsList("inventory_4", ItemCategory::All, ItemSortMode::Type);
 
     REQUIRE(result.has_value());
-    REQUIRE(result->Items.size() == 5);
-    REQUIRE(result->Items[0].GetItem().Type == ItemType::Armor);
-    REQUIRE(result->Items[1].GetItem().Type == ItemType::Weapon);
-    REQUIRE(result->Items[2].GetItem().Type == ItemType::Potion);
-    REQUIRE(result->Items[2].GetItem().Id == "healing_potion");
-    REQUIRE(result->Items[3].GetItem().Type == ItemType::Potion);
-    REQUIRE(result->Items[3].GetItem().Id == "healing_potion");
-    REQUIRE(result->Items[4].GetItem().Type == ItemType::Potion);
-    REQUIRE(result->Items[4].GetItem().Id == "mana_potion");
+    REQUIRE(result.value().Items.size() == 5);
+    REQUIRE(result.value().Items[0].GetItem().Type == ItemType::Armor);
+    REQUIRE(result.value().Items[1].GetItem().Type == ItemType::Weapon);
+    REQUIRE(result.value().Items[2].GetItem().Type == ItemType::Potion);
+    REQUIRE(result.value().Items[2].GetItem().Id == "healing_potion");
+    REQUIRE(result.value().Items[3].GetItem().Type == ItemType::Potion);
+    REQUIRE(result.value().Items[3].GetItem().Id == "healing_potion");
+    REQUIRE(result.value().Items[4].GetItem().Type == ItemType::Potion);
+    REQUIRE(result.value().Items[4].GetItem().Id == "mana_potion");
 }
 
 TEST_CASE("InventoryService::GetFilterSortItemDetailsList_SortByValue_ReturnsSortedList")
@@ -432,12 +432,12 @@ TEST_CASE("InventoryService::GetFilterSortItemDetailsList_SortByValue_ReturnsSor
     auto result = context.InventoryService.GetFilterSortItemDetailsList("inventory_4", ItemCategory::All, ItemSortMode::Value);
 
     REQUIRE(result.has_value());
-    REQUIRE(result->Items.size() == 5);
-    REQUIRE(result->Items[0].GetItem().Id == "shield");
-    REQUIRE(result->Items[1].GetItem().Id == "sword");
-    REQUIRE(result->Items[2].GetItem().Id == "healing_potion");
-    REQUIRE(result->Items[3].GetItem().Id == "healing_potion");
-    REQUIRE(result->Items[4].GetItem().Id == "mana_potion");
+    REQUIRE(result.value().Items.size() == 5);
+    REQUIRE(result.value().Items[0].GetItem().Id == "shield");
+    REQUIRE(result.value().Items[1].GetItem().Id == "sword");
+    REQUIRE(result.value().Items[2].GetItem().Id == "healing_potion");
+    REQUIRE(result.value().Items[3].GetItem().Id == "healing_potion");
+    REQUIRE(result.value().Items[4].GetItem().Id == "mana_potion");
 }
 
 TEST_CASE("InventoryService::GetFilterSortItemDetailsList_SortByWeight_ReturnsSortedList")
@@ -447,12 +447,12 @@ TEST_CASE("InventoryService::GetFilterSortItemDetailsList_SortByWeight_ReturnsSo
     auto result = context.InventoryService.GetFilterSortItemDetailsList("inventory_4", ItemCategory::All, ItemSortMode::Weight);
 
     REQUIRE(result.has_value());
-    REQUIRE(result->Items.size() == 5);
-    REQUIRE(result->Items[0].GetItem().Id == "shield");
-    REQUIRE(result->Items[1].GetItem().Id == "sword");
-    REQUIRE(result->Items[2].GetItem().Id == "healing_potion");
-    REQUIRE(result->Items[3].GetItem().Id == "healing_potion");
-    REQUIRE(result->Items[4].GetItem().Id == "mana_potion");
+    REQUIRE(result.value().Items.size() == 5);
+    REQUIRE(result.value().Items[0].GetItem().Id == "shield");
+    REQUIRE(result.value().Items[1].GetItem().Id == "sword");
+    REQUIRE(result.value().Items[2].GetItem().Id == "healing_potion");
+    REQUIRE(result.value().Items[3].GetItem().Id == "healing_potion");
+    REQUIRE(result.value().Items[4].GetItem().Id == "mana_potion");
 }
 
 TEST_CASE("InventoryService::CanStackItem_FromAndToIndicesEqual_ReturnsInvalidAmount")

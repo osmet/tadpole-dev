@@ -234,10 +234,12 @@ namespace app_domain
         if (!canStackResult)
             return lang::Unexpected(canStackResult.error());
 
-        auto& inventory = canStackResult->Inventory;
-        auto& fromItem = canStackResult->FromItem;
-        auto& toItem = canStackResult->ToItem;
-        auto countToStack = canStackResult->CountToStack;
+        auto& canStackValue = canStackResult.value();
+
+        auto& inventory = canStackValue.Inventory;
+        auto& fromItem = canStackValue.FromItem;
+        auto& toItem = canStackValue.ToItem;
+        auto countToStack = canStackValue.CountToStack;
 
         toItem.Count += countToStack;
         fromItem.Count -= countToStack;
@@ -258,7 +260,7 @@ namespace app_domain
         inventory.Items.emplace_back(std::move(inventoryItem));
     }
 
-    lang::Expected<InventoryService::CanStackItemResult, InventoryError>
+    lang::Expected<InventoryService::CanStackItemContext, InventoryError>
         InventoryService::CanStackItemInternal(const std::string& inventoryId, std::size_t fromItemIndex,
             std::size_t toItemIndex, std::uint32_t count)
     {
@@ -286,7 +288,7 @@ namespace app_domain
         if (fromItem.Count < count)
             return lang::Unexpected(InventoryError::InvalidAmount);
 
-        return CanStackItemResult{ 
+        return CanStackItemContext{
             .Inventory = inventory, 
             .FromItem = fromItem, 
             .ToItem = toItem, 
