@@ -22,31 +22,29 @@ namespace app
         SetAnchor(0.f, 0.f);
         SetPivot(0.f, 0.f);
 
-
-
         auto* backgroundImage = CreateWidget<core::Image>();
         backgroundImage->SetSize(iconSize);
         backgroundImage->SetColor(sf::Color(13u, 11u, 9u, 255u));
         backgroundImage->SetActive(false);
-        m_backgroundImage = backgroundImage;
+        m_backgroundImageId = backgroundImage->GetId();
 
         auto* rarityGlowImage = CreateWidget<core::Image>();
         rarityGlowImage->SetSize(iconSize);
         rarityGlowImage->SetTexture(assetManager.GetTexture("UI_Overlay_ItemSlot_RarityGlow"));
         rarityGlowImage->SetActive(false);
-        m_rarityGlowImage = rarityGlowImage;
+        m_rarityGlowImageId = rarityGlowImage->GetId();
 
         auto* iconImage = CreateWidget<core::Image>();
         iconImage->SetSize(iconSize);
         iconImage->SetActive(false);
-        m_iconImage = iconImage;
+        m_iconImageId = iconImage->GetId();
 
         auto* frameImage = CreateWidget<core::Image>();
         frameImage->SetSize(iconSize);
         frameImage->SetColor(sf::Color::Transparent);
         frameImage->SetOutlineThickness(outlineThickness);
         frameImage->SetOutlineColor(sf::Color(64u, 54u, 48u, 255u));
-        m_frameImage = frameImage;
+        m_frameImageId = frameImage->GetId();
 
         auto* countTextLabel = CreateWidget<core::TextLabel>();
         countTextLabel->SetAnchor(1.f, 1.f);
@@ -57,7 +55,7 @@ namespace app
         countTextLabel->SetText("3");
         countTextLabel->SetOutlineThickness(1.f);
         countTextLabel->SetActive(false);
-        m_countTextLabel = countTextLabel;
+        m_countTextLabelId = countTextLabel->GetId();
 
         auto* selectImage = CreateWidget<core::Image>();
         selectImage->SetSize(iconSize + 2.f);
@@ -65,7 +63,7 @@ namespace app
         selectImage->SetOutlineThickness(outlineThickness);
         selectImage->SetOutlineColor(sf::Color::White);
         selectImage->SetActive(false);
-        m_selectImage = selectImage;
+        m_selectImageId = selectImage->GetId();
     }
 
     void ItemSlot::SetItem(const app_domain::InventoryItemDetails& item)
@@ -73,92 +71,99 @@ namespace app
         m_hasItem = true;
         m_itemIndex = item.GetIndex();
 
-        if (!m_iconImage || !m_rarityGlowImage || !m_countTextLabel)
+        auto* iconImage = FindWidgetById<core::Image>(m_iconImageId);
+        auto* rarityGlowImage = FindWidgetById<core::Image>(m_rarityGlowImageId);
+        auto* countTextLabel = FindWidgetById<core::TextLabel>(m_countTextLabelId);
+
+        if (!iconImage || !rarityGlowImage || !countTextLabel)
             return;
 
-        m_iconImage->SetTexture(m_assetManager.GetTexture(item.GetItem().IconTextureId));
-        m_iconImage->SetActive(true);
+        iconImage->SetTexture(m_assetManager.GetTexture(item.GetItem().IconTextureId));
+        iconImage->SetActive(true);
 
         if (item.GetItem().Rarity != app_domain::ItemRarity::Common)
         {
-            m_rarityGlowImage->SetColor(ItemConfig::GetRarityColor(item.GetItem().Rarity));
-            m_rarityGlowImage->SetActive(true);
+            rarityGlowImage->SetColor(ItemConfig::GetRarityColor(item.GetItem().Rarity));
+            rarityGlowImage->SetActive(true);
         }
         else
         {
-            m_rarityGlowImage->SetActive(false);
+            rarityGlowImage->SetActive(false);
         }
 
         if (m_countTextActive && item.GetCount() > 1u)
         {
-            m_countTextLabel->SetText(std::to_string(item.GetCount()));
-            m_countTextLabel->SetActive(true);
+            countTextLabel->SetText(std::to_string(item.GetCount()));
+            countTextLabel->SetActive(true);
         }
         else
         {
-            m_countTextLabel->SetActive(false);
+            countTextLabel->SetActive(false);
         }
     }
 
-    void ItemSlot::ItemSlot::ClearItem()
+    void ItemSlot::ClearItem()
     {
         m_hasItem = false;
 
-        if (!m_iconImage || !m_rarityGlowImage || !m_countTextLabel)
+        auto* iconImage = FindWidgetById<core::Image>(m_iconImageId);
+        auto* rarityGlowImage = FindWidgetById<core::Image>(m_rarityGlowImageId);
+        auto* countTextLabel = FindWidgetById<core::TextLabel>(m_countTextLabelId);
+
+        if (!iconImage || !rarityGlowImage || !countTextLabel)
             return;
 
-        m_iconImage->SetActive(false);
-
-        m_rarityGlowImage->SetActive(false);
-
-        m_countTextLabel->SetActive(false);
+        iconImage->SetActive(false);
+        rarityGlowImage->SetActive(false);
+        countTextLabel->SetActive(false);
     }
 
-    bool ItemSlot::ItemSlot::HasItem() const
+    bool ItemSlot::HasItem() const
     {
         return m_hasItem;
     }
 
-    size_t ItemSlot::ItemSlot::GetItemIndex() const
+    size_t ItemSlot::GetItemIndex() const
     {
         return m_itemIndex;
     }
 
     void ItemSlot::SetBackgroundImageActive(bool active)
     {
-        if (m_backgroundImage)
-            m_backgroundImage->SetActive(active);
+        if (auto* backgroundImage = FindWidgetById<core::Image>(m_backgroundImageId))
+            backgroundImage->SetActive(active);
     }
 
     void ItemSlot::SetCountTextActive(bool active)
     {
         m_countTextActive = active;
 
-        if (m_countTextLabel)
-            m_countTextLabel->SetActive(active);
+        if (auto* countTextLabel = FindWidgetById<core::TextLabel>(m_countTextLabelId))
+            countTextLabel->SetActive(active);
     }
 
     void ItemSlot::SetSelectMode(SelectMode selectMode)
     {
         m_selectMode = selectMode;
 
-        if (!m_selectImage)
+        auto* selectImage = FindWidgetById<core::Image>(m_selectImageId);
+        if (!selectImage)
             return;
 
         switch (m_selectMode)
         {
         case SelectMode::None:
-            m_selectImage->SetActive(false);
+            selectImage->SetActive(false);
             break;
 
         case SelectMode::Hovered:
-            m_selectImage->SetOutlineColor(sf::Color::White);
-            m_selectImage->SetActive(true);
+            selectImage->SetOutlineColor(sf::Color::White);
+            selectImage->SetActive(true);
             break;
 
         case SelectMode::Selected:
-            m_selectImage->SetOutlineColor(sf::Color(255u, 255u, 255u, 150u));
-            m_selectImage->SetActive(true);
+            selectImage->SetOutlineColor(sf::Color(255u, 255u, 255u, 150u));
+            selectImage->SetActive(true);
             break;
         }
     }

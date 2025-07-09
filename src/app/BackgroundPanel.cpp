@@ -1,28 +1,31 @@
 #include "Precompiled.h"
 #include "BackgroundPanel.h"
 
+#include "../core/Image.h"
+
 namespace app
 {
     BackgroundPanel::BackgroundPanel()
     {
-        m_backgroundImage = CreateWidget<core::Image>();
+        auto* backgroundImage = CreateWidget<core::Image>();
+        m_backgroundImageId = backgroundImage->GetId();
     }
 
     void BackgroundPanel::SetBackgroundSize(const sf::Vector2f size)
     {
-        if (m_backgroundImage)
-            m_backgroundImage->SetSize(size);
+        if (auto* backgroundImage = FindWidgetById<core::Image>(m_backgroundImageId))
+            backgroundImage->SetSize(size);
     }
 
     void BackgroundPanel::SetBackgroundColor(const sf::Color& color)
     {
-        if (m_backgroundImage)
-            m_backgroundImage->SetColor(color);
+        if (auto* backgroundImage = FindWidgetById<core::Image>(m_backgroundImageId))
+            backgroundImage->SetColor(color);
     }
 
     void BackgroundPanel::SetBackgroundTexture(const sf::Texture& texture)
     {
-        if (m_backgroundImage)
-            m_backgroundImage->SetTexture(texture);
+        if (auto* backgroundImage = FindWidgetById<core::Image>(m_backgroundImageId))
+            backgroundImage->SetTexture(texture);
     }
 }

@@ -15,16 +15,17 @@ namespace app
     {
         m_currentItemCount.Subscribe([this](const auto& value)
         {
-            if (m_itemCountTextLabel)
-                m_itemCountTextLabel->SetText(std::to_string(m_currentItemCount.GetValue()) + " / " + std::to_string(m_maxItemCount));
+            auto* itemCountTextLabel = FindWidgetById<core::TextLabel>(m_itemCountTextLabelId);
+            if (itemCountTextLabel)
+                itemCountTextLabel->SetText(std::to_string(value) + " / " + std::to_string(m_maxItemCount));
 
-            if (m_decrementCountButton)
-                m_decrementCountButton->SetInteractable(m_currentItemCount.GetValue() > m_minItemCount);
+            if (auto* decrementCountButton = FindWidgetById<core::Button>(m_decrementCountButtonId))
+                decrementCountButton->SetInteractable(value > m_minItemCount);
 
-            if (m_incrementCountButton)
-                m_incrementCountButton->SetInteractable(m_currentItemCount.GetValue() < m_maxItemCount);
+            if (auto* incrementCountButton = FindWidgetById<core::Button>(m_incrementCountButtonId))
+                incrementCountButton->SetInteractable(value < m_maxItemCount);
         });
-        
+
         SetAnchor(0.5f, 0.5f);
         SetPivot(0.5f, 0.5f);
         SetActive(false);
@@ -45,7 +46,7 @@ namespace app
         itemSlot->SetLocalPosition(0.f, 0.f);
         itemSlot->SetBackgroundImageActive(true);
         itemSlot->SetCountTextActive(false);
-        m_itemSlot = itemSlot;
+        m_itemSlotId = itemSlot->GetId();
 
         auto* itemNameTextLabel = backgroundImage->CreateWidget<core::TextLabel>();
         itemNameTextLabel->SetAnchor(0.5f, 0.f);
@@ -54,7 +55,7 @@ namespace app
         itemNameTextLabel->SetFont(regularFont);
         itemNameTextLabel->SetFontSize(22u);
         itemNameTextLabel->SetText("Name");
-        m_itemNameTextLabel = itemNameTextLabel;
+        m_itemNameTextLabelId = itemNameTextLabel->GetId();
 
         auto* itemCountTextLabel = backgroundImage->CreateWidget<core::TextLabel>();
         itemCountTextLabel->SetAnchor(0.5f, 0.f);
@@ -64,7 +65,7 @@ namespace app
         itemCountTextLabel->SetFontSize(22u);
         itemCountTextLabel->SetColor(sf::Color(222u, 214u, 203u, 255u));
         itemCountTextLabel->SetText("1/5");
-        m_itemCountTextLabel = itemCountTextLabel;
+        m_itemCountTextLabelId = itemCountTextLabel->GetId();
 
         auto* decrementCountButton = backgroundImage->CreateWidget<core::Button>();
         decrementCountButton->SetSize(34.f, 34.f);
@@ -83,7 +84,7 @@ namespace app
             textLabel->SetFontSize(20u);
             textLabel->SetText("-");
         }
-        m_decrementCountButton = decrementCountButton;
+        m_decrementCountButtonId = decrementCountButton->GetId();
 
         auto* incrementCountButton = backgroundImage->CreateWidget<core::Button>();
         incrementCountButton->SetSize(34.f, 34.f);
@@ -102,7 +103,7 @@ namespace app
             textLabel->SetFontSize(20u);
             textLabel->SetText("+");
         }
-        m_incrementCountButton = incrementCountButton;
+        m_incrementCountButtonId = incrementCountButton->GetId();
 
         auto* confirmButton = backgroundImage->CreateWidget<core::Button>();
         confirmButton->SetAnchor(0.5f, 1.f);
@@ -151,11 +152,14 @@ namespace app
 
         m_currentItemCount.SetValue(m_maxItemCount / 2u);
 
-        if (!m_itemSlot || !m_itemNameTextLabel)
+        auto* itemSlot = FindWidgetById<ItemSlot>(m_itemSlotId);
+        auto* itemNameTextLabel = FindWidgetById<core::TextLabel>(m_itemNameTextLabelId);
+
+        if (!itemSlot || !itemNameTextLabel)
             return;
 
-        m_itemSlot->SetItem(item);
-        m_itemNameTextLabel->SetText(item.GetItem().Name);
+        itemSlot->SetItem(item);
+        itemNameTextLabel->SetText(item.GetItem().Name);
 
         SetActive(true);
     }

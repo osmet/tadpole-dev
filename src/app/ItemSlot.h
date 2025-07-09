@@ -5,8 +5,6 @@
 namespace core
 {
     class AssetManager;
-    class Image;
-    class TextLabel;
 }
 
 namespace app_domain
@@ -42,12 +40,12 @@ namespace app
     private:
         core::AssetManager& m_assetManager;
 
-        core::Image* m_backgroundImage = nullptr;
-        core::Image* m_rarityGlowImage = nullptr;
-        core::Image* m_iconImage = nullptr;
-        core::Image* m_frameImage = nullptr;
-        core::TextLabel* m_countTextLabel = nullptr;
-        core::Image* m_selectImage = nullptr;
+        core::WidgetId m_backgroundImageId;
+        core::WidgetId m_rarityGlowImageId;
+        core::WidgetId m_iconImageId;
+        core::WidgetId m_frameImageId;
+        core::WidgetId m_countTextLabelId;
+        core::WidgetId m_selectImageId;
 
         bool m_hasItem = false;
         size_t m_itemIndex = 0u;

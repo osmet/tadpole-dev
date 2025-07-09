@@ -471,7 +471,7 @@ namespace app
             frameImage->SetTexture(portraitFrameTexture);
             frameImage->SetColor(portraitFrameColor);
         }
-        m_portraitImage = portraitImage;
+        m_portraitImageId = portraitImage->GetId();
 
         auto* nameTextLabel = CreateWidget<core::TextLabel>();
         nameTextLabel->SetAnchor(.5f, 0.f);
@@ -479,7 +479,7 @@ namespace app
         nameTextLabel->SetLocalPosition(namePositionX, valuesPositionY);
         nameTextLabel->SetFont(font);
         nameTextLabel->SetFontSize(20u);
-        m_nameTextLabel = nameTextLabel;
+        m_nameTextLabelId = nameTextLabel->GetId();
 
         auto* moneyTextLabel = CreateWidget<core::TextLabel>();
         moneyTextLabel->SetAnchor(.5f, 0.f);
@@ -487,7 +487,7 @@ namespace app
         moneyTextLabel->SetLocalPosition(moneyPositionX, valuesPositionY);
         moneyTextLabel->SetFont(font);
         moneyTextLabel->SetFontSize(20u);
-        m_moneyTextLabel = moneyTextLabel;
+        m_moneyTextLabelId = moneyTextLabel->GetId();
 
         auto* moneyIconImage = CreateWidget<core::Image>();
         moneyIconImage->SetAnchor(.5f, 0.f);
@@ -505,7 +505,7 @@ namespace app
             weightTextLabel->SetLocalPosition(weightPositionX - 22.f, valuesPositionY);
             weightTextLabel->SetFont(font);
             weightTextLabel->SetFontSize(20u);
-            m_weightTextLabel = weightTextLabel;
+            m_weightTextLabelId = weightTextLabel->GetId();
 
             auto* weightIconImage = CreateWidget<core::Image>();
             weightIconImage->SetAnchor(.5f, 0.f);
@@ -518,32 +518,32 @@ namespace app
 
     void TradeUIView::CharacterInfoPanel::SetCharacterName(const std::string& name)
     {
-        if (m_nameTextLabel)
-            m_nameTextLabel->SetText(name);
+        if (auto* nameTextLabel = FindWidgetById<core::TextLabel>(m_nameTextLabelId))
+            nameTextLabel->SetText(name);
     }
 
     void TradeUIView::CharacterInfoPanel::SetPortraitTexture(const std::string& textureId)
     {
-        if (m_portraitImage)
-            m_portraitImage->SetTexture(m_assetManager.GetTexture(textureId));
+        if (auto* portraitImage = FindWidgetById<core::Image>(m_portraitImageId))
+            portraitImage->SetTexture(m_assetManager.GetTexture(textureId));
     }
 
     void TradeUIView::CharacterInfoPanel::SetMoney(uint32_t money)
     {
-        if (m_moneyTextLabel)
-            m_moneyTextLabel->SetText(std::to_string(money));
+        if (auto* moneyTextLabel = FindWidgetById<core::TextLabel>(m_moneyTextLabelId))
+            moneyTextLabel->SetText(std::to_string(money));
     }
 
     void TradeUIView::CharacterInfoPanel::SetWeight(float currentWeight, float maxWeight)
     {
-        if (m_weightTextLabel)
+        if (auto* weightTextLabel = FindWidgetById<core::TextLabel>(m_weightTextLabelId))
         {
-            m_weightTextLabel->SetColor(currentWeight > maxWeight ? sf::Color::Red : sf::Color::White);
+            weightTextLabel->SetColor(currentWeight > maxWeight ? sf::Color::Red : sf::Color::White);
 
             char buffer[32];
-            snprintf(buffer, sizeof(buffer), "%.1f/%d", currentWeight, (std::uint32_t)maxWeight);
+            snprintf(buffer, sizeof(buffer), "%.1f/%d", currentWeight, static_cast<std::uint32_t>(maxWeight));
 
-            m_weightTextLabel->SetText(buffer);
+            weightTextLabel->SetText(buffer);
         }
     }
 
@@ -774,7 +774,7 @@ namespace app
                 }
             }
         }
-        m_itemSortButtonsPanel = itemSortPanelImage;
+        m_itemSortButtonsPanelId = itemSortPanelImage->GetId();
     }
 
     void TradeUIView::ItemSortPanel::SetTooltipPanel(TooltipPanel* tooltipPanel)
@@ -789,7 +789,7 @@ namespace app
 
     void TradeUIView::ItemSortPanel::ToggleItemSortButtonsPanel()
     {
-        if (m_itemSortButtonsPanel)
-            m_itemSortButtonsPanel->SetActive(!m_itemSortButtonsPanel->IsActiveSelf());
+        if (auto* itemSortButtonsPanel = FindWidgetById<core::Widget>(m_itemSortButtonsPanelId))
+            itemSortButtonsPanel->SetActive(!itemSortButtonsPanel->IsActiveSelf());
     }
 }

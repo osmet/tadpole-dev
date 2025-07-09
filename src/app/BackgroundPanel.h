@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../core/CanvasPanel.h"
-#include "../core/Image.h"
 
 namespace app
 {
@@ -15,6 +14,6 @@ namespace app
         void SetBackgroundTexture(const sf::Texture& texture);
 
     private:
-        core::Image* m_backgroundImage = nullptr;
+        core::WidgetId m_backgroundImageId;
     };
 }

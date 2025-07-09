@@ -14,8 +14,6 @@
 namespace core 
 { 
     class AssetManager; 
-    class Image; 
-    class TextLabel; 
 }
 
 namespace app_domain 
@@ -27,10 +25,6 @@ namespace app
 {
     class AppContext; 
     class TooltipPanel;
-    class ItemGridPanel;
-    class ItemPanel;
-    class ItemTransferPanel;
-    class ErrorPanel;
 
     class TradeUIView : public core::UIView
     {
@@ -42,10 +36,6 @@ namespace app
         void Render(sf::RenderWindow& renderWindow) override;
         
     private:
-        class CharacterInfoPanel;
-        class ItemFilterPanel;
-        class ItemSortPanel;
-
         void BindViewModel();
         void BindItemGridPanel(ItemGridPanel* gridPanel, bool isBuying);
 
@@ -100,10 +90,10 @@ namespace app
         private:
             core::AssetManager& m_assetManager;
 
-            core::TextLabel* m_nameTextLabel = nullptr;
-            core::Image* m_portraitImage = nullptr;
-            core::TextLabel* m_moneyTextLabel = nullptr;
-            core::TextLabel* m_weightTextLabel = nullptr;
+            core::WidgetId m_nameTextLabelId;
+            core::WidgetId m_portraitImageId;
+            core::WidgetId m_moneyTextLabelId;
+            core::WidgetId m_weightTextLabelId;
         };
 
         class ItemFilterPanel final : public core::StackPanel
@@ -152,8 +142,9 @@ namespace app
         private:
             void ToggleItemSortButtonsPanel();
 
-            core::Widget* m_itemSortButtonsPanel = nullptr;
             TooltipPanel* m_tooltipPanel = nullptr;
+
+            core::WidgetId m_itemSortButtonsPanelId;
 
             ItemSortPanel::OnSortButtonClick m_onSortButtonClick;
         };

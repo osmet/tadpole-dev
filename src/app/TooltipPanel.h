@@ -5,8 +5,6 @@
 namespace core
 {
     class AssetManager;
-    class Image;
-    class TextLabel;
 }
 
 namespace app
@@ -19,7 +17,7 @@ namespace app
         void Show(const std::string& text, const sf::Vector2f& position, const sf::Vector2f& offset);
         void Hide();
     private:
-        core::Image* m_frameImage = nullptr;
-        core::TextLabel* m_textLabel = nullptr;
+        core::WidgetId m_frameImageId;
+        core::WidgetId m_textLabelId;
     };
 }

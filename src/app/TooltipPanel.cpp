@@ -19,18 +19,21 @@ namespace app
         frameImage->SetColor(sf::Color(0u, 0u, 0u, 150u));
         frameImage->SetOutlineThickness(2.f);
         frameImage->SetOutlineColor(sf::Color(191u, 163u, 143u, 128u));
-        m_frameImage = frameImage;
+        m_frameImageId = frameImage->GetId();
 
         auto* textLabel = frameImage->CreateWidget<core::TextLabel>();
         textLabel->SetLocalPosition(0.f, -1.f);
         textLabel->SetFont(regularFont);
         textLabel->SetFontSize(18u);
-        m_textLabel = textLabel;
+        m_textLabelId = textLabel->GetId();
     }
 
     void TooltipPanel::Show(const std::string& text, const sf::Vector2f& position, const sf::Vector2f& offset)
     {
-        if (!m_textLabel || !m_frameImage)
+        auto* textLabel = FindWidgetById<core::TextLabel>(m_textLabelId);
+        auto* frameImage = FindWidgetById<core::Image>(m_frameImageId);
+
+        if (!textLabel || !frameImage)
             return;
 
         sf::Vector2f padding(20.f, 14.f);
@@ -42,15 +45,15 @@ namespace app
         SetLocalPosition(positionWithOffset);
         SetActive(true);
 
-        m_textLabel->SetText(text);
+        textLabel->SetText(text);
 
-        sf::Vector2f frameSize(m_textLabel->GetSize());
+        sf::Vector2f frameSize(textLabel->GetSize());
         frameSize.x += 2.f * padding.x;
         frameSize.y += 2.f * padding.y;
 
-        m_frameImage->SetSize(frameSize);
-        m_frameImage->SetAnchor(GetPivot());
-        m_frameImage->SetPivot(GetPivot());
+        frameImage->SetSize(frameSize);
+        frameImage->SetAnchor(GetPivot());
+        frameImage->SetPivot(GetPivot());
     }
 
     void TooltipPanel::Hide()

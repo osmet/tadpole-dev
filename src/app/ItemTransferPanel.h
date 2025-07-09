@@ -34,11 +34,11 @@ namespace app
         void SetOnCancel(OnCancel callback);
 
     private:
-        ItemSlot* m_itemSlot = nullptr;
-        core::TextLabel* m_itemNameTextLabel = nullptr;
-        core::TextLabel* m_itemCountTextLabel = nullptr;
-        core::Button* m_incrementCountButton = nullptr;
-        core::Button* m_decrementCountButton = nullptr;
+        core::WidgetId m_itemSlotId;
+        core::WidgetId m_itemNameTextLabelId;
+        core::WidgetId m_itemCountTextLabelId;
+        core::WidgetId m_incrementCountButtonId;
+        core::WidgetId m_decrementCountButtonId;
 
         OnConfirm m_onConfirm;
         OnCancel m_onCancel;

@@ -5,8 +5,6 @@
 namespace core
 {
     class AssetManager;
-    class Image;
-    class TextLabel;
 }
 
 namespace app_domain
@@ -27,21 +25,21 @@ namespace app
     private:
         core::AssetManager& m_assetManager;
 
-        core::Image* m_backgroundImage = nullptr;
-        core::Image* m_backgroundCenterOverlayImage = nullptr;
-        core::Image* m_backgroundBottomOverlayImage = nullptr;
-        core::Image* m_rarityOverlayImage = nullptr;
-        core::Image* m_iconImage = nullptr;
-        core::TextLabel* m_nameTextLabel = nullptr;
-        core::TextLabel* m_rarityTextLabel = nullptr;
-        core::Image* m_descriptionIconImage = nullptr;
-        core::TextLabel* m_descriptionTextLabel = nullptr;
-        core::Image* m_typeIconImage = nullptr;
-        core::TextLabel* m_typeTextLabel = nullptr;
-        core::CanvasPanel* m_footerPanel = nullptr;
-        core::TextLabel* m_moneyTextLabel = nullptr;
-        core::Image* m_moneyIconImage = nullptr;
-        core::TextLabel* m_weightTextLabel = nullptr;
-        core::Image* m_weightIconImage = nullptr;
+        core::WidgetId m_backgroundImageId;
+        core::WidgetId m_backgroundCenterOverlayImageId;
+        core::WidgetId m_backgroundBottomOverlayImageId;
+        core::WidgetId m_rarityOverlayImageId;
+        core::WidgetId m_iconImageId;
+        core::WidgetId m_nameTextLabelId;
+        core::WidgetId m_rarityTextLabelId;
+        core::WidgetId m_descriptionIconImageId;
+        core::WidgetId m_descriptionTextLabelId;
+        core::WidgetId m_typeIconImageId;
+        core::WidgetId m_typeTextLabelId;
+        core::WidgetId m_footerPanelId;
+        core::WidgetId m_moneyTextLabelId;
+        core::WidgetId m_moneyIconImageId;
+        core::WidgetId m_weightTextLabelId;
+        core::WidgetId m_weightIconImageId;
     };
 }

@@ -5,7 +5,6 @@
 namespace core
 {
     class AssetManager;
-    class TextLabel;
 }
 
 namespace app
@@ -24,8 +23,8 @@ namespace app
         void SetOnConfirm(OnConfirm callback);
 
     private:
-        core::TextLabel* m_titleTextLabel = nullptr;
-        core::TextLabel* m_descriptionTextLabel = nullptr;
+        core::WidgetId m_titleTextLabelId;
+        core::WidgetId m_descriptionTextLabelId;
 
         OnConfirm m_onConfirm;
     };

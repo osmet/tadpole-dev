@@ -33,7 +33,7 @@ namespace app
         titleTextLabel->SetFont(regularFont);
         titleTextLabel->SetFontSize(28u);
         titleTextLabel->SetText("Not enough gold");
-        m_titleTextLabel = titleTextLabel;
+        m_titleTextLabelId = titleTextLabel->GetId();
 
         auto* descriptionTextLabel = backgroundImage->CreateWidget<core::TextLabel>();
         descriptionTextLabel->SetAnchor(0.5f, 0.f);
@@ -43,7 +43,7 @@ namespace app
         descriptionTextLabel->SetFontSize(18u);
         descriptionTextLabel->SetColor(sf::Color(222u, 214u, 203u, 255u));
         descriptionTextLabel->SetText("Not enough gold to complete this deal.");
-        m_descriptionTextLabel = descriptionTextLabel;
+        m_descriptionTextLabelId = descriptionTextLabel->GetId();
 
         auto* confirmButton = backgroundImage->CreateWidget<core::Button>();
         confirmButton->SetAnchor(0.5f, 1.f);
@@ -68,11 +68,11 @@ namespace app
 
     void ErrorPanel::Show(const std::string& title, const std::string& description)
     {
-        if (m_titleTextLabel)
-            m_titleTextLabel->SetText(title);
+        if (auto* titleTextLabel = FindWidgetById<core::TextLabel>(m_titleTextLabelId))
+            titleTextLabel->SetText(title);
 
-        if (m_descriptionTextLabel)
-            m_descriptionTextLabel->SetText(description);
+        if (auto* descriptionTextLabel = FindWidgetById<core::TextLabel>(m_descriptionTextLabelId))
+            descriptionTextLabel->SetText(description);
 
         SetActive(true);
     }
