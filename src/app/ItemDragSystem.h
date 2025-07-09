@@ -26,7 +26,7 @@ namespace app
         
         void AddDragTarget(IItemDragTarget* target);
 
-        void HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow);
+        bool HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow);
         void Render(sf::RenderWindow& renderWindow);
 
         bool IsActive() const;

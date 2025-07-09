@@ -36,6 +36,7 @@
     <ClInclude Include="StackPanel.h" />
     <ClInclude Include="UIView.h" />
     <ClInclude Include="Widget.h" />
+    <ClInclude Include="WidgetId.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssetManager.cpp" />
@@ -58,6 +59,7 @@
     <ClCompile Include="StackPanel.cpp" />
     <ClCompile Include="UIView.cpp" />
     <ClCompile Include="Widget.cpp" />
+    <ClCompile Include="WidgetId.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lang\lang.vcxproj">

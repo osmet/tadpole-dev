@@ -52,6 +52,9 @@
     <ClInclude Include="UIView.h">
       <Filter>Source Files\ui</Filter>
     </ClInclude>
+    <ClInclude Include="WidgetId.h">
+      <Filter>Source Files\ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Precompiled.cpp">
@@ -103,6 +106,9 @@
       <Filter>Source Files\ui</Filter>
     </ClCompile>
     <ClCompile Include="UIView.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="WidgetId.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
   </ItemGroup>

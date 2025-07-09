@@ -26,7 +26,6 @@ namespace app
 
     void TradeScope::Update(float deltaTime)
     {
-        m_tradeUIView.Update(deltaTime);
     }
 
     void TradeScope::Render(sf::RenderWindow& renderWindow)

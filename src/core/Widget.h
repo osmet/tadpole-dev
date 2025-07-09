@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include "WidgetId.h"
 #include <SFML/Graphics.hpp>
 
 namespace core
@@ -11,8 +12,10 @@ namespace core
 	public:
 		virtual ~Widget() = 0;
 
-		bool HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow);
-		void Render(sf::RenderWindow& renderWindow);
+		virtual bool HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow);
+		virtual void Render(sf::RenderWindow& renderWindow);
+
+		const WidgetId& GetId() const;
 
 		const sf::String& GetName() const;
 		void SetName(const sf::String& name);
@@ -45,6 +48,13 @@ namespace core
 		void Reserve(size_t capacity);
 		size_t GetWidgetCount() const;
 		Widget* GetWidget(size_t index) const;
+		Widget* FindWidgetById(const WidgetId& id) const;
+
+		template<typename TWidget>
+		TWidget* FindWidgetById(const WidgetId& id) const
+		{
+			return dynamic_cast<TWidget*>(FindWidgetById(id));
+		}
 
 		template<class TWidget, typename... Args>
 		TWidget* CreateWidget(Args&&... args)
@@ -76,6 +86,8 @@ namespace core
 
 	private:
 		void SetParent(Widget* widget);
+
+		WidgetId m_id = WidgetId::New();
 
 		sf::String m_name = "Widget";
 		bool m_active = true;

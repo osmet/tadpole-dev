@@ -71,6 +71,11 @@ namespace core
 			child->Render(renderWindow);
 	}
 
+	const core::WidgetId& Widget::GetId() const
+	{
+		return m_id;
+	}
+
 	const sf::String& Widget::GetName() const
 	{
 		return m_name;
@@ -226,6 +231,21 @@ namespace core
 	{
 		if (index < GetWidgetCount())
 			return m_widgets[index].get();
+
+		return nullptr;
+	}
+
+	Widget* Widget::FindWidgetById(const WidgetId& id) const
+	{
+		if (m_id == id)
+			return const_cast<Widget*>(this);
+
+		for (auto& widget : m_widgets)
+		{
+			Widget* found = widget->FindWidgetById(id);
+			if (found != nullptr)
+				return found;
+		}
 
 		return nullptr;
 	}

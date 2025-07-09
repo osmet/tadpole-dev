@@ -38,7 +38,7 @@ namespace app
         TradeUIView(AppContext& appContext, TradeUIViewModel& viewModel);
 
         void Initialize() override;
-        void HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow) override;
+        bool HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow) override;
         void Render(sf::RenderWindow& renderWindow) override;
         
     private:
@@ -74,15 +74,15 @@ namespace app
 
         ItemDragSystem m_itemDragSystem;
 
-        CharacterInfoPanel* m_playerCharacterInfoPanel = nullptr;
-        CharacterInfoPanel* m_traderCharacterInfoPanel = nullptr;
-        ItemGridPanel* m_playerItemGrid = nullptr;
-        ItemGridPanel* m_traderItemGrid = nullptr;
-        ItemFilterPanel* m_itemFilterPanel = nullptr;
-        ItemSortPanel* m_itemSortPanel = nullptr;
-        ItemPanel* m_itemPanel = nullptr;
-        ItemTransferPanel* m_itemTransferPanel = nullptr;
-        ErrorPanel* m_errorPanel = nullptr;
+        core::WidgetId m_playerCharacterInfoPanelId;
+        core::WidgetId m_traderCharacterInfoPanelId;
+        core::WidgetId m_playerItemGridId;
+        core::WidgetId m_traderItemGridId;
+        core::WidgetId m_itemFilterPanelId;
+        core::WidgetId m_itemSortPanelId;
+        core::WidgetId m_itemPanelId;
+        core::WidgetId m_itemTransferPanelId;
+        core::WidgetId m_errorPanelId;
 
         std::function<void()> m_onTradeButtonClick;
 

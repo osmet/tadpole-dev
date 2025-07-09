@@ -31,13 +31,13 @@ namespace app
 
         auto& regularFont = assetManager.GetFont("Mignon_Regular");
 
-        m_mainWidget = std::make_unique<core::CanvasPanel>();
-        m_mainWidget->SetAnchor(0.f, 0.f);
-        m_mainWidget->SetPivot(0.f, 0.f);
-        m_mainWidget->SetSize(renderWindowSize);
+        SetAnchor(0.f, 0.f);
+        SetPivot(0.f, 0.f);
+        SetSize(renderWindowSize);
+
         {
             {
-                auto* tradeTextLabel = m_mainWidget->CreateWidget<core::TextLabel>();
+                auto* tradeTextLabel = CreateWidget<core::TextLabel>();
                 tradeTextLabel->SetAnchor(.5f, 0.f);
                 tradeTextLabel->SetPivot(.5f, 0.f);
                 tradeTextLabel->SetLocalPosition(0.f, 24.f);
@@ -57,19 +57,19 @@ namespace app
                     { app_domain::ItemCategory::Misc, "Miscellaneous", "UI_Icon_Filter_Misc" },
                 };
 
-                auto* itemFilterPanel = m_mainWidget->CreateWidget<ItemFilterPanel>(assetManager, itemFilterDescriptors);
+                auto* itemFilterPanel = CreateWidget<ItemFilterPanel>(assetManager, itemFilterDescriptors);
                 itemFilterPanel->SetAnchor(.5f, 0.f);
                 itemFilterPanel->SetPivot(.5f, 0.f);
                 itemFilterPanel->SetLocalPosition(0.f, 135.f);
-                m_itemFilterPanel = itemFilterPanel;
+                m_itemFilterPanelId = itemFilterPanel->GetId();
             }
 
             {
-                auto* playerCharacterInfoPanel = m_mainWidget->CreateWidget<CharacterInfoPanel>(assetManager, false);
-                m_playerCharacterInfoPanel = playerCharacterInfoPanel;
+                auto* playerCharacterInfoPanel = CreateWidget<CharacterInfoPanel>(assetManager, false);
+                m_playerCharacterInfoPanelId = playerCharacterInfoPanel->GetId();
 
-                auto* traderCharacterInfoPanel = m_mainWidget->CreateWidget<CharacterInfoPanel>(assetManager, true);
-                m_traderCharacterInfoPanel = traderCharacterInfoPanel;
+                auto* traderCharacterInfoPanel = CreateWidget<CharacterInfoPanel>(assetManager, true);
+                m_traderCharacterInfoPanelId = traderCharacterInfoPanel->GetId();
             }
 
             {
@@ -79,17 +79,17 @@ namespace app
                 float cellSize = 54.f;
                 float spacing = 4.f;
 
-                auto* playerItemGrid = m_mainWidget->CreateWidget<ItemGridPanel>(assetManager, columnCount, rowCount, cellSize, spacing);
+                auto* playerItemGrid = CreateWidget<ItemGridPanel>(assetManager, columnCount, rowCount, cellSize, spacing);
                 playerItemGrid->SetAnchor(0.5f, 0.f);
                 playerItemGrid->SetPivot(1.f, 0.f);
                 playerItemGrid->SetLocalPosition(-40.f, 215.f);
-                m_playerItemGrid = playerItemGrid;
+                m_playerItemGridId = playerItemGrid->GetId();
 
-                auto* traderItemGrid = m_mainWidget->CreateWidget<ItemGridPanel>(assetManager, columnCount, rowCount, cellSize, spacing);
+                auto* traderItemGrid = CreateWidget<ItemGridPanel>(assetManager, columnCount, rowCount, cellSize, spacing);
                 traderItemGrid->SetAnchor(0.5f, 0.f);
                 traderItemGrid->SetPivot(0.f, 0.f);
                 traderItemGrid->SetLocalPosition(40.f, 215.f);
-                m_traderItemGrid = traderItemGrid;
+                m_traderItemGridId = traderItemGrid->GetId();
             }
 
             {
@@ -100,15 +100,15 @@ namespace app
                   { app_domain::ItemSortMode::Weight, "Weight" },
                 };
 
-                auto* itemSortPanel = m_mainWidget->CreateWidget<ItemSortPanel>(assetManager, itemSortDescriptors);
+                auto* itemSortPanel = CreateWidget<ItemSortPanel>(assetManager, itemSortDescriptors);
                 itemSortPanel->SetAnchor(.5f, 1.f);
                 itemSortPanel->SetPivot(0.f, 1.f);
                 itemSortPanel->SetLocalPosition(-492.f, -95.f);
-                m_itemSortPanel = itemSortPanel;
+                m_itemSortPanelId = itemSortPanel->GetId();
             }
 
             {
-                auto* tradeButton = m_mainWidget->CreateWidget<core::Button>();
+                auto* tradeButton = CreateWidget<core::Button>();
                 tradeButton->SetAnchor(0.5f, 1.f);
                 tradeButton->SetPivot(0.5f, 1.f);
                 tradeButton->SetLocalPosition(0.f, -35.f);
@@ -127,54 +127,58 @@ namespace app
             }
 
             {
-                auto* itemPanel = m_mainWidget->CreateWidget<ItemPanel>(assetManager);
-                m_itemPanel = itemPanel;
+                auto* itemPanel = CreateWidget<ItemPanel>(assetManager);
+                m_itemPanelId = itemPanel->GetId();
             }
 
             {
-                auto* tooltipPanel = m_mainWidget->CreateWidget<TooltipPanel>(assetManager);
+                auto* tooltipPanel = CreateWidget<TooltipPanel>(assetManager);
 
-                if (m_itemFilterPanel) 
-                    m_itemFilterPanel->SetTooltipPanel(tooltipPanel);
+                {
+                    auto* tooltipPanel = CreateWidget<TooltipPanel>(assetManager);
 
-                if (m_itemSortPanel) 
-                    m_itemSortPanel->SetTooltipPanel(tooltipPanel);
+                    if (auto* itemFilterPanel = FindWidgetById<ItemFilterPanel>(m_itemFilterPanelId))
+                        itemFilterPanel->SetTooltipPanel(tooltipPanel);
+
+                    if (auto* itemSortPanel = FindWidgetById<ItemSortPanel>(m_itemSortPanelId))
+                        itemSortPanel->SetTooltipPanel(tooltipPanel);
+                }
             }
 
             {
-                auto* itemTransferPanel = m_mainWidget->CreateWidget<ItemTransferPanel>(assetManager, renderWindowSize);
-                m_itemTransferPanel = itemTransferPanel;
+                auto* itemTransferPanel = CreateWidget<ItemTransferPanel>(assetManager, renderWindowSize);
+                m_itemTransferPanelId = itemTransferPanel->GetId();
             }
 
             {
-                auto* errorPanel = m_mainWidget->CreateWidget<ErrorPanel>(assetManager, renderWindowSize);
-                m_errorPanel = errorPanel;
+                auto* errorPanel = CreateWidget<ErrorPanel>(assetManager, renderWindowSize);
+                m_errorPanelId = errorPanel->GetId();
             }
         }
 
         BindViewModel();
     }
 
-    void TradeUIView::HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow)
+    bool TradeUIView::HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow)
     {
-        if (m_errorPanel && m_errorPanel->IsActiveSelf())
+        if (auto* errorPanel = FindWidgetById<ErrorPanel>(m_errorPanelId); 
+            errorPanel && errorPanel->IsActiveSelf())
         {
-            m_errorPanel->HandleEvent(event, renderWindow);
-            return;
+            return errorPanel->HandleEvent(event, renderWindow);
         }
-        else if (m_itemTransferPanel && m_itemTransferPanel->IsActiveSelf())
+        else if (auto* itemTransferPanel = FindWidgetById<ItemTransferPanel>(m_itemTransferPanelId);
+            itemTransferPanel && itemTransferPanel->IsActiveSelf())
         {
-            m_itemTransferPanel->HandleEvent(event, renderWindow);
-            return;
+            return itemTransferPanel->HandleEvent(event, renderWindow);
         }
         else if (m_itemDragSystem.IsActive())
         {
-            m_itemDragSystem.HandleEvent(event, renderWindow);
-            return;
+            return m_itemDragSystem.HandleEvent(event, renderWindow);
         }
 
-        UIView::HandleEvent(event, renderWindow);
+        return UIView::HandleEvent(event, renderWindow);
     }
+
 
     void TradeUIView::Render(sf::RenderWindow& renderWindow)
     {
@@ -234,11 +238,11 @@ namespace app
 
         m_viewModel.SetOnShowTransferPanel([this](const app_domain::InventoryItemDetails& item, TradeUIViewModel::OnTransferPanelConfirm onConfirm)
         {
-            if (!m_itemTransferPanel)
-                return;
-
-            m_itemTransferPanel->SetOnConfirm(std::move(onConfirm));
-            m_itemTransferPanel->Show(item);
+            if (auto* itemTransferPanel = FindWidgetById<ItemTransferPanel>(m_itemTransferPanelId))
+            {
+                itemTransferPanel->SetOnConfirm(std::move(onConfirm));
+                itemTransferPanel->Show(item);
+            }
         });
 
         m_viewModel.SetOnTradeError([this](const app_domain::TradeError& error)
@@ -246,23 +250,31 @@ namespace app
             ShowErrorPanel(error);
         });
 
-        m_itemDragSystem.AddDragTarget(m_playerItemGrid);
-        m_itemDragSystem.AddDragTarget(m_traderItemGrid);
-
-        BindItemGridPanel(m_playerItemGrid, false);
-        BindItemGridPanel(m_traderItemGrid, true);
-
-        if (m_itemFilterPanel)
+        if (auto* playerItemGrid = FindWidgetById<ItemGridPanel>(m_playerItemGridId))
         {
-            m_itemFilterPanel->SetOnFilterButtonClick([this](app_domain::ItemCategory itemCategory)
+            BindItemGridPanel(playerItemGrid, false);
+
+            m_itemDragSystem.AddDragTarget(playerItemGrid);
+        }
+
+        if (auto* traderItemGrid = FindWidgetById<ItemGridPanel>(m_traderItemGridId))
+        {
+            BindItemGridPanel(traderItemGrid, true);
+
+            m_itemDragSystem.AddDragTarget(traderItemGrid);
+        }
+
+        if (auto* itemFilterPanel = FindWidgetById<ItemFilterPanel>(m_itemFilterPanelId))
+        {
+            itemFilterPanel->SetOnFilterButtonClick([this](app_domain::ItemCategory itemCategory)
             {
                 m_viewModel.GetContext().ItemFilterCategory.SetValue(itemCategory);
             });
         }
-            
-        if (m_itemSortPanel)
+
+        if (auto* itemSortPanel = FindWidgetById<ItemSortPanel>(m_itemSortPanelId); itemSortPanel)
         {
-            m_itemSortPanel->SetOnSortButtonClick([this](app_domain::ItemSortMode itemSortMode)
+            itemSortPanel->SetOnSortButtonClick([this](app_domain::ItemSortMode itemSortMode)
             {
                 m_viewModel.GetContext().ItemSortMode.SetValue(itemSortMode);
             });
@@ -314,14 +326,14 @@ namespace app
                 if (!target)
                     return;
 
-                if (target == m_playerItemGrid)
+                if (target == FindWidgetById<ItemGridPanel>(m_playerItemGridId))
                 {
                     if (isBuying)
                         m_viewModel.TradeItem(isBuying, fromItemIndex);
                     else
                         m_viewModel.StackItem(fromItemIndex, signedToItemIndex);
                 }
-                else if (target == m_traderItemGrid)
+                else if (target == FindWidgetById<ItemGridPanel>(m_traderItemGridId))
                 {
                     if (!isBuying)
                         m_viewModel.TradeItem(isBuying, fromItemIndex);
@@ -337,83 +349,80 @@ namespace app
 
     void TradeUIView::SetPlayerPortraitTexture(const std::string& textureId)
     {
-        if (m_playerCharacterInfoPanel)
-            m_playerCharacterInfoPanel->SetPortraitTexture(textureId);
+        if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_playerCharacterInfoPanelId))
+            characterInfoPanel->SetPortraitTexture(textureId);
     }
 
     void TradeUIView::SetPlayerName(const std::string& name)
     {
-        if (m_playerCharacterInfoPanel)
-            m_playerCharacterInfoPanel->SetCharacterName(name);
+        if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_playerCharacterInfoPanelId))
+            characterInfoPanel->SetCharacterName(name);
     }
 
     void TradeUIView::SetPlayerMoney(uint32_t money)
     {
-        if (m_playerCharacterInfoPanel)
-            m_playerCharacterInfoPanel->SetMoney(money);
+        if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_playerCharacterInfoPanelId))
+            characterInfoPanel->SetMoney(money);
     }
 
     void TradeUIView::SetPlayerWeight(float currentWeight, float maxWeight)
     {
-        if (m_playerCharacterInfoPanel)
-            m_playerCharacterInfoPanel->SetWeight(currentWeight, maxWeight);
+        if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_playerCharacterInfoPanelId))
+            characterInfoPanel->SetWeight(currentWeight, maxWeight);
     }
 
     void TradeUIView::SetTraderPortraitTexture(const std::string& textureId)
     {
-        if (m_traderCharacterInfoPanel)
-            m_traderCharacterInfoPanel->SetPortraitTexture(textureId);
+        if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_traderCharacterInfoPanelId))
+            characterInfoPanel->SetPortraitTexture(textureId);
     }
 
     void TradeUIView::SetTraderName(const std::string& name)
     {
-        if (m_traderCharacterInfoPanel)
-            m_traderCharacterInfoPanel->SetCharacterName(name);
+        if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_traderCharacterInfoPanelId))
+            characterInfoPanel->SetCharacterName(name);
     }
 
     void TradeUIView::SetTraderMoney(uint32_t money)
     {
-        if (m_traderCharacterInfoPanel)
-            m_traderCharacterInfoPanel->SetMoney(money);
+        if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_traderCharacterInfoPanelId))
+            characterInfoPanel->SetMoney(money);
     }
 
     void TradeUIView::SetTraderWeight(float currentWeight, float maxWeight)
     {
-        if (m_traderCharacterInfoPanel)
-            m_traderCharacterInfoPanel->SetWeight(currentWeight, maxWeight);
+        if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_traderCharacterInfoPanelId))
+            characterInfoPanel->SetWeight(currentWeight, maxWeight);
     }
 
     void TradeUIView::SetPlayerItems(const std::vector<app_domain::InventoryItemDetails>& items)
     {
-        if (m_playerItemGrid)
-            m_playerItemGrid->SetItems(items);
+        if (auto* itemGridPanel = FindWidgetById<ItemGridPanel>(m_playerItemGridId))
+            itemGridPanel->SetItems(items);
     }
 
     void TradeUIView::SetTraderItems(const std::vector<app_domain::InventoryItemDetails>& items)
     {
-        if (m_traderItemGrid)
-            m_traderItemGrid->SetItems(items);
+        if (auto* itemGridPanel = FindWidgetById<ItemGridPanel>(m_traderItemGridId))
+            itemGridPanel->SetItems(items);
     }
 
     void TradeUIView::ShowItemPanel(const app_domain::Item& item, const sf::Vector2f& position) const
     {
-        if (!m_itemPanel)
-            return;
-
-        m_itemPanel->Show(item, position, sf::Vector2f(60.f, 60.f), m_appContext.GetRenderWindowSize().y);
+        if (auto* itemPanel = FindWidgetById<ItemPanel>(m_itemPanelId))
+            itemPanel->Show(item, position, sf::Vector2f(60.f, 60.f), m_appContext.GetRenderWindowSize().y);
     }
 
     void TradeUIView::HideItemPanel() const
     {
-        if (!m_itemPanel)
-            return;
-
-        m_itemPanel->Hide();
+        if (auto* itemPanel = FindWidgetById<ItemPanel>(m_itemPanelId))
+            itemPanel->Hide();
     }
 
     void TradeUIView::ShowErrorPanel(app_domain::TradeError error) const
     {
-        if (!m_errorPanel)
+        auto* errorPanel = FindWidgetById<ErrorPanel>(m_errorPanelId);
+        if (!errorPanel)
             return;
 
         using app_domain::TradeError;
@@ -421,7 +430,7 @@ namespace app
         switch (error)
         {
         case TradeError::NotEnoughMoney:
-            m_errorPanel->Show(
+            errorPanel->Show(
                 "Insufficient Gold",
                 "A character has insufficient gold to complete this transaction."
             );

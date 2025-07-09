@@ -62,10 +62,10 @@ namespace app
         m_dragTargets.push_back(target);
     }
 
-    void ItemDragSystem::HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow)
+    bool ItemDragSystem::HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow)
     {
         if (!IsActive())
-            return;
+            return false;
 
         UpdateRenderPosition();
 
@@ -74,6 +74,8 @@ namespace app
         {
             EndDrag();
         }
+
+        return true;
     }
 
     void ItemDragSystem::Render(sf::RenderWindow& renderWindow)
