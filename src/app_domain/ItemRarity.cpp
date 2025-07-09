@@ -4,12 +4,11 @@
 
 namespace app_domain
 {
-    ItemRarity ItemRarityHelper::FromString(const std::string& str)
+    ItemRarity ItemRarityHelper::FromString(const std::string& string)
     {
-        auto value = magic_enum::enum_cast<ItemRarity>(str);
-
-        if (value.has_value())
-            return value.value();
+        auto valueOpt = magic_enum::enum_cast<ItemRarity>(string);
+        if (valueOpt.has_value())
+            return valueOpt.value();
 
         return ItemRarity::Common;
     }

@@ -42,7 +42,7 @@ namespace app_domain
     class ItemTypeHelper
     {
     public:
-        static ItemType FromString(const std::string& str);
+        static ItemType FromString(const std::string& string);
         static std::string ToString(ItemType type);
 
         static ItemCategory ToCategory(ItemType type);

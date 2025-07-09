@@ -36,7 +36,7 @@ namespace app_domain
 
         auto fromResult = m_characterService.GetCharacterById(fromCharacterId);
         auto toResult = m_characterService.GetCharacterById(toCharacterId);
-        if (!fromResult || !toResult)
+        if (!fromResult.has_value() || !toResult.has_value())
             return lang::Unexpected(TradeError::CharacterNotFound);
 
         auto& fromCharacter = fromResult.value().get();
@@ -44,7 +44,7 @@ namespace app_domain
 
         auto fromInventoryResult = m_inventoryService.GetInventoryById(fromCharacter.InventoryId);
         auto toInventoryResult = m_inventoryService.GetInventoryById(toCharacter.InventoryId);
-        if (!fromInventoryResult || !toInventoryResult)
+        if (!fromInventoryResult.has_value() || !toInventoryResult.has_value())
             return lang::Unexpected(TradeError::InventoryNotFound);
 
         return TradeContext{
@@ -65,11 +65,11 @@ namespace app_domain
             std::size_t itemIndex, std::uint32_t count) const
     {
         auto contextResult = MakeContext(fromCharacterId, toCharacterId);
-        if (!contextResult)
+        if (!contextResult.has_value())
             return lang::Unexpected(contextResult.error());
 
         auto result = CanTradeItemInternal(contextResult.value(), itemIndex, count);
-        if (!result)
+        if (!result.has_value())
             return lang::Unexpected(result.error());
 
         return {};
@@ -80,7 +80,7 @@ namespace app_domain
             std::size_t itemIndex, std::uint32_t count) const
     {
         auto contextResult = MakeContext(fromCharacterId, toCharacterId);
-        if (!contextResult)
+        if (!contextResult.has_value())
             return lang::Unexpected(contextResult.error());
 
         return TradeItemInternal(contextResult.value(), itemIndex, count);
@@ -91,7 +91,7 @@ namespace app_domain
             std::uint32_t count) const
     {
         const auto& fromInventoryItemResult = m_inventoryService.GetItemDetails(context.FromInventory.Id, itemIndex);
-        if (!fromInventoryItemResult)
+        if (!fromInventoryItemResult.has_value())
             return lang::Unexpected(app_domain::TradeService::ToTradeError(fromInventoryItemResult.error()));
 
         const auto& fromInventoryItem = fromInventoryItemResult.value();
@@ -119,7 +119,7 @@ namespace app_domain
             std::uint32_t count) const
     {
         auto canTradeResult = CanTradeItemInternal(context, itemIndex, count);
-        if (!canTradeResult)
+        if (!canTradeResult.has_value())
             return lang::Unexpected(canTradeResult.error());
 
         const auto& fromInventoryItem = canTradeResult.value();

@@ -29,7 +29,7 @@ namespace app
         TradeUIViewModel::BeginTrade(const std::string& playerCharacterId, const std::string& traderCharacterId)
     {
         auto tradeContextResult = m_tradeService.MakeContext(traderCharacterId, playerCharacterId);
-        if (!tradeContextResult)
+        if (!tradeContextResult.has_value())
             return lang::Unexpected(tradeContextResult.error());
 
         const auto& tradeContext = tradeContextResult.value();
@@ -58,14 +58,14 @@ namespace app
     void TradeUIViewModel::TradeItem(bool isBuying, std::size_t itemIndex)
     {
         auto canTradeResult = CanTradeItem(isBuying, itemIndex, 1u);
-        if (!canTradeResult)
+        if (!canTradeResult.has_value())
         {
             EmitOnTradeError(canTradeResult.error());
             return;
         }
 
         auto itemOpt = isBuying ? GetTraderItem(itemIndex) : GetPlayerItem(itemIndex);
-        if (!itemOpt)
+        if (!itemOpt.has_value())
             return;
 
         ShowTransferPanelOrApply(itemOpt.value(), [this, isBuying, itemIndex](std::uint32_t count)
@@ -82,11 +82,11 @@ namespace app
         std::size_t toItemIndex = static_cast<std::size_t>(signedToItemIndex);
 
         auto canStackResult = CanStackItem(fromItemIndex, toItemIndex, 1u);
-        if (!canStackResult)
+        if (!canStackResult.has_value())
             return;
 
         auto fromItemOpt = GetPlayerItem(fromItemIndex);
-        if (!fromItemOpt)
+        if (!fromItemOpt.has_value())
             return;
 
         ShowTransferPanelOrApply(fromItemOpt.value(), [this, fromItemIndex, toItemIndex](std::uint32_t count)
@@ -129,7 +129,7 @@ namespace app
     uint32_t TradeUIViewModel::GetInventoryCurrentMoney(const std::string& inventoryId) const
     {
         auto inventoryResult = m_inventoryService.GetInventoryById(inventoryId);
-        if (!inventoryResult)
+        if (!inventoryResult.has_value())
             return 0u;
 
         return inventoryResult.value().get().CurrentMoney;
@@ -138,7 +138,7 @@ namespace app
     float TradeUIViewModel::GetInventoryCurrentWeight(const std::string& inventoryId) const
     {
         auto result = m_inventoryService.CalculateCurrentWeight(inventoryId);
-        if (!result)
+        if (!result.has_value())
             return 0.f;
 
         return result.value();
@@ -148,7 +148,7 @@ namespace app
         TradeUIViewModel::GetInventoryItem(const std::string& inventoryId, size_t itemIndex) const
     {
         auto result = m_inventoryService.GetItemDetails(inventoryId, itemIndex);
-        if (!result)
+        if (!result.has_value())
             return std::nullopt;
 
         return result.value();
@@ -163,7 +163,7 @@ namespace app
             { 
                 return m_tradeService.IsItemTradable(item.GetItem()); 
             });
-        if (!result)
+        if (!result.has_value())
             return {};
 
         return result.value().Items;
@@ -191,7 +191,7 @@ namespace app
         auto& toCharacterId = isBuying ? m_playerCharacterId : m_traderCharacterId;
 
         auto result = m_tradeService.CanTradeItem(fromCharacterId, toCharacterId, itemIndex, count);
-        if (!result)
+        if (!result.has_value())
             return lang::Unexpected(result.error());
 
         return {};
@@ -203,7 +203,7 @@ namespace app
         auto& toCharacterId = isBuying ? m_playerCharacterId : m_traderCharacterId;
 
         auto result = m_tradeService.TradeItem(fromCharacterId, toCharacterId, itemIndex, count);
-        if (!result)
+        if (!result.has_value())
         {
             EmitOnTradeError(result.error());
             return;
@@ -216,7 +216,7 @@ namespace app
         TradeUIViewModel::CanStackItem(std::size_t fromItemIndex, std::size_t toItemIndex, std::uint32_t count)
     {
         auto result = m_inventoryService.CanStackItem(m_playerInventoryId, fromItemIndex, toItemIndex, count);
-        if (!result)
+        if (!result.has_value())
             return lang::Unexpected(app_domain::TradeService::ToTradeError(result.error()));
 
         return {};
@@ -225,7 +225,7 @@ namespace app
     void TradeUIViewModel::TryStackItem(std::size_t fromItemIndex, std::size_t toItemIndex, std::uint32_t count)
     {
         auto result = m_inventoryService.StackItem(m_playerInventoryId, fromItemIndex, toItemIndex, count);
-        if (!result)
+        if (!result.has_value())
         {
             EmitOnTradeError(app_domain::TradeService::ToTradeError(result.error()));
             return;

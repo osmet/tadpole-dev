@@ -4,12 +4,11 @@
 
 namespace app_domain
 {
-    ItemType ItemTypeHelper::FromString(const std::string& str)
+    ItemType ItemTypeHelper::FromString(const std::string& string)
     {
-        auto value = magic_enum::enum_cast<ItemType>(str);
-
-        if (value.has_value())
-            return value.value();
+        auto valueOpt = magic_enum::enum_cast<ItemType>(string);
+        if (valueOpt.has_value())
+            return valueOpt.value();
 
         return ItemType::Misc;
     }

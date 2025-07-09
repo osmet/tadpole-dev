@@ -14,7 +14,7 @@ namespace app_domain
     class ItemRarityHelper
     {
     public:
-        static ItemRarity FromString(const std::string& str);
+        static ItemRarity FromString(const std::string& string);
         static std::string ToString(ItemRarity type);
     };
 }

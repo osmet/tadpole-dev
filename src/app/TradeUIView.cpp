@@ -286,8 +286,7 @@ namespace app
             auto itemOpt = isBuying
                 ? m_viewModel.GetTraderItem(itemIndex)
                 : m_viewModel.GetPlayerItem(itemIndex);
-
-            if (!itemOpt)
+            if (!itemOpt.has_value())
                 return;
 
             ShowItemPanel(itemOpt.value().GetItem(), position);
@@ -305,8 +304,7 @@ namespace app
             auto itemOpt = isBuying
                 ? m_viewModel.GetTraderItem(itemIndex)
                 : m_viewModel.GetPlayerItem(itemIndex);
-
-            if (!itemOpt)
+            if (!itemOpt.has_value())
                 return;
 
             const auto& item = itemOpt.value();

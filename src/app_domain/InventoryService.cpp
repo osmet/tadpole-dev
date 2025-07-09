@@ -66,7 +66,7 @@ namespace app_domain
             std::function<bool(const InventoryItemDetails&)> customFilter) const
     {
         auto inventoryResult = GetInventoryById(inventoryId);
-        if (!inventoryResult)
+        if (!inventoryResult.has_value())
             return lang::Unexpected(inventoryResult.error());
 
         const auto& inventory = inventoryResult.value().get();
@@ -78,7 +78,7 @@ namespace app_domain
         for (size_t itemIndex = 0; itemIndex < inventory.Items.size(); ++itemIndex)
         {
             auto itemDetailsResult = GetItemDetails(inventoryId, itemIndex);
-            if (!itemDetailsResult)
+            if (!itemDetailsResult.has_value())
             {
                 result.FailedIndices.push_back(itemIndex);
                 continue;
@@ -204,7 +204,7 @@ namespace app_domain
         for (size_t itemIndex = 0; itemIndex < inventory.Items.size(); ++itemIndex)
         {
             auto itemDetailsResult = GetItemDetails(inventoryId, itemIndex);
-            if (!itemDetailsResult)
+            if (!itemDetailsResult.has_value())
                 continue;
 
             auto& itemDetails = itemDetailsResult.value();
@@ -220,7 +220,7 @@ namespace app_domain
             std::size_t toItemIndex, std::uint32_t count)
     {
         auto result = CanStackItemInternal(inventoryId, fromItemIndex, toItemIndex, count);
-        if (!result)
+        if (!result.has_value())
             return lang::Unexpected(result.error());
 
         return {};
@@ -231,7 +231,7 @@ namespace app_domain
             std::size_t toItemIndex, std::uint32_t count)
     {
         auto canStackResult = CanStackItemInternal(inventoryId, fromItemIndex, toItemIndex, count);
-        if (!canStackResult)
+        if (!canStackResult.has_value())
             return lang::Unexpected(canStackResult.error());
 
         auto& canStackValue = canStackResult.value();

@@ -37,7 +37,7 @@ namespace app
         m_tradeScope.Initialize();
 
         auto result = m_tradeScope.BeginTrade("Player", "Wizard");
-        if (result)
+        if (result.has_value())
             m_activeScope = std::ref(m_tradeScope);
         else
             m_activeScope.reset();
