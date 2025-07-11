@@ -60,4 +60,28 @@ namespace app
     {
         SetActive(false);
     }
+
+    void TooltipPanelCommands::SetShow(Show command)
+    {
+        m_show = std::move(command);
+    }
+
+    void TooltipPanelCommands::SetHide(Hide command)
+    {
+        m_hide = std::move(command);
+    }
+
+    void TooltipPanelCommands::InvokeShow(const std::string& text, const sf::Vector2f& position, const sf::Vector2f& offset) const
+    {
+        if (m_show)
+            m_show(text, position, offset);
+    }
+
+    void TooltipPanelCommands::InvokeHide() const
+    {
+        if (m_hide)
+            m_hide();
+    }
+
+    ITooltipPanelClient::~ITooltipPanelClient() = default;
 }

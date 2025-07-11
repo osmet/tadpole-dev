@@ -10,6 +10,7 @@
 #include "ItemGridPanel.h"
 #include "ItemTransferPanel.h"
 #include "ItemDragSystem.h"
+#include "TooltipPanel.h"
 
 namespace core 
 { 
@@ -24,7 +25,6 @@ namespace app_domain
 namespace app
 {
     class AppContext; 
-    class TooltipPanel;
 
     class TradeUIView final : public core::UIView
     {
@@ -79,7 +79,7 @@ namespace app
             core::WidgetId m_weightTextLabelId;
         };
 
-        class ItemFilterPanel final : public core::StackPanel
+        class ItemFilterPanel final : public core::StackPanel, public ITooltipPanelClient
         {
         public:
             struct ItemFilterDescriptor
@@ -97,19 +97,19 @@ namespace app
             ItemFilterPanel(core::AssetManager& assetManager,
                 const std::vector<ItemFilterDescriptor>& itemFilterDescriptors);
 
-            void SetTooltipPanel(TooltipPanel* tooltipPanel);
+            TooltipPanelCommands& GetTooltipPanelCommands() override;
 
             void SetOnFilterButtonClick(OnFilterButtonClick callback);
 
         private:
-            TooltipPanel* m_tooltipPanel = nullptr;
+            std::vector<core::WidgetId> m_filterButtonIds;
 
-            std::vector<core::Button*> m_filterButtons;
+            TooltipPanelCommands m_tooltipPanelCommands;
 
             ItemFilterPanel::OnFilterButtonClick m_onFilterButtonClick;
         };
 
-        class ItemSortPanel final : public core::CanvasPanel
+        class ItemSortPanel final : public core::CanvasPanel, public ITooltipPanelClient
         {
         public:
             using ItemSortDescriptor = std::pair<app_domain::ItemSortMode, std::string>;
@@ -118,17 +118,17 @@ namespace app
             ItemSortPanel(core::AssetManager& assetManager,
                 const std::vector<ItemSortDescriptor>& itemSortDescriptors);
 
-            void SetTooltipPanel(TooltipPanel* tooltipPanel);
+            TooltipPanelCommands& GetTooltipPanelCommands() override;
 
             void SetOnSortButtonClick(OnSortButtonClick callback);
 
         private:
             void ToggleItemSortButtonsPanel();
 
-            TooltipPanel* m_tooltipPanel = nullptr;
-
             core::WidgetId m_sortByButtonTextLabelId;
             core::WidgetId m_itemSortButtonsPanelId;
+
+            TooltipPanelCommands m_tooltipPanelCommands;
 
             ItemSortPanel::OnSortButtonClick m_onSortButtonClick;
         };

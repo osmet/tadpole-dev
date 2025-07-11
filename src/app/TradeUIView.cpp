@@ -113,11 +113,28 @@ namespace app
         {
             auto* tooltipPanel = CreateWidget<TooltipPanel>(assetManager);
 
-            if (auto* itemFilterPanel = FindWidgetById<ItemFilterPanel>(m_itemFilterPanelId))
-                itemFilterPanel->SetTooltipPanel(tooltipPanel);
+            auto setTooltipCommands = [this, tooltipPanelId = tooltipPanel->GetId()](ITooltipPanelClient* tooltipPanelClient)
+            {
+                if (!tooltipPanelClient)
+                    return;
 
-            if (auto* itemSortPanel = FindWidgetById<ItemSortPanel>(m_itemSortPanelId))
-                itemSortPanel->SetTooltipPanel(tooltipPanel);
+                tooltipPanelClient->GetTooltipPanelCommands().SetShow(
+                    [this, tooltipPanelId](const std::string& text, const sf::Vector2f& position, const sf::Vector2f& offset)
+                {
+                    if (auto* tooltipPanel = FindWidgetById<TooltipPanel>(tooltipPanelId))
+                        tooltipPanel->Show(text, position, offset);
+                });
+
+                tooltipPanelClient->GetTooltipPanelCommands().SetHide(
+                    [this, tooltipPanelId]()
+                {
+                    if (auto* tooltipPanel = FindWidgetById<TooltipPanel>(tooltipPanelId))
+                        tooltipPanel->Hide();
+                });
+            };
+
+            setTooltipCommands(FindWidgetById<ItemFilterPanel>(m_itemFilterPanelId));
+            setTooltipCommands(FindWidgetById<ItemSortPanel>(m_itemSortPanelId));
         }
 
         {
@@ -218,7 +235,7 @@ namespace app
                 itemGridPanel->SetItems(value);
         });
 
-        m_viewModel.SetOnShowTransferPanel([this](const app_domain::InventoryItemDetails& item, TradeUIViewModel::OnTransferPanelConfirm onConfirm)
+        m_viewModel.SetShowTransferPanelCommand([this](const app_domain::InventoryItemDetails& item, TradeUIViewModel::OnTransferPanelConfirm onConfirm)
         {
             if (auto* itemTransferPanel = FindWidgetById<ItemTransferPanel>(m_itemTransferPanelId))
             {
@@ -510,30 +527,28 @@ namespace app
             filterButton->SetHoveredColor(filterButtonHoveredColor);
             filterButton->SetPressedColor(filterButtonPressedColor);
             filterButton->SetDisabledColor(filterButtonDisabledColor);
-            filterButton->SetOnClick([this, filterButton, itemCategory]()
+            filterButton->SetOnClick([this, clickFilterButtonId = filterButton->GetId(), itemCategory]()
             {
-                for (auto* button : m_filterButtons)
+                for (const auto& filterButtonId : m_filterButtonIds)
                 {
-                    if (button)
-                        button->SetInteractable(true);
+                    if (auto* filterButton = FindWidgetById<core::Button>(filterButtonId))
+                        filterButton->SetInteractable(filterButtonId != clickFilterButtonId);
                 }
-
-                if (filterButton)
-                    filterButton->SetInteractable(false);
 
                 if (m_onFilterButtonClick)
                     m_onFilterButtonClick(itemCategory);
 
             });
-            filterButton->SetOnHoverIn([this, filterButton, name](const sf::Vector2f& mousePosition)
+            filterButton->SetOnHoverIn([this, filterButtonId = filterButton->GetId(), name](const sf::Vector2f& mousePosition)
             {
-                if (m_tooltipPanel && filterButton)
-                    m_tooltipPanel->Show(name, filterButton->GetPosition(), sf::Vector2f(6.f, -12.f));
+                if (auto* filterButton = FindWidgetById<core::Button>(filterButtonId))
+                {
+                    m_tooltipPanelCommands.InvokeShow(name, filterButton->GetPosition(), sf::Vector2f(6.f, -12.f));
+                }
             });
             filterButton->SetOnHoverOut([this]
             {
-                if (m_tooltipPanel)
-                    m_tooltipPanel->Hide();
+                m_tooltipPanelCommands.InvokeHide();
             });
             {
                 auto* itemCategoryImage = filterButton->CreateWidget<core::Image>();
@@ -545,18 +560,23 @@ namespace app
                 frameImage->SetTexture(filterButtonFrameTexture);
                 frameImage->SetColor(filterButtonFrameColor);
             }
-            m_filterButtons.push_back(filterButton);
+            m_filterButtonIds.push_back(filterButton->GetId());
         }
 
-        if (m_filterButtons[0])
-            m_filterButtons[0]->SetInteractable(false);
+        if (!m_filterButtonIds.empty())
+        {
+            if (auto* filterButton = FindWidgetById<core::Button>(m_filterButtonIds[0]))
+            {
+                filterButton->SetInteractable(false);
+            }
+        }
     }
 
-    void TradeUIView::ItemFilterPanel::SetTooltipPanel(TooltipPanel* tooltipPanel)
+    TooltipPanelCommands& TradeUIView::ItemFilterPanel::GetTooltipPanelCommands()
     {
-        m_tooltipPanel = tooltipPanel;
+        return m_tooltipPanelCommands;
     }
-
+    
     void TradeUIView::ItemFilterPanel::SetOnFilterButtonClick(OnFilterButtonClick callback)
     {
         m_onFilterButtonClick = std::move(callback);
@@ -587,15 +607,16 @@ namespace app
         sortByButton->SetSize(panelWidth, 32.f);
         sortByButton->SetColor(sf::Color::Transparent);
         sortByButton->SetOnClick([this] { ToggleItemSortButtonsPanel(); });
-        sortByButton->SetOnHoverIn([this, sortByButton](const sf::Vector2f& mousePosition)
+        sortByButton->SetOnHoverIn([this, sortByButtonId = sortByButton->GetId()](const sf::Vector2f& mousePosition)
         {
-            if (m_tooltipPanel && sortByButton)
-                m_tooltipPanel->Show("Sort By", sf::Vector2f(mousePosition.x, sortByButton->GetPosition().y), sf::Vector2f(6.f, 24.f + sortByButton->GetSize().y));
+            if (auto* sortByButton = FindWidgetById<core::Button>(sortByButtonId))
+            {
+                m_tooltipPanelCommands.InvokeShow("Sort By", sf::Vector2f(mousePosition.x, sortByButton->GetPosition().y), sf::Vector2f(6.f, 24.f + sortByButton->GetSize().y));
+            }
         });
         sortByButton->SetOnHoverOut([this]
         {
-            if (m_tooltipPanel)
-                m_tooltipPanel->Hide();
+            m_tooltipPanelCommands.InvokeHide();
         });
         {
             auto* iconImage = sortByButton->CreateWidget<core::Image>();
@@ -690,9 +711,9 @@ namespace app
         m_itemSortButtonsPanelId = itemSortPanelImage->GetId();
     }
 
-    void TradeUIView::ItemSortPanel::SetTooltipPanel(TooltipPanel* tooltipPanel)
+    TooltipPanelCommands& TradeUIView::ItemSortPanel::GetTooltipPanelCommands()
     {
-        m_tooltipPanel = tooltipPanel;
+        return m_tooltipPanelCommands;
     }
 
     void TradeUIView::ItemSortPanel::SetOnSortButtonClick(OnSortButtonClick callback)

@@ -60,7 +60,7 @@ namespace app
         auto canTradeResult = CanTradeItem(isBuying, itemIndex, 1u);
         if (!canTradeResult.has_value())
         {
-            EmitOnTradeError(canTradeResult.error());
+            InvokeOnTradeError(canTradeResult.error());
             return;
         }
 
@@ -105,9 +105,9 @@ namespace app
         return GetInventoryItem(m_traderInventoryId, itemIndex);
     }
 
-    void TradeUIViewModel::SetOnShowTransferPanel(OnShowTransferPanel callback)
+    void TradeUIViewModel::SetShowTransferPanelCommand(ShowTransferPanelCommand command)
     {
-        m_onShowTransferPanel = std::move(callback);
+        m_showTransferPanelCommand = std::move(command);
     }
 
     void TradeUIViewModel::SetOnTradeError(OnTradeError callback)
@@ -172,13 +172,13 @@ namespace app
     void TradeUIViewModel::ShowTransferPanelOrApply(const app_domain::InventoryItemDetails& item,
         std::function<void(std::uint32_t)> onConfirm)
     {
-        if (item.GetCount() > 1u && m_onShowTransferPanel)
-            m_onShowTransferPanel(item, std::move(onConfirm));
+        if (item.GetCount() > 1u && m_showTransferPanelCommand)
+            m_showTransferPanelCommand(item, std::move(onConfirm));
         else
             onConfirm(1u);
     }
 
-    void TradeUIViewModel::EmitOnTradeError(const app_domain::TradeError& error) const
+    void TradeUIViewModel::InvokeOnTradeError(const app_domain::TradeError& error) const
     {
         if (m_onTradeError)
             m_onTradeError(error);
@@ -205,7 +205,7 @@ namespace app
         auto result = m_tradeService.TradeItem(fromCharacterId, toCharacterId, itemIndex, count);
         if (!result.has_value())
         {
-            EmitOnTradeError(result.error());
+            InvokeOnTradeError(result.error());
             return;
         }
 
@@ -227,7 +227,7 @@ namespace app
         auto result = m_inventoryService.StackItem(m_playerInventoryId, fromItemIndex, toItemIndex, count);
         if (!result.has_value())
         {
-            EmitOnTradeError(app_domain::TradeService::ToTradeError(result.error()));
+            InvokeOnTradeError(app_domain::TradeService::ToTradeError(result.error()));
             return;
         }
 

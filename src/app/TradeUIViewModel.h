@@ -35,7 +35,7 @@ namespace app
 
         using OnTradeError = std::function<void(app_domain::TradeError)>;
         using OnTransferPanelConfirm = std::function<void(std::uint32_t count)>;
-        using OnShowTransferPanel = std::function<void(const app_domain::InventoryItemDetails& item, OnTransferPanelConfirm onConfirm)>;
+        using ShowTransferPanelCommand = std::function<void(const app_domain::InventoryItemDetails& item, OnTransferPanelConfirm onConfirm)>;
 
         TradeUIViewModel(AppContext& appContext);
 
@@ -50,7 +50,7 @@ namespace app
         lang::Optional<app_domain::InventoryItemDetails> GetPlayerItem(size_t itemIndex) const;
         lang::Optional<app_domain::InventoryItemDetails> GetTraderItem(size_t itemIndex) const;
         
-        void SetOnShowTransferPanel(OnShowTransferPanel callback);
+        void SetShowTransferPanelCommand(ShowTransferPanelCommand command);
         void SetOnTradeError(OnTradeError callback);
 
     private:
@@ -65,7 +65,7 @@ namespace app
 
         void ShowTransferPanelOrApply(const app_domain::InventoryItemDetails& item,
             std::function<void(std::uint32_t)> onConfirm);
-        void EmitOnTradeError(const app_domain::TradeError& error) const;
+        void InvokeOnTradeError(const app_domain::TradeError& error) const;
 
         lang::Expected<void, app_domain::TradeError>
             CanTradeItem(bool isBuying, std::size_t itemIndex, std::uint32_t count = app_domain::TradeService::TradeAll) const;
@@ -87,7 +87,7 @@ namespace app
         std::string m_playerInventoryId;
         std::string m_traderInventoryId;
 
-        OnShowTransferPanel m_onShowTransferPanel;
+        ShowTransferPanelCommand m_showTransferPanelCommand;
         OnTradeError m_onTradeError;
     };
 }
