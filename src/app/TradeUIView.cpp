@@ -26,7 +26,6 @@ namespace app
     void TradeUIView::Initialize()
     {
         auto& assetManager = m_appContext.GetAssetManager();
-
         auto renderWindowSize = m_appContext.GetRenderWindowSize();
 
         auto& regularFont = assetManager.GetFont("Mignon_Regular");
@@ -36,124 +35,99 @@ namespace app
         SetSize(renderWindowSize);
 
         {
-            {
-                auto* tradeTextLabel = CreateWidget<core::TextLabel>();
-                tradeTextLabel->SetAnchor(.5f, 0.f);
-                tradeTextLabel->SetPivot(.5f, 0.f);
-                tradeTextLabel->SetLocalPosition(0.f, 24.f);
-                tradeTextLabel->SetFont(regularFont);
-                tradeTextLabel->SetFontSize(28u);
-                tradeTextLabel->SetText("Trade");
-                tradeTextLabel->SetColor(sf::Color(191u, 163u, 143u, 255u));
-            }
+            auto* tradeTextLabel = CreateWidget<core::TextLabel>();
+            tradeTextLabel->SetAnchor(.5f, 0.f);
+            tradeTextLabel->SetPivot(.5f, 0.f);
+            tradeTextLabel->SetLocalPosition(0.f, 24.f);
+            tradeTextLabel->SetFont(regularFont);
+            tradeTextLabel->SetFontSize(28u);
+            tradeTextLabel->SetText("Trade");
+            tradeTextLabel->SetColor(sf::Color(191u, 163u, 143u, 255u));
+        }
 
-            {
-                std::vector<ItemFilterPanel::ItemFilterDescriptor> itemFilterDescriptors = {
-                    { app_domain::ItemCategory::All, "All", "UI_Icon_Filter_All" },
-                    { app_domain::ItemCategory::Equipment, "Equipment", "UI_Icon_Filter_Equipment" },
-                    { app_domain::ItemCategory::BooksAndKeys, "Books and Keys", "UI_Icon_Filter_BooksAndKeys" },
-                    { app_domain::ItemCategory::Consumables, "Consumables", "UI_Icon_Filter_Consumables" },
-                    { app_domain::ItemCategory::ScrollsAndTools, "Scrolls and Tools", "UI_Icon_Filter_ScrollsAndTools" },
-                    { app_domain::ItemCategory::Misc, "Miscellaneous", "UI_Icon_Filter_Misc" },
-                };
+        {
+            std::vector<ItemFilterPanel::ItemFilterDescriptor> itemFilterDescriptors = {
+                { app_domain::ItemCategory::All, "All", "UI_Icon_Filter_All" },
+                { app_domain::ItemCategory::Equipment, "Equipment", "UI_Icon_Filter_Equipment" },
+                { app_domain::ItemCategory::BooksAndKeys, "Books and Keys", "UI_Icon_Filter_BooksAndKeys" },
+                { app_domain::ItemCategory::Consumables, "Consumables", "UI_Icon_Filter_Consumables" },
+                { app_domain::ItemCategory::ScrollsAndTools, "Scrolls and Tools", "UI_Icon_Filter_ScrollsAndTools" },
+                { app_domain::ItemCategory::Misc, "Miscellaneous", "UI_Icon_Filter_Misc" },
+            };
 
-                auto* itemFilterPanel = CreateWidget<ItemFilterPanel>(assetManager, itemFilterDescriptors);
-                itemFilterPanel->SetAnchor(.5f, 0.f);
-                itemFilterPanel->SetPivot(.5f, 0.f);
-                itemFilterPanel->SetLocalPosition(0.f, 135.f);
-                m_itemFilterPanelId = itemFilterPanel->GetId();
-            }
+            auto* itemFilterPanel = CreateWidget<ItemFilterPanel>(assetManager, itemFilterDescriptors);
+            itemFilterPanel->SetAnchor(.5f, 0.f);
+            itemFilterPanel->SetPivot(.5f, 0.f);
+            itemFilterPanel->SetLocalPosition(0.f, 135.f);
+            m_itemFilterPanelId = itemFilterPanel->GetId();
+        }
 
-            {
-                auto* playerCharacterInfoPanel = CreateWidget<CharacterInfoPanel>(assetManager, false);
-                m_playerCharacterInfoPanelId = playerCharacterInfoPanel->GetId();
+        {
+            auto* playerCharacterInfoPanel = CreateWidget<CharacterInfoPanel>(assetManager, false);
+            m_playerCharacterInfoPanelId = playerCharacterInfoPanel->GetId();
 
-                auto* traderCharacterInfoPanel = CreateWidget<CharacterInfoPanel>(assetManager, true);
-                m_traderCharacterInfoPanelId = traderCharacterInfoPanel->GetId();
-            }
+            auto* traderCharacterInfoPanel = CreateWidget<CharacterInfoPanel>(assetManager, true);
+            m_traderCharacterInfoPanelId = traderCharacterInfoPanel->GetId();
+        }
 
-            {
-                size_t columnCount = 7;
-                size_t rowCount = 12;
+        {
+            size_t columnCount = 7;
+            size_t rowCount = 12;
 
-                float cellSize = 54.f;
-                float spacing = 4.f;
+            float cellSize = 54.f;
+            float spacing = 4.f;
 
-                auto* playerItemGrid = CreateWidget<ItemGridPanel>(assetManager, columnCount, rowCount, cellSize, spacing);
-                playerItemGrid->SetAnchor(0.5f, 0.f);
-                playerItemGrid->SetPivot(1.f, 0.f);
-                playerItemGrid->SetLocalPosition(-40.f, 215.f);
-                m_playerItemGridId = playerItemGrid->GetId();
+            auto* playerItemGrid = CreateWidget<ItemGridPanel>(assetManager, columnCount, rowCount, cellSize, spacing);
+            playerItemGrid->SetAnchor(0.5f, 0.f);
+            playerItemGrid->SetPivot(1.f, 0.f);
+            playerItemGrid->SetLocalPosition(-40.f, 215.f);
+            m_playerItemGridId = playerItemGrid->GetId();
 
-                auto* traderItemGrid = CreateWidget<ItemGridPanel>(assetManager, columnCount, rowCount, cellSize, spacing);
-                traderItemGrid->SetAnchor(0.5f, 0.f);
-                traderItemGrid->SetPivot(0.f, 0.f);
-                traderItemGrid->SetLocalPosition(40.f, 215.f);
-                m_traderItemGridId = traderItemGrid->GetId();
-            }
+            auto* traderItemGrid = CreateWidget<ItemGridPanel>(assetManager, columnCount, rowCount, cellSize, spacing);
+            traderItemGrid->SetAnchor(0.5f, 0.f);
+            traderItemGrid->SetPivot(0.f, 0.f);
+            traderItemGrid->SetLocalPosition(40.f, 215.f);
+            m_traderItemGridId = traderItemGrid->GetId();
+        }
 
-            {
-                std::vector<ItemSortPanel::ItemSortDescriptor> itemSortDescriptors = {
-                  { app_domain::ItemSortMode::Latest, "Latest" },
-                  { app_domain::ItemSortMode::Type, "Type" },
-                  { app_domain::ItemSortMode::Value, "Value" },
-                  { app_domain::ItemSortMode::Weight, "Weight" },
-                };
+        {
+            std::vector<ItemSortPanel::ItemSortDescriptor> itemSortDescriptors = {
+                { app_domain::ItemSortMode::Latest, "Latest" },
+                { app_domain::ItemSortMode::Type, "Type" },
+                { app_domain::ItemSortMode::Value, "Value" },
+                { app_domain::ItemSortMode::Weight, "Weight" },
+            };
 
-                auto* itemSortPanel = CreateWidget<ItemSortPanel>(assetManager, itemSortDescriptors);
-                itemSortPanel->SetAnchor(.5f, 1.f);
-                itemSortPanel->SetPivot(0.f, 1.f);
-                itemSortPanel->SetLocalPosition(-492.f, -95.f);
-                m_itemSortPanelId = itemSortPanel->GetId();
-            }
+            auto* itemSortPanel = CreateWidget<ItemSortPanel>(assetManager, itemSortDescriptors);
+            itemSortPanel->SetAnchor(.5f, 1.f);
+            itemSortPanel->SetPivot(0.f, 1.f);
+            itemSortPanel->SetLocalPosition(-492.f, -95.f);
+            m_itemSortPanelId = itemSortPanel->GetId();
+        }
 
-            {
-                auto* tradeButton = CreateWidget<core::Button>();
-                tradeButton->SetAnchor(0.5f, 1.f);
-                tradeButton->SetPivot(0.5f, 1.f);
-                tradeButton->SetLocalPosition(0.f, -35.f);
-                tradeButton->SetSize(250.f, 40.f);
-                tradeButton->SetColor(sf::Color(48, 58, 64));
-                tradeButton->SetOnClick([onTradeButtonClick = m_onTradeButtonClick]() { if (onTradeButtonClick) onTradeButtonClick(); });
-                {
-                    auto* textLabel = tradeButton->CreateWidget<core::TextLabel>();
-                    textLabel->SetLocalPosition(0.f, 0.f);
-                    textLabel->SetFont(regularFont);
-                    textLabel->SetFontSize(18);
-                    textLabel->SetText("TRADE");
-                    textLabel->SetColor(sf::Color::White);
-                }
-                tradeButton->SetActive(false);
-            }
+        {
+            auto* itemPanel = CreateWidget<ItemPanel>(assetManager);
+            m_itemPanelId = itemPanel->GetId();
+        }
 
-            {
-                auto* itemPanel = CreateWidget<ItemPanel>(assetManager);
-                m_itemPanelId = itemPanel->GetId();
-            }
+        {
+            auto* tooltipPanel = CreateWidget<TooltipPanel>(assetManager);
 
-            {
-                auto* tooltipPanel = CreateWidget<TooltipPanel>(assetManager);
+            if (auto* itemFilterPanel = FindWidgetById<ItemFilterPanel>(m_itemFilterPanelId))
+                itemFilterPanel->SetTooltipPanel(tooltipPanel);
 
-                {
-                    auto* tooltipPanel = CreateWidget<TooltipPanel>(assetManager);
+            if (auto* itemSortPanel = FindWidgetById<ItemSortPanel>(m_itemSortPanelId))
+                itemSortPanel->SetTooltipPanel(tooltipPanel);
+        }
 
-                    if (auto* itemFilterPanel = FindWidgetById<ItemFilterPanel>(m_itemFilterPanelId))
-                        itemFilterPanel->SetTooltipPanel(tooltipPanel);
+        {
+            auto* itemTransferPanel = CreateWidget<ItemTransferPanel>(assetManager, renderWindowSize);
+            m_itemTransferPanelId = itemTransferPanel->GetId();
+        }
 
-                    if (auto* itemSortPanel = FindWidgetById<ItemSortPanel>(m_itemSortPanelId))
-                        itemSortPanel->SetTooltipPanel(tooltipPanel);
-                }
-            }
-
-            {
-                auto* itemTransferPanel = CreateWidget<ItemTransferPanel>(assetManager, renderWindowSize);
-                m_itemTransferPanelId = itemTransferPanel->GetId();
-            }
-
-            {
-                auto* errorPanel = CreateWidget<ErrorPanel>(assetManager, renderWindowSize);
-                m_errorPanelId = errorPanel->GetId();
-            }
+        {
+            auto* errorPanel = CreateWidget<ErrorPanel>(assetManager, renderWindowSize);
+            m_errorPanelId = errorPanel->GetId();
         }
 
         BindViewModel();
@@ -179,7 +153,6 @@ namespace app
         return UIView::HandleEvent(event, renderWindow);
     }
 
-
     void TradeUIView::Render(sf::RenderWindow& renderWindow)
     {
         UIView::Render(renderWindow);
@@ -193,47 +166,56 @@ namespace app
 
         viewModelContext.PlayerCharacterName.Subscribe([this](const auto& value)
         {
-            SetPlayerName(value);
+            if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_playerCharacterInfoPanelId))
+                characterInfoPanel->SetCharacterName(value);
         });
 
         viewModelContext.TraderCharacterName.Subscribe([this](const auto& value)
         {
-            SetTraderName(value);
+            if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_traderCharacterInfoPanelId))
+                characterInfoPanel->SetCharacterName(value);
         });
 
         viewModelContext.PlayerPortraitTextureId.Subscribe([this](const auto& value)
         {
-            SetPlayerPortraitTexture(value);
+            if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_playerCharacterInfoPanelId))
+                characterInfoPanel->SetPortraitTexture(value);
         });
 
         viewModelContext.TraderPortraitTextureId.Subscribe([this](const auto& value)
         {
-            SetTraderPortraitTexture(value);
+            if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_traderCharacterInfoPanelId))
+                characterInfoPanel->SetPortraitTexture(value);
         });
 
         viewModelContext.PlayerCurrentMoney.Subscribe([this](const auto& value)
         {
-            SetPlayerMoney(value);
+            if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_playerCharacterInfoPanelId))
+                characterInfoPanel->SetMoney(value);
         });
 
         viewModelContext.TraderCurrentMoney.Subscribe([this](const auto& value)
         {
-            SetTraderMoney(value);
+            if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_traderCharacterInfoPanelId))
+                characterInfoPanel->SetMoney(value);
         });
 
         viewModelContext.PlayerCurrentWeight.Subscribe([this](const auto& value)
         {
-            SetPlayerWeight(value, m_viewModel.GetContext().PlayerMaxWeight.GetValue());
+            if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_playerCharacterInfoPanelId))
+                characterInfoPanel->SetWeight(value, m_viewModel.GetContext().PlayerMaxWeight.GetValue());
         });
 
         viewModelContext.PlayerItems.Subscribe([this](const auto& value)
         {
-            SetPlayerItems(value);
+            if (auto* itemGridPanel = FindWidgetById<ItemGridPanel>(m_playerItemGridId))
+                itemGridPanel->SetItems(value);
         });
 
         viewModelContext.TraderItems.Subscribe([this](const auto& value)
         {
-            SetTraderItems(value);
+            if (auto* itemGridPanel = FindWidgetById<ItemGridPanel>(m_traderItemGridId))
+                itemGridPanel->SetItems(value);
         });
 
         m_viewModel.SetOnShowTransferPanel([this](const app_domain::InventoryItemDetails& item, TradeUIViewModel::OnTransferPanelConfirm onConfirm)
@@ -342,71 +324,6 @@ namespace app
         });
     }
 
-    void TradeUIView::SetOnTradeButtonClick(std::function<void()> callback)
-    {
-        m_onTradeButtonClick = std::move(callback);
-    }
-
-    void TradeUIView::SetPlayerPortraitTexture(const std::string& textureId)
-    {
-        if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_playerCharacterInfoPanelId))
-            characterInfoPanel->SetPortraitTexture(textureId);
-    }
-
-    void TradeUIView::SetPlayerName(const std::string& name)
-    {
-        if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_playerCharacterInfoPanelId))
-            characterInfoPanel->SetCharacterName(name);
-    }
-
-    void TradeUIView::SetPlayerMoney(uint32_t money)
-    {
-        if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_playerCharacterInfoPanelId))
-            characterInfoPanel->SetMoney(money);
-    }
-
-    void TradeUIView::SetPlayerWeight(float currentWeight, float maxWeight)
-    {
-        if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_playerCharacterInfoPanelId))
-            characterInfoPanel->SetWeight(currentWeight, maxWeight);
-    }
-
-    void TradeUIView::SetTraderPortraitTexture(const std::string& textureId)
-    {
-        if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_traderCharacterInfoPanelId))
-            characterInfoPanel->SetPortraitTexture(textureId);
-    }
-
-    void TradeUIView::SetTraderName(const std::string& name)
-    {
-        if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_traderCharacterInfoPanelId))
-            characterInfoPanel->SetCharacterName(name);
-    }
-
-    void TradeUIView::SetTraderMoney(uint32_t money)
-    {
-        if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_traderCharacterInfoPanelId))
-            characterInfoPanel->SetMoney(money);
-    }
-
-    void TradeUIView::SetTraderWeight(float currentWeight, float maxWeight)
-    {
-        if (auto* characterInfoPanel = FindWidgetById<CharacterInfoPanel>(m_traderCharacterInfoPanelId))
-            characterInfoPanel->SetWeight(currentWeight, maxWeight);
-    }
-
-    void TradeUIView::SetPlayerItems(const std::vector<app_domain::InventoryItemDetails>& items)
-    {
-        if (auto* itemGridPanel = FindWidgetById<ItemGridPanel>(m_playerItemGridId))
-            itemGridPanel->SetItems(items);
-    }
-
-    void TradeUIView::SetTraderItems(const std::vector<app_domain::InventoryItemDetails>& items)
-    {
-        if (auto* itemGridPanel = FindWidgetById<ItemGridPanel>(m_traderItemGridId))
-            itemGridPanel->SetItems(items);
-    }
-
     void TradeUIView::ShowItemPanel(const app_domain::Item& item, const sf::Vector2f& position) const
     {
         if (auto* itemPanel = FindWidgetById<ItemPanel>(m_itemPanelId))
@@ -425,11 +342,9 @@ namespace app
         if (!errorPanel)
             return;
 
-        using app_domain::TradeError;
-
         switch (error)
         {
-        case TradeError::NotEnoughMoney:
+        case app_domain::TradeError::NotEnoughMoney:
             errorPanel->Show(
                 "Insufficient Gold",
                 "A character has insufficient gold to complete this transaction."
@@ -666,8 +581,6 @@ namespace app
 
         sf::Color frameColor(sf::Color(191u, 163u, 143u, 128u));
 
-        core::TextLabel* sortByButtonTextLabel = nullptr;
-
         auto* sortByButton = CreateWidget<core::Button>();
         sortByButton->SetAnchor(.5f, 1.f);
         sortByButton->SetPivot(0.f, 1.f);
@@ -699,7 +612,7 @@ namespace app
             textLabel->SetFont(regularFont);
             textLabel->SetFontSize(18u);
             textLabel->SetText(itemSortDescriptors[0].second);
-            sortByButtonTextLabel = textLabel;
+            m_sortByButtonTextLabelId = textLabel->GetId();
 
             //auto& frameTexture = assetManager.GetTexture("UI_Panel_SortByButton_Frame");
 
@@ -753,9 +666,9 @@ namespace app
                 sortButton->SetPivot(0.f, 0.f);
                 sortButton->SetSize(panelWidth, 35.f);
                 sortButton->SetColor(sf::Color::Transparent);
-                sortButton->SetOnClick([this, sortMode, sortModeName, sortByButtonTextLabel]()
+                sortButton->SetOnClick([this, sortMode, sortModeName]()
                 {
-                    if (sortByButtonTextLabel)
+                    if (auto* sortByButtonTextLabel = FindWidgetById<core::TextLabel>(m_sortByButtonTextLabelId))
                         sortByButtonTextLabel->SetText(sortModeName);
 
                     ToggleItemSortButtonsPanel();

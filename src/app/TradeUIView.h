@@ -26,7 +26,7 @@ namespace app
     class AppContext; 
     class TooltipPanel;
 
-    class TradeUIView : public core::UIView
+    class TradeUIView final : public core::UIView
     {
     public:
         TradeUIView(AppContext& appContext, TradeUIViewModel& viewModel);
@@ -38,21 +38,6 @@ namespace app
     private:
         void BindViewModel();
         void BindItemGridPanel(ItemGridPanel* gridPanel, bool isBuying);
-
-        void SetOnTradeButtonClick(std::function<void()> callback);
-
-        void SetPlayerPortraitTexture(const std::string& textureId);
-        void SetPlayerName(const std::string& name);
-        void SetPlayerMoney(uint32_t money);
-        void SetPlayerWeight(float currentWeight, float maxWeight);
-
-        void SetTraderPortraitTexture(const std::string& textureId);
-        void SetTraderName(const std::string& name);
-        void SetTraderMoney(uint32_t money);
-        void SetTraderWeight(float currentWeight, float maxWeight);
-
-        void SetPlayerItems(const std::vector<app_domain::InventoryItemDetails>& items);
-        void SetTraderItems(const std::vector<app_domain::InventoryItemDetails>& items);
 
         void ShowItemPanel(const app_domain::Item& item, const sf::Vector2f& position) const;
         void HideItemPanel() const;
@@ -73,8 +58,6 @@ namespace app
         core::WidgetId m_itemPanelId;
         core::WidgetId m_itemTransferPanelId;
         core::WidgetId m_errorPanelId;
-
-        std::function<void()> m_onTradeButtonClick;
 
     private:
         class CharacterInfoPanel final : public core::CanvasPanel
@@ -144,6 +127,7 @@ namespace app
 
             TooltipPanel* m_tooltipPanel = nullptr;
 
+            core::WidgetId m_sortByButtonTextLabelId;
             core::WidgetId m_itemSortButtonsPanelId;
 
             ItemSortPanel::OnSortButtonClick m_onSortButtonClick;
