@@ -6,8 +6,9 @@
 
 namespace app
 {
-    ItemGridPanel::ItemGridPanel(core::AssetManager& assetManager,
+    ItemGridPanel::ItemGridPanel(core::AssetManager& assetManager, sf::RenderWindow& renderWindow,
         size_t columnCount, size_t rowCount, float cellSize, float spacing)
+        : m_renderWindow(renderWindow)
     {
         size_t cellCount = columnCount * rowCount;
 
@@ -35,8 +36,10 @@ namespace app
             else
                 itemSlot->ClearItem();
         }
-    }
 
+        HandleEvent(sf::Event(sf::Event::MouseMoved), m_renderWindow); // Refresh SelectMode
+    }
+    
     void ItemGridPanel::SetOnItemClick(OnItemClick callback)
     {
         m_onItemClick = std::move(callback);
@@ -122,7 +125,11 @@ namespace app
 
         if (!panelBounds.contains(mousePosition))
         {
+            m_mouseDown = false;
+            m_dragItemIndex = -1;
+
             HandleHoverOut();
+
             return false;
         }
 
@@ -142,10 +149,12 @@ namespace app
         if (!itemSlot)
             return false;
 
-        HandleHoverIn(itemSlot, slotIndex);
-
-        if (event.type == sf::Event::MouseButtonPressed &&
-            event.mouseButton.button == sf::Mouse::Left)
+        if (event.type != sf::Event::MouseButtonPressed && !m_mouseDown)
+        {
+            HandleHoverIn(itemSlot, slotIndex);
+        }
+        else if (event.type == sf::Event::MouseButtonPressed 
+            && event.mouseButton.button == sf::Mouse::Left)
         {
             m_mouseDown = true;
             m_dragItemIndex = static_cast<std::int32_t>(itemSlot->GetItemIndex());
@@ -156,13 +165,12 @@ namespace app
             m_mouseDown = false;
             m_dragItemIndex = -1;
 
-            if (itemSlot->HasItem())
-            {
-                HandleClick(itemSlot);
-                return true;
-            }
+            HandleHoverOut();
+            HandleClick(itemSlot);
+
+            return true;
         }
-        else if (event.type == sf::Event::MouseMoved && m_mouseDown && m_dragItemIndex >= 0)
+        else if (event.type == sf::Event::MouseMoved && m_mouseDown)
         {
             float distance = std::hypot(
                 mousePosition.x - m_mouseDownPosition.x,
@@ -170,6 +178,7 @@ namespace app
 
             if (distance >= DragThreshold)
             {
+                HandleHoverOut();
                 HandleDragBegin();
 
                 m_mouseDown = false;
@@ -184,7 +193,7 @@ namespace app
 
     void ItemGridPanel::HandleClick(ItemSlot* itemSlot)
     {
-        if (!itemSlot)
+        if (!itemSlot || !itemSlot->HasItem())
             return;
 
         if (m_onItemClick)
@@ -198,7 +207,7 @@ namespace app
 
         std::int32_t signedSlotIndex = static_cast<std::int32_t>(slotIndex);
 
-        if (signedSlotIndex == m_lastHoverSlotIndex)
+        if (signedSlotIndex == m_lastHoveredSlotIndex)
             return;
 
         if (!itemSlot->HasItem())
@@ -214,42 +223,40 @@ namespace app
         if (m_onItemHoverIn)
             m_onItemHoverIn(itemSlot->GetItemIndex(), itemSlot->GetPosition());
 
-        m_lastHoverSlotIndex = signedSlotIndex;
+        m_lastHoveredSlotIndex = signedSlotIndex;
     }
 
     void ItemGridPanel::HandleHoverOut()
     {
-        if (m_lastHoverSlotIndex != -1)
+        if (m_lastHoveredSlotIndex != -1)
         {
             if (m_onItemHoverOut)
                 m_onItemHoverOut();
 
             ClearLastHoveredSlotSelect();
 
-            m_lastHoverSlotIndex = -1;
+            m_lastHoveredSlotIndex = -1;
         }
     }
 
     void ItemGridPanel::HandleDragBegin()
     {
-        if (m_onItemDragBegin)
+        if (m_onItemDragBegin && m_dragItemIndex >= 0)
             m_onItemDragBegin(static_cast<size_t>(m_dragItemIndex));
-
-        ClearLastHoveredSlotSelect();
     }
 
     void ItemGridPanel::ClearLastHoveredSlotSelect()
     {
-        size_t slotIndex = static_cast<size_t>(m_lastHoverSlotIndex);
+        size_t slotIndex = static_cast<size_t>(m_lastHoveredSlotIndex);
 
         auto* widget = GetWidget(slotIndex);
         if (!widget)
             return;
 
-        auto* lastHoveredSlot = static_cast<ItemSlot*>(widget);
-        if (!lastHoveredSlot)
+        auto* lastHoverSlot = static_cast<ItemSlot*>(widget);
+        if (!lastHoverSlot)
             return;
 
-        lastHoveredSlot->SetSelectMode(ItemSlot::SelectMode::None);
+        lastHoverSlot->SetSelectMode(ItemSlot::SelectMode::None);
     }
 }

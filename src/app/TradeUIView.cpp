@@ -26,6 +26,7 @@ namespace app
     void TradeUIView::Initialize()
     {
         auto& assetManager = m_appContext.GetAssetManager();
+        auto& renderWindow = m_appContext.GetRenderWindow();
         auto renderWindowSize = m_appContext.GetRenderWindowSize();
 
         auto& regularFont = assetManager.GetFont("Mignon_Regular");
@@ -77,13 +78,13 @@ namespace app
             float cellSize = 54.f;
             float spacing = 4.f;
 
-            auto* playerItemGrid = CreateWidget<ItemGridPanel>(assetManager, columnCount, rowCount, cellSize, spacing);
+            auto* playerItemGrid = CreateWidget<ItemGridPanel>(assetManager, renderWindow, columnCount, rowCount, cellSize, spacing);
             playerItemGrid->SetAnchor(0.5f, 0.f);
             playerItemGrid->SetPivot(1.f, 0.f);
             playerItemGrid->SetLocalPosition(-40.f, 215.f);
             m_playerItemGridId = playerItemGrid->GetId();
 
-            auto* traderItemGrid = CreateWidget<ItemGridPanel>(assetManager, columnCount, rowCount, cellSize, spacing);
+            auto* traderItemGrid = CreateWidget<ItemGridPanel>(assetManager, renderWindow, columnCount, rowCount, cellSize, spacing);
             traderItemGrid->SetAnchor(0.5f, 0.f);
             traderItemGrid->SetPivot(0.f, 0.f);
             traderItemGrid->SetLocalPosition(40.f, 215.f);
@@ -152,19 +153,22 @@ namespace app
 
     bool TradeUIView::HandleEvent(const sf::Event& event, sf::RenderWindow& renderWindow)
     {
-        if (auto* errorPanel = FindWidgetById<ErrorPanel>(m_errorPanelId); 
-            errorPanel && errorPanel->IsActiveSelf())
+        if (m_itemDragSystem.IsActive())
         {
-            return errorPanel->HandleEvent(event, renderWindow);
+            if (m_itemDragSystem.HandleEvent(event, renderWindow))
+                return true;
         }
-        else if (auto* itemTransferPanel = FindWidgetById<ItemTransferPanel>(m_itemTransferPanelId);
+
+        if (auto* itemTransferPanel = FindWidgetById<ItemTransferPanel>(m_itemTransferPanelId);
             itemTransferPanel && itemTransferPanel->IsActiveSelf())
         {
             return itemTransferPanel->HandleEvent(event, renderWindow);
         }
-        else if (m_itemDragSystem.IsActive())
+
+        if (auto* errorPanel = FindWidgetById<ErrorPanel>(m_errorPanelId);
+            errorPanel && errorPanel->IsActiveSelf())
         {
-            return m_itemDragSystem.HandleEvent(event, renderWindow);
+            return errorPanel->HandleEvent(event, renderWindow);
         }
 
         return UIView::HandleEvent(event, renderWindow);
@@ -246,7 +250,21 @@ namespace app
 
         m_viewModel.SetOnTradeError([this](const app_domain::TradeError& error)
         {
-            ShowErrorPanel(error);
+            auto* errorPanel = FindWidgetById<ErrorPanel>(m_errorPanelId);
+            if (!errorPanel)
+                return;
+
+            switch (error)
+            {
+            case app_domain::TradeError::NotEnoughMoney:
+                errorPanel->Show(
+                    "Insufficient Gold",
+                    "A character has insufficient gold to complete this transaction."
+                );
+                break;
+            default:
+                break;
+            }
         });
 
         if (auto* playerItemGrid = FindWidgetById<ItemGridPanel>(m_playerItemGridId))
@@ -287,8 +305,6 @@ namespace app
      
         gridPanel->SetOnItemClick([this, isBuying](std::size_t itemIndex)
         {
-            HideItemPanel();
-
             m_viewModel.TradeItem(isBuying, itemIndex);
         });
 
@@ -300,18 +316,18 @@ namespace app
             if (!itemOpt.has_value())
                 return;
 
-            ShowItemPanel(itemOpt.value().GetItem(), position);
+            if (auto* itemPanel = FindWidgetById<ItemPanel>(m_itemPanelId))
+                itemPanel->Show(itemOpt.value().GetItem(), position, sf::Vector2f(60.f, 60.f), m_appContext.GetRenderWindowSize().y);
         });
 
         gridPanel->SetOnItemHoverOut([this]()
         {
-            HideItemPanel();
+            if (auto* itemPanel = FindWidgetById<ItemPanel>(m_itemPanelId))
+                itemPanel->Hide();
         });
 
         gridPanel->SetOnItemDragBegin([this, isBuying](std::size_t itemIndex)
         {
-            HideItemPanel();
-
             auto itemOpt = isBuying
                 ? m_viewModel.GetTraderItem(itemIndex)
                 : m_viewModel.GetPlayerItem(itemIndex);
@@ -339,37 +355,6 @@ namespace app
                 }
             });
         });
-    }
-
-    void TradeUIView::ShowItemPanel(const app_domain::Item& item, const sf::Vector2f& position) const
-    {
-        if (auto* itemPanel = FindWidgetById<ItemPanel>(m_itemPanelId))
-            itemPanel->Show(item, position, sf::Vector2f(60.f, 60.f), m_appContext.GetRenderWindowSize().y);
-    }
-
-    void TradeUIView::HideItemPanel() const
-    {
-        if (auto* itemPanel = FindWidgetById<ItemPanel>(m_itemPanelId))
-            itemPanel->Hide();
-    }
-
-    void TradeUIView::ShowErrorPanel(app_domain::TradeError error) const
-    {
-        auto* errorPanel = FindWidgetById<ErrorPanel>(m_errorPanelId);
-        if (!errorPanel)
-            return;
-
-        switch (error)
-        {
-        case app_domain::TradeError::NotEnoughMoney:
-            errorPanel->Show(
-                "Insufficient Gold",
-                "A character has insufficient gold to complete this transaction."
-            );
-            break;
-        default:
-            break;
-        }
     }
 
     TradeUIView::CharacterInfoPanel::CharacterInfoPanel(core::AssetManager& assetManager, bool alignRight)

@@ -73,6 +73,7 @@ namespace app
             event.mouseButton.button == sf::Mouse::Left)
         {
             EndDrag();
+            return false;
         }
 
         return true;

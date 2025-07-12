@@ -19,7 +19,7 @@ namespace app
         using OnItemHoverOut = std::function<void()>;
         using OnItemDragBegin = std::function<void(std::size_t itemIndex)>;
 
-        ItemGridPanel(core::AssetManager& assetManager,
+        ItemGridPanel(core::AssetManager& assetManager, sf::RenderWindow& renderWindow,
             size_t columnCount, size_t rowCount, float cellSize, float spacing);
 
         void SetItems(const std::vector<app_domain::InventoryItemDetails>& items);
@@ -41,7 +41,9 @@ namespace app
         void HandleDragBegin();
         void ClearLastHoveredSlotSelect();
 
-        std::int32_t m_lastHoverSlotIndex = -1;
+        sf::RenderWindow& m_renderWindow;
+
+        std::int32_t m_lastHoveredSlotIndex = -1;
 
         OnItemClick m_onItemClick;
         OnItemHoverIn m_onItemHoverIn;

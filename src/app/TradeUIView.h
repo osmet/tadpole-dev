@@ -39,10 +39,6 @@ namespace app
         void BindViewModel();
         void BindItemGridPanel(ItemGridPanel* gridPanel, bool isBuying);
 
-        void ShowItemPanel(const app_domain::Item& item, const sf::Vector2f& position) const;
-        void HideItemPanel() const;
-        void ShowErrorPanel(app_domain::TradeError error) const;
-
         AppContext& m_appContext;
 
         TradeUIViewModel& m_viewModel;
