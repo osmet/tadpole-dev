@@ -7,8 +7,8 @@ namespace app
 {
     AppContext::AppContext(sf::RenderWindow& renderWindow)
         : m_renderWindow(renderWindow)
-        , m_appDataSource("AppData.json", AppConstants::GetDataRootPath() + "AppData.json")
-        , m_gameDataSource("GameData.json", AppConstants::GetDataRootPath() + "GameData.json")
+        , m_appDataSource(AppConstants::GetDataRootPath() + "AppData.json", AppConstants::GetDataDefaultsRootPath() + "AppData.json")
+        , m_gameDataSource(AppConstants::GetDataRootPath() + "GameData.json", AppConstants::GetDataDefaultsRootPath() + "GameData.json")
         , m_itemService(m_itemConfig.GetItems())
         , m_characterService(m_gameDataSource.GetData().GetCharacters())
         , m_inventoryService(m_gameDataSource.GetData().GetInventories(), m_itemService)

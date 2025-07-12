@@ -20,6 +20,8 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+[Bb]uild/
+[Ll]ib/
 *.exe
 
 *_i.c
